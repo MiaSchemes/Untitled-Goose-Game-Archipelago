@@ -16,7 +16,7 @@ This mod turns Untitled Goose Game into an Archipelago multiworld game where:
 2. **BepInEx 5.x** - Unity mod loader
 
 ### Installing BepInEx
-1. Download BepInEx 5.x from: https://github.com/BepInEx/BepInEx/releases
+1. Download https://github.com/BepInEx/BepInEx/releases/tag/v5.4.9
 2. Extract to your game folder (`Untitled Goose Game/`)
 3. Run the game once to generate necesarry files and folder for Bepin
 4. Close the game

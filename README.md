@@ -26,6 +26,7 @@ This mod turns Untitled Goose Game into an Archipelago multiworld game where:
 2. Copy `GooseGameAP.dll` to `BepInEx/plugins/`
 3. Copy `APProxy.exe` to `BepInEx/plugins/` 
 4. Copy `APProxy.runtimeconfig.json` to `BepInEx/plugins/` 
+5. Copy `APProxy.dll` to `BepInEx/plugins/` 
 
 ## Usage
 
@@ -102,4 +103,4 @@ MIT License - See LICENSE file
 
 ---
 
-*Honk!* 🦆
+*Honk!* 🪿

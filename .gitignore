@@ -4,6 +4,7 @@ obj/
 *.dll
 *.pdb
 *.exe
+*.sln
 
 # Visual Studio
 .vs/

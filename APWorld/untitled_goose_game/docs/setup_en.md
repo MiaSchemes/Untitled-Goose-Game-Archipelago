@@ -36,7 +36,7 @@
 ### Step 4: Install the APWorld
 
 1. Download `untitled_goose_game.apworld` from the releases page
-2. Place it in your Archipelago installation's `lib/worlds/` folder
+2. Place it in your Archipelago installation's `custom_worlds` folder
    - Or double-click the .apworld file if you have Archipelago's file association set up
 
 ## Generating a Game

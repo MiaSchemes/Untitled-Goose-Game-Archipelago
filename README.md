@@ -13,7 +13,7 @@ This mod turns Untitled Goose Game into an Archipelago multiworld game where:
 
 ### Prerequisites
 1. **Untitled Goose Game** (Steam)
-2. **BepInEx 5.x** - Unity mod loader
+2. **BepInEx 5.4.9.0** - Unity mod loader
 
 ### Installing BepInEx
 1. Download https://github.com/BepInEx/BepInEx/releases/tag/v5.4.9
@@ -76,7 +76,7 @@ Actually too many to list now.
 - Tired Goose (slower movement)
 - Suspicious Goose (Honk randomly for 10s)
 - Confused feet (Random Stick directions for 15s)
-- Butterfingers (drop items and be able to grab anything for 10s)
+- Butterbeak (drop items and be unable to grab anything for 10s)
 
 ## YAML Options
 

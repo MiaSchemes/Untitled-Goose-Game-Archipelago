@@ -109,7 +109,6 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Radio": GooseGameLocationData(BASE_ID + 1002, "Garden"),
     "Pick up Trowel": GooseGameLocationData(BASE_ID + 1003, "Garden"),
     "Pick up Keys": GooseGameLocationData(BASE_ID + 1004, "Garden"),
-    "Pick up Carrot": GooseGameLocationData(BASE_ID + 1005, "Garden"),
     "Pick up Tulip": GooseGameLocationData(BASE_ID + 1006, "Garden"),
     "Pick up Apple": GooseGameLocationData(BASE_ID + 1007, "Garden"),
     "Pick up Jam": GooseGameLocationData(BASE_ID + 1008, "Garden"),
@@ -146,7 +145,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Cucumber 1": GooseGameLocationData(BASE_ID + 1039, "High Street"),
     "Pick up Leek 1": GooseGameLocationData(BASE_ID + 1040, "High Street"),
     "Pick up Fusilage": GooseGameLocationData(BASE_ID + 1041, "High Street"),
-    "Pick up Pint Bottle": GooseGameLocationData(BASE_ID + 1042, "High Street"),
+    "Pick up Pint Bottle": GooseGameLocationData(BASE_ID + 1042, "Hub"),
     "Pick up Spray Bottle": GooseGameLocationData(BASE_ID + 1043, "High Street"),
     "Pick up Walkie Talkie B": GooseGameLocationData(BASE_ID + 1044, "High Street"),
     "Pick up Walkie Talkie": GooseGameLocationData(BASE_ID + 1045, "High Street"),
@@ -169,7 +168,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     
     # Back Gardens items (1071-1093)
     "Pick up Bow (Blue)": GooseGameLocationData(BASE_ID + 1071, "Back Gardens"),
-    "Pick up Dummy": GooseGameLocationData(BASE_ID + 1072, "Back Gardens"),
+    "Pick up Dummy": GooseGameLocationData(BASE_ID + 1072, "Hub"),
     "Pick up Cricket Ball": GooseGameLocationData(BASE_ID + 1073, "Back Gardens"),
     "Pick up Bust Pipe": GooseGameLocationData(BASE_ID + 1074, "Back Gardens"),
     "Pick up Bust Hat": GooseGameLocationData(BASE_ID + 1075, "Back Gardens"),
@@ -235,6 +234,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Mini Person": GooseGameLocationData(BASE_ID + 1141, "Model Village"),
     "Pick up Timber Handle": GooseGameLocationData(BASE_ID + 1142, "Model Village"),
     "Pick up Golden Bell": GooseGameLocationData(BASE_ID + 1143, "Model Village"),
+    "Pick up Mini Person (Goose)": GooseGameLocationData(BASE_ID + 1144, "Model Village"),
 }
 
 # =============================================================================
@@ -295,7 +295,6 @@ drag_item_locations: Dict[str, GooseGameLocationData] = {
     "Drag Mop Bucket": GooseGameLocationData(BASE_ID + 1277, "Pub"),
     "Drag Mop": GooseGameLocationData(BASE_ID + 1278, "Pub"),
     "Drag Delivery Box": GooseGameLocationData(BASE_ID + 1279, "Pub"),
-    "Drag Tomato Box": GooseGameLocationData(BASE_ID + 1280, "Pub"),
     
     # Model Village drags (1290-1295)
     "Drag Mini Bench": GooseGameLocationData(BASE_ID + 1290, "Model Village"),
@@ -369,9 +368,6 @@ unique_item_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Carrot 8": GooseGameLocationData(BASE_ID + 1408, "Garden"),
     "Pick up Carrot 9": GooseGameLocationData(BASE_ID + 1409, "Garden"),
     "Pick up Carrot 10": GooseGameLocationData(BASE_ID + 1410, "Garden"),
-    "Pick up Carrot 11": GooseGameLocationData(BASE_ID + 1411, "High Street"),  # Shop carrot
-    "Pick up Carrot 12": GooseGameLocationData(BASE_ID + 1412, "High Street"),  # Shop carrot
-    "Pick up Carrot 13": GooseGameLocationData(BASE_ID + 1413, "High Street"),  # Shop carrot
     
     # Pub Tomatoes (IDs 1421-1431)
     "Pick up Pub Tomato 1": GooseGameLocationData(BASE_ID + 1421, "Pub"),
@@ -428,7 +424,7 @@ def get_all_locations(include_extra: bool = False, include_speedrun: bool = Fals
 def get_all_location_ids() -> Dict[str, int]:
     """Get ALL location name->ID mappings (for AP registration)
     
-    IMPORTANT: AP requires all possible locations registered upfront,
+    AP requires all possible locations registered upfront,
     regardless of whether they're enabled by options.
     """
     all_locs = {}

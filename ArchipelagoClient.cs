@@ -26,7 +26,7 @@ namespace GooseGameAP
         private const int LOCAL_PROXY_PORT = 38282;
         
         private Queue<string> messageQueue = new Queue<string>();
-        private int lastProcessedIndex = -1;  // Track last processed item index, not IDs
+        private int lastProcessedIndex = -1;
         private int playerSlot = 0;
         private string slotName = "";
         private int slotNumber = 0;
@@ -36,7 +36,11 @@ namespace GooseGameAP
         
         public bool IsConnected { get; private set; } = false;
         
-        // Gate sync timing - now does multiple attempts
+        // Slot data options
+        public bool NPCSoulsEnabled { get; private set; } = true;
+        public bool PropSoulsEnabled { get; private set; } = true;
+        
+        // Gate sync timing
         public bool PendingGateSync { get; set; } = false;
         public float GateSyncTimer { get; set; } = 0f;
         public int GateSyncAttempts { get; set; } = 0;
@@ -55,7 +59,6 @@ namespace GooseGameAP
             {
                 plugin.UI.Status = "Starting proxy...";
                 
-                // Store slot name for message display
                 slotName = slot;
                 
                 StopProxy();
@@ -223,7 +226,6 @@ namespace GooseGameAP
                     string line = reader.ReadLine();
                     if (line == null) break;
                     
-                    // Handle RoomInfo immediately to send Connect
                     if (line.Contains("\"cmd\":\"RoomInfo\""))
                     {
                         plugin.UI.Status = "Authenticating...";
@@ -265,28 +267,29 @@ namespace GooseGameAP
                     }
                 }
                 
-                // Parse player names from "players" array
+                // Parse player names
                 ParsePlayerNames(data);
                 
-                // DON'T reload access flags here - Plugin.Connect() already handled slot validation
-                // and set up the correct state. Reloading here would undo that work.
+                // Parse slot_data for soul options
+                ParseSlotData(data);
                 
-                // Load last processed index - this was already set correctly by Plugin.Connect()
-                // via ClearReceivedItems() if slot changed, or preserved if same slot
+                // Load last processed index
                 lastProcessedIndex = PlayerPrefs.GetInt("AP_LastItemIndex", -1);
                 Log.LogInfo($"[AP] Connected - lastProcessedIndex = {lastProcessedIndex}");
                 
-                // IMMEDIATELY queue a gate sync using saved flags
-                // This ensures gates work even if AP doesn't resend items
+                // Queue gate sync
                 GateSyncTimer = 0f;
                 GateSyncAttempts = 0;
-                PendingGateSync = true;  // Start syncing now with saved flags
+                PendingGateSync = true;
                 
                 WaitingForReceivedItems = true;
                 ReceivedItemsTimeout = 0f;
                 
                 // Request sync
                 SendPacket("[{\"cmd\":\"Sync\"}]");
+                
+                // Notify plugin that connection is complete so it can refresh states
+                plugin.OnConnectionComplete();
             }
             else if (data.Contains("\"cmd\":\"ReceivedItems\""))
             {
@@ -310,9 +313,60 @@ namespace GooseGameAP
             }
         }
         
+        private void ParseSlotData(string data)
+        {
+            // Default to true (souls enabled) if not specified
+            NPCSoulsEnabled = true;
+            PropSoulsEnabled = true;
+            
+            int slotDataIdx = data.IndexOf("\"slot_data\":");
+            if (slotDataIdx < 0)
+            {
+                Log.LogInfo("[AP] No slot_data found, using defaults (souls enabled)");
+                return;
+            }
+            
+            // Find the slot_data object bounds
+            int braceStart = data.IndexOf("{", slotDataIdx);
+            if (braceStart < 0) return;
+            
+            // Parse include_npc_souls
+            int npcSoulsIdx = data.IndexOf("\"include_npc_souls\":", slotDataIdx);
+            if (npcSoulsIdx > 0)
+            {
+                int colonPos = npcSoulsIdx + 20;
+                string valueArea = data.Substring(colonPos, Math.Min(10, data.Length - colonPos)).Trim();
+                NPCSoulsEnabled = valueArea.StartsWith("true") || valueArea.StartsWith("1");
+                Log.LogInfo($"[AP] Parsed include_npc_souls: {NPCSoulsEnabled}");
+            }
+            
+            // Parse include_prop_souls
+            int propSoulsIdx = data.IndexOf("\"include_prop_souls\":", slotDataIdx);
+            if (propSoulsIdx > 0)
+            {
+                int colonPos = propSoulsIdx + 21;
+                string valueArea = data.Substring(colonPos, Math.Min(10, data.Length - colonPos)).Trim();
+                PropSoulsEnabled = valueArea.StartsWith("true") || valueArea.StartsWith("1");
+                Log.LogInfo($"[AP] Parsed include_prop_souls: {PropSoulsEnabled}");
+            }
+            
+            Log.LogInfo($"[AP] Slot data parsed: NPCSouls={NPCSoulsEnabled}, PropSouls={PropSoulsEnabled}");
+            
+            // Save these settings for reconnection
+            PlayerPrefs.SetInt("AP_NPCSoulsEnabled", NPCSoulsEnabled ? 1 : 0);
+            PlayerPrefs.SetInt("AP_PropSoulsEnabled", PropSoulsEnabled ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+        
+        public void LoadSavedSoulSettings()
+        {
+            NPCSoulsEnabled = PlayerPrefs.GetInt("AP_NPCSoulsEnabled", 1) == 1;
+            PropSoulsEnabled = PlayerPrefs.GetInt("AP_PropSoulsEnabled", 1) == 1;
+            Log.LogInfo($"[AP] Loaded soul settings: NPCSouls={NPCSoulsEnabled}, PropSouls={PropSoulsEnabled}");
+        }
+        
         private void ParseReceivedItems(string data)
         {
-            // Parse the starting index from the message
             int startingIndex = 0;
             int indexPos = data.IndexOf("\"index\":");
             if (indexPos > 0)
@@ -345,14 +399,12 @@ namespace GooseGameAP
                     {
                         string itemName = LocationMappings.GetItemName(itemId);
                         
-                        // Only process items we haven't seen yet (by index)
                         if (currentIndex > lastProcessedIndex)
                         {
                             plugin.UI.AddReceivedItem(itemName);
                             plugin.ProcessReceivedItem(itemId);
                             newItemsCount++;
                             
-                            // Update last processed index
                             lastProcessedIndex = currentIndex;
                             PlayerPrefs.SetInt("AP_LastItemIndex", lastProcessedIndex);
                             PlayerPrefs.Save();
@@ -368,7 +420,6 @@ namespace GooseGameAP
         
         private void ParsePlayerNames(string data)
         {
-            // Parse "players" array: [{"team":0,"slot":1,"alias":"PlayerName","name":"PlayerName"}]
             playerNames.Clear();
             
             int playersIdx = data.IndexOf("\"players\":");
@@ -377,7 +428,6 @@ namespace GooseGameAP
             int arrStart = data.IndexOf("[", playersIdx);
             if (arrStart < 0) return;
             
-            // Find matching ]
             int bracketCount = 0;
             int arrEnd = arrStart;
             for (int i = arrStart; i < data.Length; i++)
@@ -396,7 +446,6 @@ namespace GooseGameAP
             
             string playersArr = data.Substring(arrStart, arrEnd - arrStart + 1);
             
-            // Parse each player object
             int pos = 0;
             while (pos < playersArr.Length)
             {
@@ -408,7 +457,6 @@ namespace GooseGameAP
                 
                 string obj = playersArr.Substring(objStart, objEnd - objStart + 1);
                 
-                // Get slot number
                 int slotIdx = obj.IndexOf("\"slot\":");
                 int slot = 0;
                 if (slotIdx >= 0)
@@ -420,7 +468,6 @@ namespace GooseGameAP
                     int.TryParse(obj.Substring(start, end - start), out slot);
                 }
                 
-                // Get name (prefer "alias" over "name")
                 string name = "";
                 int aliasIdx = obj.IndexOf("\"alias\":\"");
                 if (aliasIdx >= 0)

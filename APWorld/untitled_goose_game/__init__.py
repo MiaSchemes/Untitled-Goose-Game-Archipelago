@@ -41,7 +41,7 @@ class GooseGameWorld(World):
         name: data.id for name, data in item_table.items()
     }
     
-    # Register ALL possible locations - AP needs these upfront
+    # Register ALL possible locations - AP needs these upfront or it breaks badly (Lookin at you early MM Dev Builds)
     location_name_to_id: ClassVar[Dict[str, int]] = get_all_location_ids()
     
     item_name_groups = ITEM_GROUPS
@@ -239,7 +239,7 @@ class GooseGameWorld(World):
             "Mini Street Bench Soul",
             "Sun Lounge Soul",
             
-            # Victory item soul
+            # Victory item soul - required to spawn/pick up the Golden Bell
             "Golden Bell Soul",
         ]
         
@@ -259,13 +259,14 @@ class GooseGameWorld(World):
         for soul in prop_souls:
             self.multiworld.itempool.append(self.create_item(soul))
         
-        # Victory item
-        self.multiworld.itempool.append(self.create_item("Golden Bell"))
+        # NOTE: Golden Bell is NOT added to the pool here!
+        # It is placed directly at "Pick up Golden Bell" location in pre_fill()
+        # This ensures players must have Golden Bell Soul to access it
         
         # Calculate filler needed
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
-        # 4 area items in pool + NPC souls + prop souls + 1 Golden Bell
-        items_added = 4 + len(npc_souls) + len(prop_souls) + 1
+        # 4 area items in pool + NPC souls + prop souls (Golden Bell is placed separately)
+        items_added = 4 + len(npc_souls) + len(prop_souls)
         filler_needed = total_locations - items_added
         
         # Capped filler items - these have maximum quantities
@@ -303,6 +304,21 @@ class GooseGameWorld(World):
                     item_name = self.random.choice(trap_items)
             
             self.multiworld.itempool.append(self.create_item(item_name))
+    
+    def pre_fill(self) -> None:
+        """Place the Golden Bell at its fixed location.
+        
+        The Golden Bell is placed directly at 'Pick up Golden Bell' rather than
+        being in the item pool. This ensures players must:
+        1. Have Pub Access (to reach Model Village area)
+        2. Have Model Village Access (to enter Model Village)
+        3. Have Golden Bell Soul (to spawn/pick up the bell)
+        
+        This makes the victory item properly gated behind its soul requirement.
+        """
+        golden_bell = self.create_item("Golden Bell")
+        golden_bell_location = self.multiworld.get_location("Pick up Golden Bell", self.player)
+        golden_bell_location.place_locked_item(golden_bell)
     
     def set_rules(self) -> None:
         from .Rules import set_rules

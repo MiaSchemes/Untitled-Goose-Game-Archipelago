@@ -193,7 +193,9 @@ item_table: Dict[str, GooseGameItemData] = {
     "Suspicious Goose": GooseGameItemData(BASE_ID + 303, ItemClassification.trap),
     
     # Victory
+    
     "Golden Bell": GooseGameItemData(BASE_ID + 999, ItemClassification.progression),
+
 }
 
 # Item groups for logical grouping

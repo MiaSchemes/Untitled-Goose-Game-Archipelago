@@ -6,17 +6,16 @@ if TYPE_CHECKING:
 
 # MAIN RULES
 
+# MAIN RULES
+
 def set_rules(world: "GooseGameWorld") -> None:
     multiworld = world.multiworld
     player = world.player
     
     def set_location_rule(location_name, rule_func):
-        try:
-            location = multiworld.get_location(location_name, player)
-            if location:
-                set_rule(location, rule_func)
-        except:
-            pass
+        location = multiworld.get_location(location_name, player)
+        if location:
+            set_rule(location, rule_func)
     
     for entrance_name, rule in get_region_rules(player).items():
         set_rule(multiworld.get_entrance(entrance_name, player), rule)
@@ -479,6 +478,7 @@ def get_goal_rules(player):
                 and has_back_gardens(state, player) 
                 and has_pub(state, player) 
                 and has_model_village(state, player) 
+                and has_soul(state, player, "Golden Bell")
                 and state.has("Golden Bell", player)
             ),
     }

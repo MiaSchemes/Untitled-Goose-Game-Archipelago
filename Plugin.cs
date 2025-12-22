@@ -54,6 +54,10 @@ namespace GooseGameAP
         public bool HasFancyLadiesSoul { get; set; } = false;
         public bool HasCookSoul { get; set; } = false;
         
+        // Soul settings from slot data
+        public bool NPCSoulsEnabled => Client?.NPCSoulsEnabled ?? true;
+        public bool PropSoulsEnabled => Client?.PropSoulsEnabled ?? true;
+        
         // Buff tracking
         public bool IsSilent => TrapManager?.IsSilent ?? false;
         public int MegaHonkCount => TrapManager?.MegaHonkCount ?? 0;
@@ -88,14 +92,11 @@ namespace GooseGameAP
             
             harmony = new Harmony("com.archipelago.goosegame");
             harmony.PatchAll();
-            
-            // Don't load access flags on startup - they'll be loaded/validated when connecting
-            // This prevents old session data from affecting new multiworlds
         }
 
         private void Update()
         {
-            // Reset state when player returns to menu (no goose exists)
+            // Reset state when player returns to menu
             if (hasInitializedGates && (GameManager.instance == null || 
                 GameManager.instance.allGeese == null || GameManager.instance.allGeese.Count == 0))
             {
@@ -111,16 +112,9 @@ namespace GooseGameAP
                 GameManager.instance.allGeese != null && GameManager.instance.allGeese.Count > 0)
             {
                 hasInitializedGates = true;
-                // Only initialize gates, don't teleport - let player start where they are
                 
-                // Refresh goose color renderers
                 GooseColour?.RefreshRenderers();
-                
-                // Scan and rename duplicate items EARLY before player can pick them up
                 PositionTracker?.ScanAndCacheItems();
-                
-                // DON'T initialize NPCs here - wait until connection is validated
-                // NPCManager?.InitializeNPCs();
                 
                 StartCoroutine(DelayedGateInit());
             }
@@ -157,7 +151,7 @@ namespace GooseGameAP
             // Update traps
             TrapManager?.Update();
             
-            // Update goose color (for rainbow mode)
+            // Update goose color
             GooseColour?.Update();
             
             // Update notification timer
@@ -169,8 +163,6 @@ namespace GooseGameAP
         
         private void LateUpdate()
         {
-            // Confused feet now uses velocity inversion in MoverPatches
-            // stickAim inversion didn't work - Mover reads input directly
         }
         
         private void HandleDebugKeys()
@@ -195,7 +187,7 @@ namespace GooseGameAP
                 UI?.ShowNotification("Goose color reset");
             }
             
-            // F9: Manual gate sync from access flags (recovery for disconnect issues)
+            // F9: Manual gate sync from access flags
             if (Input.GetKeyDown(KeyCode.F9))
             {
                 LoadAccessFlags();
@@ -209,7 +201,6 @@ namespace GooseGameAP
         {
             if (Client == null) return;
             
-            // Handle pending gate sync - now does multiple attempts
             if (Client.PendingGateSync && GameManager.instance != null && 
                 GameManager.instance.allGeese != null && GameManager.instance.allGeese.Count > 0)
             {
@@ -219,13 +210,9 @@ namespace GooseGameAP
                     Client.GateSyncAttempts++;
                     Client.GateSyncTimer = 0f;
                     
-                    // Clear hub blockers on each attempt
                     ClearHubBlockers();
-                    
-                    // Sync gates
                     GateManager?.SyncGatesFromAccessFlags();
                     
-                    // Check if we've done all attempts
                     if (Client.GateSyncAttempts >= ArchipelagoClient.MAX_GATE_SYNC_ATTEMPTS)
                     {
                         Client.PendingGateSync = false;
@@ -233,7 +220,6 @@ namespace GooseGameAP
                 }
             }
             
-            // Timeout for received items
             if (Client.WaitingForReceivedItems && Client.IsConnected)
             {
                 Client.ReceivedItemsTimeout += Time.deltaTime;
@@ -258,7 +244,6 @@ namespace GooseGameAP
         
         public void Connect()
         {
-            // Check if connecting to a different slot than last time
             string savedSlot = PlayerPrefs.GetString("AP_SlotName", "");
             string savedServer = PlayerPrefs.GetString("AP_ServerAddress", "");
             
@@ -270,9 +255,9 @@ namespace GooseGameAP
             
             if (slotMatches)
             {
-                // Same slot - load saved flags
                 Log.LogInfo($"[AP] Reconnecting to same slot ({UI.SlotName}@{UI.ServerAddress}). Loading saved state.");
                 LoadAccessFlags();
+                Client?.LoadSavedSoulSettings();
                 PropManager?.LoadSouls();
                 GateManager?.SyncGatesFromAccessFlags();
                 NPCManager?.RefreshNPCStates();
@@ -280,9 +265,8 @@ namespace GooseGameAP
             }
             else
             {
-                // Different slot OR first time - clear everything and start fresh
                 Log.LogInfo($"[AP] New/different slot. Clearing ALL saved state.");
-                ResetAllAccess(); // This clears ALL flags including souls
+                ResetAllAccess();
                 PropManager?.ClearAllSouls();
                 PropManager?.ClearSavedSouls();
                 GateManager?.SyncGatesFromAccessFlags();
@@ -290,13 +274,24 @@ namespace GooseGameAP
                 PropManager?.RefreshPropStates();
             }
             
-            // Save the new slot info IMMEDIATELY so we can detect changes next time
             PlayerPrefs.SetString("AP_SlotName", UI.SlotName);
             PlayerPrefs.SetString("AP_ServerAddress", UI.ServerAddress);
             PlayerPrefs.Save();
             Log.LogInfo($"[AP] Saved new slot info: {UI.SlotName}@{UI.ServerAddress}");
             
             Client?.Connect(UI.ServerAddress, UI.ServerPort, UI.SlotName, UI.Password, DeathLinkEnabled);
+        }
+        
+        /// <summary>
+        /// Called by ArchipelagoClient when connection is complete and slot_data is parsed
+        /// </summary>
+        public void OnConnectionComplete()
+        {
+            Log.LogInfo($"[AP] OnConnectionComplete - NPCSouls={NPCSoulsEnabled}, PropSouls={PropSoulsEnabled}");
+            
+            // Refresh NPC and Prop states now that we know the settings
+            NPCManager?.RefreshNPCStates();
+            PropManager?.RefreshPropStates();
         }
         
         public void Disconnect()
@@ -374,75 +369,75 @@ namespace GooseGameAP
                     SaveAccessFlags();
                     break;
                 
-                // NPC Souls (120-129)
+                // NPC Souls (120-129) - only process if NPC souls enabled
                 case 120:
                     HasGroundskeeperSoul = true;
-                    NPCManager?.EnableNPC("Groundskeeper");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("Groundskeeper");
                     UI?.ShowNotification("Groundskeeper Soul received!");
                     SaveAccessFlags();
                     break;
                 case 121:
                     HasBoySoul = true;
-                    NPCManager?.EnableNPC("Boy");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("Boy");
                     UI?.ShowNotification("Boy Soul received!");
                     SaveAccessFlags();
                     break;
                 case 122:
                     HasTVShopOwnerSoul = true;
-                    NPCManager?.EnableNPC("TVShopOwner");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("TVShopOwner");
                     UI?.ShowNotification("TV Shop Owner Soul received!");
                     SaveAccessFlags();
                     break;
                 case 123:
                     HasMarketLadySoul = true;
-                    NPCManager?.EnableNPC("MarketLady");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("MarketLady");
                     UI?.ShowNotification("Market Lady Soul received!");
                     SaveAccessFlags();
                     break;
                 case 124:
                     HasTidyNeighbourSoul = true;
-                    NPCManager?.EnableNPC("TidyNeighbour");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("TidyNeighbour");
                     UI?.ShowNotification("Tidy Neighbour Soul received!");
                     SaveAccessFlags();
                     break;
                 case 125:
                     HasMessyNeighbourSoul = true;
-                    NPCManager?.EnableNPC("MessyNeighbour");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("MessyNeighbour");
                     UI?.ShowNotification("Messy Neighbour Soul received!");
                     SaveAccessFlags();
                     break;
                 case 126:
                     HasBurlyManSoul = true;
-                    NPCManager?.EnableNPC("BurlyMan");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("BurlyMan");
                     UI?.ShowNotification("Burly Man Soul received!");
                     SaveAccessFlags();
                     break;
                 case 127:
                     HasOldManSoul = true;
-                    NPCManager?.EnableNPC("OldMan");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("OldMan");
                     UI?.ShowNotification("Old Man Soul received!");
                     SaveAccessFlags();
                     break;
                 case 128:
                     HasPubLadySoul = true;
-                    NPCManager?.EnableNPC("PubLady");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("PubLady");
                     UI?.ShowNotification("Pub Lady Soul received!");
                     SaveAccessFlags();
                     break;
                 case 129:
                     HasFancyLadiesSoul = true;
-                    NPCManager?.EnableNPC("FancyLadies");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("FancyLadies");
                     UI?.ShowNotification("Fancy Ladies Soul received!");
                     SaveAccessFlags();
                     break;
                 case 130:
                     HasCookSoul = true;
-                    NPCManager?.EnableNPC("Cook");
+                    if (NPCSoulsEnabled) NPCManager?.EnableNPC("Cook");
                     UI?.ShowNotification("Cook Soul received!");
                     SaveAccessFlags();
                     break;
                 
-                // Prop Souls (400-620) - handled by PropManager
+                // Prop Souls (400-621) - handled by PropManager
                 case 400: case 401: case 402: case 403: case 404: case 405: case 406: case 407: case 408: case 409:
                 case 410: case 411: case 412: case 413: case 414: case 415: case 416: case 417: case 418: case 419:
                 case 420: case 421: case 422: case 423: case 424: case 425:
@@ -538,19 +533,18 @@ namespace GooseGameAP
         
         public void OnGooseShooed()
         {
-            // Could trigger DeathLink here if enabled
         }
         
         public bool CanEnterArea(GoalListArea area)
         {
             switch (area)
             {
-                case GoalListArea.Garden: return HasGardenAccess;  // Now requires access!
+                case GoalListArea.Garden: return HasGardenAccess;
                 case GoalListArea.Shops: return HasHighStreetAccess;
                 case GoalListArea.Backyards: return HasBackGardensAccess;
                 case GoalListArea.Pub: return HasPubAccess;
                 case GoalListArea.Finale: return HasModelVillageAccess;
-                default: return true;  // Hub is always accessible
+                default: return true;
             }
         }
         
@@ -558,7 +552,6 @@ namespace GooseGameAP
         {
             Log.LogInfo("[AP] ResetAllAccess called - clearing all progress");
             
-            // Area access
             HasGardenAccess = false;
             HasHighStreetAccess = false;
             HasBackGardensAccess = false;
@@ -566,7 +559,6 @@ namespace GooseGameAP
             HasModelVillageAccess = false;
             HasGoldenBell = false;
             
-            // NPC Souls
             HasGroundskeeperSoul = false;
             HasBoySoul = false;
             HasTVShopOwnerSoul = false;
@@ -579,11 +571,9 @@ namespace GooseGameAP
             HasFancyLadiesSoul = false;
             HasCookSoul = false;
             
-            // Prop Souls
             PropManager?.ClearAllSouls();
             PropManager?.ClearSavedSouls();
             
-            // Clear tracking
             Client?.ClearReceivedItems();
             UI?.ClearReceivedItems();
             checkedLocations.Clear();
@@ -597,14 +587,12 @@ namespace GooseGameAP
         
         private void SaveAccessFlags()
         {
-            // Save slot identifier to detect when switching multiworlds
             if (UI != null && !string.IsNullOrEmpty(UI.SlotName))
             {
                 PlayerPrefs.SetString("AP_SlotName", UI.SlotName);
                 PlayerPrefs.SetString("AP_ServerAddress", UI.ServerAddress);
             }
             
-            // Area access flags
             PlayerPrefs.SetInt("AP_Garden", HasGardenAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_HighStreet", HasHighStreetAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_BackGardens", HasBackGardensAccess ? 1 : 0);
@@ -612,7 +600,6 @@ namespace GooseGameAP
             PlayerPrefs.SetInt("AP_ModelVillage", HasModelVillageAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_GoldenBell", HasGoldenBell ? 1 : 0);
             
-            // NPC Soul flags
             PlayerPrefs.SetInt("AP_GroundskeeperSoul", HasGroundskeeperSoul ? 1 : 0);
             PlayerPrefs.SetInt("AP_BoySoul", HasBoySoul ? 1 : 0);
             PlayerPrefs.SetInt("AP_TVShopOwnerSoul", HasTVShopOwnerSoul ? 1 : 0);
@@ -630,17 +617,15 @@ namespace GooseGameAP
         
         private void LoadAccessFlags()
         {
-            // Check if saved data is for a different slot - if so, clear it
             if (UI != null && !string.IsNullOrEmpty(UI.SlotName))
             {
                 string savedSlot = PlayerPrefs.GetString("AP_SlotName", "");
                 string savedServer = PlayerPrefs.GetString("AP_ServerAddress", "");
                 
-                // If connecting to a different slot/server combo, clear saved data
                 if (!string.IsNullOrEmpty(savedSlot) && 
                     (savedSlot != UI.SlotName || savedServer != UI.ServerAddress))
                 {
-                    Log.LogInfo($"[AP] Different slot detected (saved: {savedSlot}@{savedServer}, current: {UI.SlotName}@{UI.ServerAddress}). Clearing saved flags.");
+                    Log.LogInfo($"[AP] Different slot detected. Clearing saved flags.");
                     ClearSavedAccessFlags();
                     ResetAllFlags();
                     return;
@@ -656,7 +641,6 @@ namespace GooseGameAP
                 HasModelVillageAccess = PlayerPrefs.GetInt("AP_ModelVillage") == 1;
                 HasGoldenBell = PlayerPrefs.GetInt("AP_GoldenBell") == 1;
                 
-                // NPC Souls
                 HasGroundskeeperSoul = PlayerPrefs.GetInt("AP_GroundskeeperSoul", 0) == 1;
                 HasBoySoul = PlayerPrefs.GetInt("AP_BoySoul", 0) == 1;
                 HasTVShopOwnerSoul = PlayerPrefs.GetInt("AP_TVShopOwnerSoul", 0) == 1;
@@ -671,12 +655,8 @@ namespace GooseGameAP
             }
         }
         
-        /// <summary>
-        /// Reset all in-memory flags to default values
-        /// </summary>
         private void ResetAllFlags()
         {
-            // Area access
             HasGardenAccess = false;
             HasHighStreetAccess = false;
             HasBackGardensAccess = false;
@@ -684,7 +664,6 @@ namespace GooseGameAP
             HasModelVillageAccess = false;
             HasGoldenBell = false;
             
-            // NPC Souls
             HasGroundskeeperSoul = false;
             HasBoySoul = false;
             HasTVShopOwnerSoul = false;
@@ -697,7 +676,6 @@ namespace GooseGameAP
             HasFancyLadiesSoul = false;
             HasCookSoul = false;
             
-            // Progressive items (via TrapManager)
             if (TrapManager != null)
             {
                 TrapManager.MegaHonkCount = 0;
@@ -706,9 +684,6 @@ namespace GooseGameAP
             }
         }
         
-        /// <summary>
-        /// Public method to reload access flags - called on reconnect
-        /// </summary>
         public void ReloadAccessFlags()
         {
             LoadAccessFlags();
@@ -716,11 +691,9 @@ namespace GooseGameAP
         
         private void ClearSavedAccessFlags()
         {
-            // Slot tracking
             PlayerPrefs.DeleteKey("AP_SlotName");
             PlayerPrefs.DeleteKey("AP_ServerAddress");
             
-            // Area access
             PlayerPrefs.DeleteKey("AP_Garden");
             PlayerPrefs.DeleteKey("AP_HighStreet");
             PlayerPrefs.DeleteKey("AP_BackGardens");
@@ -728,7 +701,6 @@ namespace GooseGameAP
             PlayerPrefs.DeleteKey("AP_ModelVillage");
             PlayerPrefs.DeleteKey("AP_GoldenBell");
             
-            // NPC Souls
             PlayerPrefs.DeleteKey("AP_GroundskeeperSoul");
             PlayerPrefs.DeleteKey("AP_BoySoul");
             PlayerPrefs.DeleteKey("AP_TVShopOwnerSoul");
@@ -741,7 +713,9 @@ namespace GooseGameAP
             PlayerPrefs.DeleteKey("AP_FancyLadiesSoul");
             PlayerPrefs.DeleteKey("AP_CookSoul");
             
-            // Progressive items
+            PlayerPrefs.DeleteKey("AP_NPCSoulsEnabled");
+            PlayerPrefs.DeleteKey("AP_PropSoulsEnabled");
+            
             PlayerPrefs.DeleteKey("AP_LastItemIndex");
             PlayerPrefs.DeleteKey("AP_SpeedyFeet");
             PlayerPrefs.DeleteKey("AP_MegaHonk");
@@ -754,32 +728,26 @@ namespace GooseGameAP
         
         private IEnumerator DelayedGateInit()
         {
-            // Wait longer for game to fully initialize
             yield return new WaitForSeconds(3f);
             
-            // Run clearing multiple times to make sure it sticks
             for (int attempt = 0; attempt < 3; attempt++)
             {
                 ClearHubBlockers();
                 yield return new WaitForSeconds(1f);
             }
             
-            // Sync area gates based on current access flags
             GateManager?.SyncGatesFromAccessFlags();
         }
         
         private void ClearHubBlockers()
         {
-            // Use GateManager's method which has the actual blocker paths
             GateManager?.ClearHubBlockers();
             
-            // Also scan for any remaining GateExtraColliders and disable them
             var allObjects = FindObjectsOfType<GameObject>();
             foreach (var obj in allObjects)
             {
                 if (obj == null) continue;
                 
-                // Disable any GateExtraColliders anywhere
                 if (obj.name.Contains("ExtraCollider"))
                 {
                     var cols = obj.GetComponentsInChildren<Collider>();
@@ -801,7 +769,6 @@ namespace GooseGameAP
             }
             return path;
         }
-        
         
         private void OnDestroy()
         {

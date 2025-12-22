@@ -8,6 +8,7 @@ namespace GooseGameAP
     /// <summary>
     /// Manages NPC visibility based on soul items.
     /// NPCs are disabled immediately when game loads, then enabled when souls are received.
+    /// When NPCSoulsEnabled is false, all NPCs are always active.
     /// </summary>
     public class NPCManager
     {
@@ -18,7 +19,7 @@ namespace GooseGameAP
         private Dictionary<string, GameObject> npcCache = new Dictionary<string, GameObject>();
         private bool hasScannedNPCs = false;
         
-        // Confirmed NPC paths from scan - all under boilerRoom/ObjectManager/GeneratedGroups/people/
+        // Confirmed NPC paths from scan
         private static readonly Dictionary<string, string> NpcPaths = new Dictionary<string, string>
         {
             { "Groundskeeper", "boilerRoom/ObjectManager/GeneratedGroups/people/gardener brain" },
@@ -30,10 +31,8 @@ namespace GooseGameAP
             { "BurlyMan", "boilerRoom/ObjectManager/GeneratedGroups/people/pub man brain" },
             { "OldMan", "boilerRoom/ObjectManager/GeneratedGroups/people/oldMan brain" },
             { "PubLady", "boilerRoom/ObjectManager/GeneratedGroups/people/pub woman brain" },
-            // Fancy Ladies are TWO separate NPCs - gossip1 and gossip2
             { "FancyLadies1", "boilerRoom/ObjectManager/GeneratedGroups/people/gossip1 brain" },
             { "FancyLadies2", "boilerRoom/ObjectManager/GeneratedGroups/people/gossip2 brain" },
-            // Cook (junk soul - not required for any goals)
             { "Cook", "boilerRoom/ObjectManager/GeneratedGroups/people/cook brain" },
         };
         
@@ -43,18 +42,32 @@ namespace GooseGameAP
         }
         
         /// <summary>
+        /// Check if NPC souls are enabled for this session
+        /// </summary>
+        private bool NPCSoulsEnabled => plugin.NPCSoulsEnabled;
+        
+        /// <summary>
         /// Called every frame from Plugin.Update()
-        /// Disables all NPCs as soon as the game loads, then applies soul states
         /// </summary>
         public void Update()
         {
-            // As soon as we detect the game is loaded (goose exists), disable all NPCs
             if (!hasScannedNPCs && GameManager.instance?.allGeese != null && GameManager.instance.allGeese.Count > 0)
             {
-                Log.LogInfo("[NPC] Game loaded - finding and disabling all NPCs");
+                Log.LogInfo("[NPC] Game loaded - finding NPCs");
                 FindAndCacheNPCs();
-                DisableAllNPCs();
-                ApplyNPCStatesFromFlags();
+                
+                // Only disable NPCs if NPC souls are enabled
+                if (NPCSoulsEnabled)
+                {
+                    Log.LogInfo("[NPC] NPC souls ENABLED - disabling NPCs until souls received");
+                    DisableAllNPCs();
+                    ApplyNPCStatesFromFlags();
+                }
+                else
+                {
+                    Log.LogInfo("[NPC] NPC souls DISABLED - all NPCs active");
+                    EnableAllNPCs();
+                }
             }
         }
         
@@ -89,7 +102,7 @@ namespace GooseGameAP
         }
         
         /// <summary>
-        /// Disable ALL NPCs - called immediately when game loads
+        /// Disable ALL NPCs
         /// </summary>
         private void DisableAllNPCs()
         {
@@ -104,11 +117,32 @@ namespace GooseGameAP
         }
         
         /// <summary>
+        /// Enable ALL NPCs (when souls are disabled)
+        /// </summary>
+        private void EnableAllNPCs()
+        {
+            Log.LogInfo("[NPC] Enabling all NPCs (souls disabled)");
+            foreach (var kvp in npcCache)
+            {
+                if (kvp.Value != null)
+                {
+                    kvp.Value.SetActive(true);
+                }
+            }
+        }
+        
+        /// <summary>
         /// Apply NPC states based on current soul flags in Plugin
-        /// Called after disabling all, to re-enable any we have souls for
         /// </summary>
         private void ApplyNPCStatesFromFlags()
         {
+            // If souls are disabled, enable everything
+            if (!NPCSoulsEnabled)
+            {
+                EnableAllNPCs();
+                return;
+            }
+            
             Log.LogInfo("[NPC] Applying NPC states from flags");
             
             if (plugin.HasGroundskeeperSoul) SetNPCActive("Groundskeeper", true);
@@ -141,13 +175,16 @@ namespace GooseGameAP
         }
         
         /// <summary>
-        /// Enable an NPC when their soul is received (called from Plugin.ProcessReceivedItem)
+        /// Enable an NPC when their soul is received
         /// </summary>
         public void EnableNPC(string npcType)
         {
+            // If souls are disabled, NPCs are already enabled
+            if (!NPCSoulsEnabled)
+                return;
+            
             Log.LogInfo($"[NPC] EnableNPC called for {npcType}");
             
-            // FancyLadies controls two NPCs
             if (npcType == "FancyLadies")
             {
                 EnableSingleNPC("FancyLadies1");
@@ -167,7 +204,6 @@ namespace GooseGameAP
             }
             else
             {
-                // NPC not in cache - try to find it now
                 Log.LogWarning($"[NPC] {npcType} not in cache, searching...");
                 if (NpcPaths.TryGetValue(npcType, out string path))
                 {
@@ -183,19 +219,27 @@ namespace GooseGameAP
         }
         
         /// <summary>
-        /// Re-apply all NPC states (called when reconnecting to same slot)
+        /// Re-apply all NPC states (called when reconnecting or settings change)
         /// </summary>
         public void RefreshNPCStates()
         {
             if (!hasScannedNPCs) return;
             
-            Log.LogInfo("[NPC] RefreshNPCStates called");
-            DisableAllNPCs();
-            ApplyNPCStatesFromFlags();
+            Log.LogInfo($"[NPC] RefreshNPCStates called (NPCSoulsEnabled={NPCSoulsEnabled})");
+            
+            if (NPCSoulsEnabled)
+            {
+                DisableAllNPCs();
+                ApplyNPCStatesFromFlags();
+            }
+            else
+            {
+                EnableAllNPCs();
+            }
         }
         
         /// <summary>
-        /// Reset for returning to menu - clears cache so we rescan on next game load
+        /// Reset for returning to menu
         /// </summary>
         public void Reset()
         {

@@ -8,7 +8,7 @@ namespace GooseGameAP
     /// <summary>
     /// Manages prop visibility based on prop soul items.
     /// Props are disabled until their corresponding soul is received.
-    /// Uses a dictionary-based approach for scalability.
+    /// When PropSoulsEnabled is false, all props are always accessible.
     /// </summary>
     public class PropManager
     {
@@ -24,7 +24,6 @@ namespace GooseGameAP
         private bool hasScannedProps = false;
         
         // Map item name patterns to soul names
-        // Key = lowercase item name pattern, Value = soul name
         private static readonly Dictionary<string, string> PropToSoul = new Dictionary<string, string>
         {
             // Grouped souls - items with multiple instances
@@ -210,24 +209,44 @@ namespace GooseGameAP
         }
         
         /// <summary>
+        /// Check if prop souls are enabled for this session
+        /// </summary>
+        private bool PropSoulsEnabled => plugin.PropSoulsEnabled;
+        
+        // Props that should ALWAYS be enabled (needed for basic progression)
+        private static readonly HashSet<string> AlwaysEnabledProps = new HashSet<string>
+        {
+            "Fence Bolt Soul"  // Needed to open intro gate
+        };
+        
+        /// <summary>
         /// Called every frame from Plugin.Update()
         /// </summary>
         public void Update()
         {
             try
             {
-                // Only scan when in-game, not at menu
                 if (GameManager.instance == null) return;
                 if (GameManager.instance.allGeese == null) return;
                 if (GameManager.instance.allGeese.Count == 0) return;
                 
-                // Scan and DISABLE all props when game loads (before connection)
                 if (!hasScannedProps)
                 {
                     Log.LogInfo("[Prop] Game loaded - scanning for props");
                     ScanAndCacheProps();
-                    DisableAllProps();  // Disable ALL props immediately
-                    ApplyAllPropStates();  // Re-enable ones we have souls for
+                    
+                    // Only disable props if prop souls are enabled
+                    if (PropSoulsEnabled)
+                    {
+                        Log.LogInfo("[Prop] Prop souls ENABLED - disabling props until souls received");
+                        DisableAllProps();
+                        ApplyAllPropStates();
+                    }
+                    else
+                    {
+                        Log.LogInfo("[Prop] Prop souls DISABLED - all props accessible");
+                        EnableAllProps();
+                    }
                 }
             }
             catch (System.Exception ex)
@@ -257,6 +276,26 @@ namespace GooseGameAP
         }
         
         /// <summary>
+        /// Enable ALL cached props (when souls are disabled)
+        /// </summary>
+        private void EnableAllProps()
+        {
+            int count = 0;
+            foreach (var kvp in propCache)
+            {
+                foreach (var prop in kvp.Value)
+                {
+                    if (prop != null)
+                    {
+                        prop.SetActive(true);
+                        count++;
+                    }
+                }
+            }
+            Log.LogInfo($"[Prop] Enabled {count} props (souls disabled)");
+        }
+        
+        /// <summary>
         /// Scan the game world for props and cache them by soul type
         /// </summary>
         private void ScanAndCacheProps()
@@ -268,11 +307,9 @@ namespace GooseGameAP
             
             try
             {
-                // Find all Props in scene
                 var allProps = UnityEngine.Object.FindObjectsOfType<Prop>();
                 Log.LogInfo($"[Prop] Found {allProps.Length} props total");
                 
-                // DEBUG: Log first 20 prop names to understand naming pattern
                 int logCount = 0;
                 foreach (var prop in allProps)
                 {
@@ -306,14 +343,12 @@ namespace GooseGameAP
                     else
                     {
                         unmatched++;
-                        // Log ALL unmatched for debugging
                         Log.LogWarning($"[Prop] No soul match for: '{prop.name}' (cleaned: '{cleanName}')");
                     }
                 }
                 
                 Log.LogInfo($"[Prop] Matched {matched} props, unmatched {unmatched}");
                 
-                // Log what we found
                 foreach (var kvp in propCache)
                 {
                     Log.LogInfo($"[Prop] {kvp.Key}: {kvp.Value.Count} props");
@@ -325,9 +360,6 @@ namespace GooseGameAP
             }
         }
         
-        /// <summary>
-        /// Clean prop name for matching
-        /// </summary>
         private string CleanPropName(string name)
         {
             string clean = name.ToLower()
@@ -338,23 +370,17 @@ namespace GooseGameAP
                 .Replace("_", "")
                 .Trim();
             
-            // Remove trailing numbers
             while (clean.Length > 0 && char.IsDigit(clean[clean.Length - 1]))
                 clean = clean.Substring(0, clean.Length - 1);
             
             return clean;
         }
         
-        /// <summary>
-        /// Get the soul required for a prop based on its name
-        /// </summary>
         private string GetSoulForProp(string cleanName)
         {
-            // Exact match first
             if (PropToSoul.TryGetValue(cleanName, out string soul))
                 return soul;
             
-            // Partial match - check if prop name starts with or contains a key
             foreach (var kvp in PropToSoul)
             {
                 if (cleanName.StartsWith(kvp.Key) || cleanName.Contains(kvp.Key))
@@ -369,19 +395,27 @@ namespace GooseGameAP
         /// </summary>
         private void ApplyAllPropStates()
         {
+            // If souls are disabled, enable everything
+            if (!PropSoulsEnabled)
+            {
+                EnableAllProps();
+                return;
+            }
+            
             foreach (var kvp in propCache)
             {
                 string soul = kvp.Key;
-                bool hasSoul = receivedSouls.Contains(soul);
+                // Always enable props needed for progression, or if we have the soul
+                bool shouldEnable = AlwaysEnabledProps.Contains(soul) || receivedSouls.Contains(soul);
                 
                 foreach (var prop in kvp.Value)
                 {
                     if (prop != null)
-                        prop.SetActive(hasSoul);
+                        prop.SetActive(shouldEnable);
                 }
             }
             
-            Log.LogInfo($"[Prop] Applied states for {receivedSouls.Count} received souls");
+            Log.LogInfo($"[Prop] Applied states for {receivedSouls.Count} received souls (+ always-enabled props)");
         }
         
         /// <summary>
@@ -395,7 +429,11 @@ namespace GooseGameAP
             Log.LogInfo($"[Prop] Received soul: {soulName}");
             receivedSouls.Add(soulName);
             
-            // Enable props for this soul
+            // Only enable specific props if souls are enabled
+            // If souls disabled, props are already enabled
+            if (!PropSoulsEnabled)
+                return;
+            
             if (propCache.TryGetValue(soulName, out var props))
             {
                 foreach (var prop in props)
@@ -410,23 +448,39 @@ namespace GooseGameAP
         }
         
         /// <summary>
-        /// Check if we have a specific soul
+        /// Check if we have a specific soul (or if souls are disabled, or if it's always enabled)
         /// </summary>
         public bool HasSoul(string soulName)
         {
+            // Always-enabled props don't need souls
+            if (AlwaysEnabledProps.Contains(soulName))
+                return true;
+            
+            // If souls are disabled, always return true
+            if (!PropSoulsEnabled)
+                return true;
+            
             return receivedSouls.Contains(soulName);
         }
         
         /// <summary>
-        /// Refresh prop states (called when reconnecting to same slot)
+        /// Refresh prop states (called when reconnecting or settings change)
         /// </summary>
         public void RefreshPropStates()
         {
             if (!hasScannedProps) return;
             
-            Log.LogInfo("[Prop] RefreshPropStates called");
-            DisableAllProps();
-            ApplyAllPropStates();
+            Log.LogInfo($"[Prop] RefreshPropStates called (PropSoulsEnabled={PropSoulsEnabled})");
+            
+            if (PropSoulsEnabled)
+            {
+                DisableAllProps();
+                ApplyAllPropStates();
+            }
+            else
+            {
+                EnableAllProps();
+            }
         }
         
         /// <summary>
@@ -437,7 +491,6 @@ namespace GooseGameAP
             Log.LogInfo("[Prop] Reset called");
             hasScannedProps = false;
             propCache.Clear();
-            // Don't clear receivedSouls - persist across game resets
         }
         
         /// <summary>

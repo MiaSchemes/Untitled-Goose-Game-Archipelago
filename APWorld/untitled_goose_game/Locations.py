@@ -107,7 +107,6 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Radio": GooseGameLocationData(BASE_ID + 1002, "Garden"),
     "Pick up Trowel": GooseGameLocationData(BASE_ID + 1003, "Garden"),
     "Pick up Keys": GooseGameLocationData(BASE_ID + 1004, "Garden"),
-    "Pick up Carrot": GooseGameLocationData(BASE_ID + 1005, "Garden"),
     "Pick up Tulip": GooseGameLocationData(BASE_ID + 1006, "Garden"),
     "Pick up Apple": GooseGameLocationData(BASE_ID + 1007, "Garden"),
     "Pick up Jam": GooseGameLocationData(BASE_ID + 1008, "Garden"),

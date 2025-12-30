@@ -114,14 +114,51 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
             and has_soul(state, player, "Bust Pipe")
         )
     
+    def has_bust_outside_items(state, player):
+        return (
+            has_back_gardens(state, player)
+            and has_npc(state, player, "Messy Neighbour")
+            and has_high_street(state, player) # Hard-required, as there are no eyewear outside of High Street aside from the glasses normally meant for the bust
+            and (
+                has_soul(state, player, "Horn-Rimmed Glasses")
+                or has_soul(state, player, "Sunglasses")
+                or has_soul(state, player, "Stereoscope")
+                or (has_soul(state, player, "Boy's Glasses") and has_npc(state, player, "Boy"))
+            )
+            and (
+                has_soul(state, player, "Dummy") # Doesn't require any access
+                or has_garden(state, player) and has_soul(state, player, "Tulip")
+                or has_soul(state, player, "Toothbrush") # High Street
+                or has_soul(state, player, "Lily Flower") # High Street
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Knife")
+                    or has_soul(state, player, "Fork")
+                    or has_soul(state, player, "Flower for Vase Soul") and has_npc(state, player, "Fancy Ladies Soul")
+                    or has_model_village(state, player) and has_soul(state, player, "Poppy Flower")
+                )
+            )
+            and (
+                has_garden(state, player)
+                and (
+                    has_soul(state, player, "Gardener Hat") and has_npc(state, player, "Groundskeeper")
+                    # No need to include Straw Hat at the moment as it logically requires the Gardener Hat
+                )
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Traffic Cone")
+                    or has_soul(state, player, "Wooly Hat") and has_npc(state, player, "Old Man")
+                )
+            )
+        )
+    
     def has_table_items(state, player):
         return (
             has_soul(state, player, "Plate") 
             and has_soul(state, player, "Fork") 
             and has_soul(state, player, "Knife") 
             and has_soul(state, player, "Pepper Grinder") 
-            and has_soul(state, player, "Candlestick") 
-            and has_soul(state, player, "Pub Cloth")
+            and has_soul(state, player, "Candlestick")
         )
     
     def has_shopping_items(state, player):
@@ -129,7 +166,7 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
             has_soul(state, player, "Shopping Basket") 
             and has_soul(state, player, "Toothbrush") 
             and has_soul(state, player, "Hairbrush") 
-            and has_soul(state, player, "Toilet Paper")
+            and has_soul(state, player, "Loo Paper")
             and (
                 has_soul(state, player, "Dish Soap Bottle") 
                 or has_soul(state, player, "Spray Bottle")
@@ -151,33 +188,141 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
             or has_soul(state, player, "Sunglasses")
         )
     
-    def can_complete_high_street_todos(state, player):
+    def has_bust_items_in_back_gardens_without_pipe(state, player):
         return (
-            has_high_street(state, player) 
-            and has_npc(state, player, "Boy") 
-            and has_npc(state, player, "TV Shop Owner") 
-            and has_npc(state, player, "Market Lady") 
-            and has_soul(state, player, "Boy's Glasses") 
-            and has_any_wrong_glasses(state, player) 
-            and has_soul(state, player, "Toy Car") 
-            and has_soul(state, player, "Push Broom") 
-            and has_shopping_items(state, player)
-        )
-    
-    def can_complete_back_gardens_todos(state, player):
-        return (
-            has_back_gardens(state, player) 
-            and has_npc(state, player, "Tidy Neighbour") 
-            and has_npc(state, player, "Messy Neighbour") 
-            and has_soul(state, player, "Tea Cup") 
-            and has_soul(state, player, "Slipper") 
-            and has_soul(state, player, "Sock") 
-            and has_soul(state, player, "Clippers") 
-            and has_soul(state, player, "Rose") 
-            and has_bust_items(state, player) 
-            and has_soul(state, player, "Bow") 
+            has_high_street(state, player)
+            and has_soul(state, player, "Bust Hat") 
+            and has_soul(state, player, "Bust Glasses") 
+            and has_npc(state, player, "Tidy Neighbour")
+            and has_npc(state, player, "Messy Neighbour")
+            and has_soul(state, player, "Slipper")
+            and has_soul(state, player, "Rose")
+            and has_soul(state, player, "Rose Box")
+            and has_soul(state, player, "Clippers")
+            and has_soul(state, player, "Clean Sign") # I could be wrong about this one, but I suspect you can't move the box until he moves the sign, even if the sign hasn't spawned in
+            and has_soul(state, player, "Tea Cup")
+            and has_soul(state, player, "Sock")
+            and has_soul(state, player, "Right Strap")
+            and has_soul(state, player, "Soap")
+            and has_soul(state, player, "Bow")
             and has_soul(state, player, "Vase")
         )
+    
+    def can_access_final_garden_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_garden(state, player)
+            or not has_npc(state, player, "Groundskeeper")
+            or not has_soul(state, player, "Mallet")
+            or not has_soul(state, player, "Gardener Sign")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 2 # Getting into the Garden and getting the Groundskeeper wet are free with the above conditions
+        
+        if has_soul(state, player, "Keys"):
+            task_count += 1
+        if has_soul(state, player, "Straw Hat") and has_soul(state, player, "Tulip"):
+            task_count += 1
+        if has_soul(state, player, "Rake"):
+            task_count += 1
+        if has_picnic_items(state, player):
+            task_count += 1
+        
+        return task_count >= 5
+    
+    def can_access_final_high_street_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Boy")
+            or not has_npc(state, player, "Market Lady")
+            or not has_npc(state, player, "TV Shop Owner")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 2 # Trapping the boy in the phone booth and getting on TV are free with the above conditions
+        
+        if has_soul(state, player, "Boy's Glasses") and has_any_wrong_glasses(state, player):
+            task_count += 1
+        if (
+            has_soul(state, player, "Fusilage")
+            or has_garden(state, player)
+            and has_npc(state, player, "Groundskeeper") 
+            and has_soul(state, player, "Trowel")
+        ):
+            task_count += 1
+        if has_soul(state, player, "Push Broom"):
+            task_count += 1
+        if has_shopping_items(state, player):
+            task_count += 1
+        
+        return task_count >= 5
+    
+    def can_access_final_back_gardens_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Tidy Neighbour")
+            or not has_npc(state, player, "Messy Neighbour")
+            or not has_soul(state, player, "Slipper")
+            or not has_soul(state, player, "Rose")
+            or not has_soul(state, player, "Rose Box")
+            or not has_soul(state, player, "Clippers")
+            or not has_soul(state, player, "Clean Sign") # I could be wrong about this one, but I suspect you can't move the box until he moves the sign, even if the sign hasn't spawned in
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 1 # Making the man go barefoot is free with the above conditions
+        
+        if has_soul(state, player, "Tea Cup"):
+            task_count += 1
+        if (
+            has_soul(state, player, "Sock") 
+            and has_soul(state, player, "Right Strap") 
+            and has_soul(state, player, "Soap") 
+        ):
+            task_count += 1
+        if has_bust_items(state, player) or has_bust_outside_items(state, player):
+            task_count += 1
+        if has_soul(state, player, "Bow"):
+            task_count += 1
+        if has_soul(state, player, "Vase"):
+            task_count += 1
+        
+        return task_count >= 5
+    
+    def can_access_final_pub_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Old Man")
+            or not has_npc(state, player, "Burly Man Soul")
+            or not has_soul(state, player, "Burly Mans Bucket")
+            or not has_soul(state, player, "Tomato")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 0
+        
+        if has_soul(state, player, "Toy Boat"):
+            task_count += 1
+        if has_soul(state, player, "Portable Stool"):
+            task_count += 1
+        if has_soul(state, player, "Dartboard") and has_soul(state, player, "Dart"):
+            task_count += 1
+        if has_table_items(state, player):
+            task_count += 1
+        if has_soul(state, player, "Pint Glass"):
+            task_count += 1
+        if has_npc(state, player, "Fancy Ladies") and has_soul(state, player, "Flower for Vase"):
+            task_count += 1
+        
+        return task_count >= 5
     
     return {
         # Garden Goals
@@ -210,18 +355,14 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
                 and has_picnic_items(state, player)
             ),
         "Make the groundskeeper hammer his thumb":
-            lambda state: (
-                has_garden(state, player) 
-                and has_npc(state, player, "Groundskeeper") 
-                and has_soul(state, player, "Mallet") 
-                and has_high_street(state, player)
-            ),
+            lambda state: can_access_final_garden_task(state, player),
         
         # High Street Goals
         "Trap the boy in the phone booth":
             lambda state: (
                 has_high_street(state, player) 
-                and has_npc(state, player, "Boy")
+                and has_npc(state, player, "Boy") 
+                and has_npc(state, player, "TV Shop Owner") 
             ),
         "Make the boy wear the wrong glasses":
             lambda state: (
@@ -233,9 +374,14 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
         "Make someone buy back their own stuff":
             lambda state: (
                 has_high_street(state, player) 
-                and has_npc(state, player, "Boy") 
                 and has_npc(state, player, "Market Lady") 
-                and has_soul(state, player, "Fusilage")
+                and (
+                    has_npc(state, player, "Boy") 
+                    and has_soul(state, player, "Fusilage")
+                    or has_garden(state, player)
+                    and has_npc(state, player, "Groundskeeper") 
+                    and has_soul(state, player, "Trowel")
+                )
             ),
         "Get on TV":
             lambda state: (
@@ -255,7 +401,7 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
                 and has_shopping_items(state, player)
             ),
         "Trap the shopkeeper in the garage":
-            lambda state: can_complete_high_street_todos(state, player),
+            lambda state: can_access_final_high_street_task(state, player),
         
         # Back Gardens Goals
         "Make the man spit out his tea":
@@ -281,12 +427,16 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
                 and has_soul(state, player, "Slipper")
             ),
         "Make someone prune the prize rose":
-            lambda state: can_complete_back_gardens_todos(state, player),
+            lambda state: can_access_final_back_gardens_task(state, player),
         "Help the woman dress up the bust":
             lambda state: (
                 has_back_gardens(state, player) 
                 and has_npc(state, player, "Messy Neighbour") 
-                and has_bust_items(state, player)
+                and (
+                    has_bust_items(state, player)
+                    or has_bust_outside_items(state, player)
+                    or has_bust_items_in_back_gardens_without_pipe(state, player) # using the Rose instead
+                )
             ),
         "Get dressed up with a ribbon":
             lambda state: (
@@ -312,8 +462,7 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
             lambda state: (
                 has_pub(state, player) 
                 and has_npc(state, player, "Old Man") 
-                and has_soul(state, player, "Portable Stool") 
-                and has_soul(state, player, "Harmonica")
+                and has_soul(state, player, "Portable Stool")
             ),
         "Break the dartboard":
             lambda state: (
@@ -327,18 +476,13 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
                 has_pub(state, player) 
                 and has_table_items(state, player)
             ),
-        "Steal a pint glass":
+        "Steal a pint glass and drop it in the canal":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Pint Glass")
             ),
         "Drop a bucket on the burly man's head":
-            lambda state: (
-                has_pub(state, player) 
-                and has_npc(state, player, "Burly Man") 
-                and has_soul(state, player, "Burly Mans Bucket")
-                and has_soul(state, player, "Tomato")
-            ),
+            lambda state: can_access_final_pub_task(state, player),
         "Be awarded a flower":
             lambda state: (
                 has_pub(state, player) 
@@ -356,8 +500,8 @@ def get_goal_rules(player, include_npc_souls, include_prop_souls):
                 and has_pub(state, player) 
                 and has_model_village(state, player)
                 # Timber Handle and Golden Bell are ALWAYS required regardless of prop souls option
-                and state.has("Timber Handle Soul", player) 
-                and state.has("Golden Bell Soul", player)
+                and has_soul(state, player, "Timber Handle Soul") 
+                and has_soul(state, player, "Golden Bell Soul")
                 and state.has("Golden Bell", player)
             ),
     }
@@ -392,29 +536,12 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
             and has_soul(state, player, "Poppy Flower")
         )
     
-    def has_bust_outside_items(state, player):
-        return (
-            has_back_gardens(state, player)
-            and has_npc(state, player, "Messy Neighbour")
-            and has_high_street(state, player)
-            and has_soul(state, player, "Toothbrush")
-            and (
-                has_soul(state, player, "Horn-Rimmed Glasses")
-                or has_soul(state, player, "Sunglasses")
-                or (has_soul(state, player, "Boy's Glasses") and has_npc(state, player, "Boy"))
-            )
-            and (
-                (has_garden(state, player) and has_soul(state, player, "Gardener Hat") and has_npc(state, player, "Groundskeeper"))
-                or (has_pub(state, player) and has_soul(state, player, "Wooly Hat") and has_npc(state, player, "Old Man"))
-            )
-        )
-    
     def has_shopping_items(state, player):
         return (
             has_soul(state, player, "Shopping Basket") 
             and has_soul(state, player, "Toothbrush") 
             and has_soul(state, player, "Hairbrush") 
-            and has_soul(state, player, "Toilet Paper")
+            and has_soul(state, player, "Loo Paper")
             and (
                 has_soul(state, player, "Dish Soap Bottle") 
                 or has_soul(state, player, "Spray Bottle")
@@ -436,35 +563,110 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
             and has_soul(state, player, "Bust Pipe")
         )
     
-    def can_complete_high_street_todos(state, player):
+    def has_bust_outside_items(state, player):
         return (
-            has_high_street(state, player) 
-            and has_npc(state, player, "Boy") 
-            and has_npc(state, player, "TV Shop Owner") 
-            and has_npc(state, player, "Market Lady") 
-            and has_soul(state, player, "Boy's Glasses") 
-            and has_any_wrong_glasses(state, player) 
-            and has_soul(state, player, "Toy Car") 
-            and has_soul(state, player, "Push Broom") 
-            and has_shopping_items(state, player)
+            has_back_gardens(state, player)
+            and has_npc(state, player, "Messy Neighbour")
+            and has_high_street(state, player) # Hard-required, as there are no eyewear outside of High Street aside from the glasses normally meant for the bust
+            and (
+                has_soul(state, player, "Horn-Rimmed Glasses")
+                or has_soul(state, player, "Sunglasses")
+                or has_soul(state, player, "Stereoscope")
+                or (has_soul(state, player, "Boy's Glasses") and has_npc(state, player, "Boy"))
+            )
+            and (
+                has_soul(state, player, "Dummy") # Doesn't require any access
+                or has_garden(state, player) and has_soul(state, player, "Tulip")
+                or has_soul(state, player, "Toothbrush") # High Street
+                or has_soul(state, player, "Lily Flower") # High Street
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Knife")
+                    or has_soul(state, player, "Fork")
+                    or has_soul(state, player, "Flower for Vase Soul") and has_npc(state, player, "Fancy Ladies Soul")
+                    or has_model_village(state, player) and has_soul(state, player, "Poppy Flower")
+                )
+            )
+            and (
+                has_garden(state, player)
+                and (
+                    has_soul(state, player, "Gardener Hat") and has_npc(state, player, "Groundskeeper")
+                    # No need to include Straw Hat at the moment as it logically requires the Gardener Hat
+                )
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Traffic Cone")
+                    or has_soul(state, player, "Wooly Hat") and has_npc(state, player, "Old Man")
+                )
+            )
         )
     
-    def can_complete_back_gardens_todos(state, player):
-        return (
-            has_back_gardens(state, player) 
-            and has_npc(state, player, "Tidy Neighbour") 
-            and has_npc(state, player, "Messy Neighbour") 
-            and has_soul(state, player, "Tea Cup") 
-            and has_soul(state, player, "Slipper") 
-            and has_soul(state, player, "Sock") 
-            and has_soul(state, player, "Clippers") 
-            and has_soul(state, player, "Rose") 
-            and has_bust_items(state, player) 
-            and has_soul(state, player, "Bow") 
-            and has_soul(state, player, "Vase")
-        )
+    def can_access_final_high_street_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Boy")
+            or not has_npc(state, player, "Market Lady")
+            or not has_npc(state, player, "TV Shop Owner")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 2 # Trapping the boy in the phone booth and getting on TV are free with the above conditions
+        
+        if has_soul(state, player, "Boy's Glasses") and has_any_wrong_glasses(state, player):
+            task_count += 1
+        if (
+            has_soul(state, player, "Fusilage")
+            or has_garden(state, player)
+            and has_npc(state, player, "Groundskeeper") 
+            and has_soul(state, player, "Trowel")
+        ):
+            task_count += 1
+        if has_soul(state, player, "Push Broom"):
+            task_count += 1
+        if has_shopping_items(state, player):
+            task_count += 1
+        
+        return task_count >= 5
+    
+    def can_access_final_back_gardens_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Tidy Neighbour")
+            or not has_npc(state, player, "Messy Neighbour")
+            or not has_soul(state, player, "Slipper")
+            or not has_soul(state, player, "Rose")
+            or not has_soul(state, player, "Rose Box")
+            or not has_soul(state, player, "Clippers")
+            or not has_soul(state, player, "Clean Sign") # I could be wrong about this one, but I suspect you can't move the box until he moves the sign, even if the sign hasn't spawned in
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 1 # Making the man go barefoot is free with the above conditions
+        
+        if has_soul(state, player, "Tea Cup"):
+            task_count += 1
+        if (
+            has_soul(state, player, "Sock") 
+            and has_soul(state, player, "Right Strap") 
+            and has_soul(state, player, "Soap") 
+        ):
+            task_count += 1
+        if has_bust_items(state, player) or has_bust_outside_items(state, player):
+            task_count += 1
+        if has_soul(state, player, "Bow"):
+            task_count += 1
+        if has_soul(state, player, "Vase"):
+            task_count += 1
+        
+        return task_count >= 5
     
     def has_three_scale_items(state, player):
+        # Count total available items that can be placed on the scale
+        # Must have High Street access to use the scale
         if not has_high_street(state, player):
             return False
         
@@ -487,7 +689,7 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
             item_count += 1
         if has_soul(state, player, "Hairbrush"):
             item_count += 1
-        if has_soul(state, player, "Toilet Paper"):
+        if has_soul(state, player, "Loo Paper"):
             item_count += 1
         if has_soul(state, player, "Dish Soap Bottle"):
             item_count += 1
@@ -638,16 +840,10 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
                 and has_npc(state, player, "Boy")
             ),
         "Trap the boy in the garage":
-            lambda state: (
-                has_high_street(state, player) 
-                and has_npc(state, player, "Boy") 
-                and has_npc(state, player, "Market Lady") 
-                and can_complete_high_street_todos(state, player)
-            ),
+            lambda state: can_access_final_high_street_task(state, player),
         "Make the scales go ding":
             lambda state: (
                 has_high_street(state, player) 
-                and has_npc(state, player, "Market Lady") 
                 and has_three_scale_items(state, player)
             ),
         "Open an umbrella inside the TV shop":
@@ -696,10 +892,72 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
                 has_back_gardens(state, player) 
                 and has_npc(state, player, "Tidy Neighbour")
                 and (
+                    # Back Garden items
                     has_soul(state, player, "Bow")
-                    or has_soul(state, player, "Cricket Ball")
                     or has_soul(state, player, "Soap")
-                    or has_soul(state, player, "Tea Cup")
+                    or has_soul(state, player, "Pot Stack")
+                    or has_soul(state, player, "Paintbrush")
+                    or has_soul(state, player, "Vase")
+                    or has_soul(state, player, "Right Strap")
+                    or has_soul(state, player, "Sock")
+                    # Hub items
+                    or has_soul(state, player, "Dummy")
+                    or has_soul(state, player, "Coin")
+                    or has_soul(state, player, "Fishing Bobber")
+                    or has_soul(state, player, "Drink Can")
+                    or has_soul(state, player, "Tennis Ball")
+                    # Garden items
+                    or has_garden(state, player) 
+                    and (
+                        has_soul(state, player, "Radio")
+                        or has_soul(state, player, "Trowel")
+                        or has_soul(state, player, "Tulip")
+                        or has_soul(state, player, "Jam")
+                        or has_soul(state, player, "Carrot")
+                        or has_soul(state, player, "Apple")
+                        or has_soul(state, player, "Sandwich")
+                    )
+                    # High Street items
+                    or has_high_street(state, player) 
+                    and (
+                        has_soul(state, player, "Horn-Rimmed Glasses")
+                        or has_soul(state, player, "Red Glasses")
+                        or has_soul(state, player, "Sunglasses")
+                        or has_soul(state, player, "Loo Paper")
+                        or has_soul(state, player, "Toy Car")
+                        or has_soul(state, player, "Hairbrush")
+                        or has_soul(state, player, "Toothbrush")
+                        or has_soul(state, player, "Stereoscope")
+                        or has_soul(state, player, "Dish Soap Bottle")
+                        or has_soul(state, player, "Spray Bottle")
+                        or has_soul(state, player, "Weed Tool")
+                        or has_soul(state, player, "Lily Flower")
+                        or has_soul(state, player, "Fusilage")
+                        or has_soul(state, player, "Baby Doll")
+                        or has_soul(state, player, "Carrot")
+                        or has_soul(state, player, "Tomato")
+                        or has_soul(state, player, "Leek")
+                        or has_soul(state, player, "Cucumber")
+                        or has_soul(state, player, "Tinned Food")
+                        or has_soul(state, player, "Apple Core")
+                        or has_soul(state, player, "Walkie Talkie")
+                        or has_soul(state, player, "Orange")
+                    )
+                    # Pub items
+                    or has_pub(state, player) 
+                    and (
+                        has_soul(state, player, "Exit Letter")
+                        or has_soul(state, player, "Toy Boat")
+                        or has_soul(state, player, "Pepper Grinder")
+                        or has_soul(state, player, "Cork")
+                        or has_soul(state, player, "Candlestick")
+                        or has_soul(state, player, "Harmonica")
+                        or has_soul(state, player, "Tomato")
+                        or has_soul(state, player, "Quoit")
+                        or has_soul(state, player, "Plate")
+                        or has_soul(state, player, "Knife")
+                        or has_soul(state, player, "Fork")
+                    )
                 )
             ),
         "Steal the old man's woolen hat":
@@ -717,7 +975,8 @@ def get_extra_goal_rules(player, include_npc_souls, include_prop_souls):
             lambda state: (
                 has_back_gardens(state, player) 
                 and has_high_street(state, player)
-                and can_complete_back_gardens_todos(state, player)
+                and can_access_final_back_gardens_task(state, player)
+                and has_soul(state, player, "Messy Sign")
             ),
     }
 
@@ -752,14 +1011,51 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
             and has_soul(state, player, "Bust Pipe")
         )
     
+    def has_bust_outside_items(state, player):
+        return (
+            has_back_gardens(state, player)
+            and has_npc(state, player, "Messy Neighbour")
+            and has_high_street(state, player) # Hard-required, as there are no eyewear outside of High Street aside from the glasses normally meant for the bust
+            and (
+                has_soul(state, player, "Horn-Rimmed Glasses")
+                or has_soul(state, player, "Sunglasses")
+                or has_soul(state, player, "Stereoscope")
+                or (has_soul(state, player, "Boy's Glasses") and has_npc(state, player, "Boy"))
+            )
+            and (
+                has_soul(state, player, "Dummy") # Doesn't require any access
+                or has_garden(state, player) and has_soul(state, player, "Tulip")
+                or has_soul(state, player, "Toothbrush") # High Street
+                or has_soul(state, player, "Lily Flower") # High Street
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Knife")
+                    or has_soul(state, player, "Fork")
+                    or has_soul(state, player, "Flower for Vase Soul") and has_npc(state, player, "Fancy Ladies Soul")
+                    or has_model_village(state, player) and has_soul(state, player, "Poppy Flower")
+                )
+            )
+            and (
+                has_garden(state, player)
+                and (
+                    has_soul(state, player, "Gardener Hat") and has_npc(state, player, "Groundskeeper")
+                    # No need to include Straw Hat at the moment as it logically requires the Gardener Hat
+                )
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Traffic Cone")
+                    or has_soul(state, player, "Wooly Hat") and has_npc(state, player, "Old Man")
+                )
+            )
+        )
+    
     def has_table_items(state, player):
         return (
             has_soul(state, player, "Plate") 
             and has_soul(state, player, "Fork") 
             and has_soul(state, player, "Knife") 
             and has_soul(state, player, "Pepper Grinder") 
-            and has_soul(state, player, "Candlestick") 
-            and has_soul(state, player, "Pub Cloth")
+            and has_soul(state, player, "Candlestick")
         )
     
     def has_shopping_items(state, player):
@@ -767,7 +1063,7 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
             has_soul(state, player, "Shopping Basket") 
             and has_soul(state, player, "Toothbrush") 
             and has_soul(state, player, "Hairbrush") 
-            and has_soul(state, player, "Toilet Paper")
+            and has_soul(state, player, "Loo Paper")
             and (
                 has_soul(state, player, "Dish Soap Bottle") 
                 or has_soul(state, player, "Spray Bottle")
@@ -793,8 +1089,11 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
         return (
             has_garden(state, player) 
             and has_npc(state, player, "Groundskeeper") 
+            and has_soul(state, player, "Mallet") 
+            and has_soul(state, player, "Gardener Sign") 
             and has_soul(state, player, "Keys") 
             and has_soul(state, player, "Straw Hat") 
+            and has_soul(state, player, "Tulip") 
             and has_soul(state, player, "Rake") 
             and has_picnic_items(state, player)
         )
@@ -803,11 +1102,11 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
         return (
             has_high_street(state, player) 
             and has_npc(state, player, "Boy") 
-            and has_npc(state, player, "TV Shop Owner") 
             and has_npc(state, player, "Market Lady") 
             and has_soul(state, player, "Boy's Glasses") 
             and has_any_wrong_glasses(state, player) 
-            and has_soul(state, player, "Toy Car") 
+            and has_soul(state, player, "Fusilage")
+            and has_npc(state, player, "TV Shop Owner") 
             and has_soul(state, player, "Push Broom") 
             and has_shopping_items(state, player)
         )
@@ -817,12 +1116,19 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
             has_back_gardens(state, player) 
             and has_npc(state, player, "Tidy Neighbour") 
             and has_npc(state, player, "Messy Neighbour") 
-            and has_soul(state, player, "Tea Cup") 
             and has_soul(state, player, "Slipper") 
-            and has_soul(state, player, "Sock") 
-            and has_soul(state, player, "Clippers") 
             and has_soul(state, player, "Rose") 
-            and has_bust_items(state, player) 
+            and has_soul(state, player, "Rose Box") 
+            and has_soul(state, player, "Clippers") 
+            and has_soul(state, player, "Clean Sign") 
+            and has_soul(state, player, "Tea Cup") 
+            and has_soul(state, player, "Sock") 
+            and has_soul(state, player, "Right Strap") 
+            and has_soul(state, player, "Soap") 
+            and (
+                has_bust_items(state, player)
+                or has_bust_outside_items(state, player)
+            )
             and has_soul(state, player, "Bow") 
             and has_soul(state, player, "Vase")
         )
@@ -833,18 +1139,15 @@ def get_speedrun_rules(player, include_npc_souls, include_prop_souls):
             and has_back_gardens(state, player) 
             and has_npc(state, player, "Old Man") 
             and has_npc(state, player, "Burly Man") 
-            and has_npc(state, player, "Pub Lady") 
-            and has_npc(state, player, "Fancy Ladies") 
-            and has_npc(state, player, "Messy Neighbour") 
+            and has_soul(state, player, "Burly Mans Bucket") 
+            and has_soul(state, player, "Tomato") 
             and has_soul(state, player, "Toy Boat") 
             and has_soul(state, player, "Portable Stool") 
             and has_soul(state, player, "Dartboard") 
             and has_soul(state, player, "Dart") 
             and has_table_items(state, player) 
-            and has_soul(state, player, "Pail") 
             and has_soul(state, player, "Pint Glass") 
-            and has_soul(state, player, "Bow") 
-            and has_soul(state, player, "Harmonica")
+            and has_npc(state, player, "Fancy Ladies")
         )
     
     return {
@@ -997,14 +1300,51 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
             and has_soul(state, player, "Bust Pipe")
         )
     
+    def has_bust_outside_items(state, player):
+        return (
+            has_back_gardens(state, player)
+            and has_npc(state, player, "Messy Neighbour")
+            and has_high_street(state, player) # Hard-required, as there are no eyewear outside of High Street aside from the glasses normally meant for the bust
+            and (
+                has_soul(state, player, "Horn-Rimmed Glasses")
+                or has_soul(state, player, "Sunglasses")
+                or has_soul(state, player, "Stereoscope")
+                or (has_soul(state, player, "Boy's Glasses") and has_npc(state, player, "Boy"))
+            )
+            and (
+                has_soul(state, player, "Dummy") # Doesn't require any access
+                or has_garden(state, player) and has_soul(state, player, "Tulip")
+                or has_soul(state, player, "Toothbrush") # High Street
+                or has_soul(state, player, "Lily Flower") # High Street
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Knife")
+                    or has_soul(state, player, "Fork")
+                    or has_soul(state, player, "Flower for Vase Soul") and has_npc(state, player, "Fancy Ladies Soul")
+                    or has_model_village(state, player) and has_soul(state, player, "Poppy Flower")
+                )
+            )
+            and (
+                has_garden(state, player)
+                and (
+                    has_soul(state, player, "Gardener Hat") and has_npc(state, player, "Groundskeeper")
+                    # No need to include Straw Hat at the moment as it logically requires the Gardener Hat
+                )
+                or has_pub(state, player)
+                and (
+                    has_soul(state, player, "Traffic Cone")
+                    or has_soul(state, player, "Wooly Hat") and has_npc(state, player, "Old Man")
+                )
+            )
+        )
+    
     def has_table_items(state, player):
         return (
             has_soul(state, player, "Plate") 
             and has_soul(state, player, "Fork") 
             and has_soul(state, player, "Knife") 
             and has_soul(state, player, "Pepper Grinder") 
-            and has_soul(state, player, "Candlestick") 
-            and has_soul(state, player, "Pub Cloth")
+            and has_soul(state, player, "Candlestick")
         )
     
     def has_shopping_items(state, player):
@@ -1012,7 +1352,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
             has_soul(state, player, "Shopping Basket") 
             and has_soul(state, player, "Toothbrush") 
             and has_soul(state, player, "Hairbrush") 
-            and has_soul(state, player, "Toilet Paper")
+            and has_soul(state, player, "Loo Paper")
             and (
                 has_soul(state, player, "Dish Soap Bottle") 
                 or has_soul(state, player, "Spray Bottle")
@@ -1034,63 +1374,121 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
             or has_soul(state, player, "Sunglasses")
         )
     
-    def can_complete_garden_todos(state, player):
-        return (
-            has_garden(state, player) 
+    def can_access_final_garden_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_garden(state, player)
+            or not has_npc(state, player, "Groundskeeper")
+            or not has_soul(state, player, "Mallet")
+            or not has_soul(state, player, "Gardener Sign")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 2 # Getting into the Garden and getting the Groundskeeper wet are free with the above conditions
+        
+        if has_soul(state, player, "Keys"):
+            task_count += 1
+        if has_soul(state, player, "Straw Hat") and has_soul(state, player, "Tulip"):
+            task_count += 1
+        if has_soul(state, player, "Rake"):
+            task_count += 1
+        if has_picnic_items(state, player):
+            task_count += 1
+        
+        return task_count >= 5
+    
+    def can_access_final_high_street_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Boy")
+            or not has_npc(state, player, "Market Lady")
+            or not has_npc(state, player, "TV Shop Owner")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 2 # Trapping the boy in the phone booth and getting on TV are free with the above conditions
+        
+        if has_soul(state, player, "Boy's Glasses") and has_any_wrong_glasses(state, player):
+            task_count += 1
+        if (
+            has_soul(state, player, "Fusilage")
+            or has_garden(state, player)
             and has_npc(state, player, "Groundskeeper") 
-            and has_soul(state, player, "Keys") 
-            and has_soul(state, player, "Straw Hat") 
-            and has_soul(state, player, "Rake") 
-            and has_picnic_items(state, player)
-        )
+            and has_soul(state, player, "Trowel")
+        ):
+            task_count += 1
+        if has_soul(state, player, "Push Broom"):
+            task_count += 1
+        if has_shopping_items(state, player):
+            task_count += 1
+        
+        return task_count >= 5
     
-    def can_complete_high_street_todos(state, player):
-        return (
-            has_high_street(state, player) 
-            and has_npc(state, player, "Boy") 
-            and has_npc(state, player, "TV Shop Owner") 
-            and has_npc(state, player, "Market Lady") 
-            and has_soul(state, player, "Boy's Glasses") 
-            and has_any_wrong_glasses(state, player) 
-            and has_soul(state, player, "Toy Car") 
-            and has_soul(state, player, "Push Broom") 
-            and has_shopping_items(state, player)
-        )
+    def can_access_final_back_gardens_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Tidy Neighbour")
+            or not has_npc(state, player, "Messy Neighbour")
+            or not has_soul(state, player, "Slipper")
+            or not has_soul(state, player, "Rose")
+            or not has_soul(state, player, "Rose Box")
+            or not has_soul(state, player, "Clippers")
+            or not has_soul(state, player, "Clean Sign") # I could be wrong about this one, but I suspect you can't move the box until he moves the sign, even if the sign hasn't spawned in
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 1 # Making the man go barefoot is free with the above conditions
+        
+        if has_soul(state, player, "Tea Cup"):
+            task_count += 1
+        if (
+            has_soul(state, player, "Sock") 
+            and has_soul(state, player, "Right Strap") 
+            and has_soul(state, player, "Soap") 
+        ):
+            task_count += 1
+        if has_bust_items(state, player) or has_bust_outside_items(state, player):
+            task_count += 1
+        if has_soul(state, player, "Bow"):
+            task_count += 1
+        if has_soul(state, player, "Vase"):
+            task_count += 1
+        
+        return task_count >= 5
     
-    def can_complete_back_gardens_todos(state, player):
-        return (
-            has_back_gardens(state, player) 
-            and has_npc(state, player, "Tidy Neighbour") 
-            and has_npc(state, player, "Messy Neighbour") 
-            and has_soul(state, player, "Tea Cup") 
-            and has_soul(state, player, "Slipper") 
-            and has_soul(state, player, "Sock") 
-            and has_soul(state, player, "Clippers") 
-            and has_soul(state, player, "Rose") 
-            and has_bust_items(state, player) 
-            and has_soul(state, player, "Bow") 
-            and has_soul(state, player, "Vase")
-        )
-    
-    def can_complete_pub_todos(state, player):
-        return (
-            has_pub(state, player) 
-            and has_back_gardens(state, player) 
-            and has_npc(state, player, "Old Man") 
-            and has_npc(state, player, "Burly Man") 
-            and has_npc(state, player, "Pub Lady") 
-            and has_npc(state, player, "Fancy Ladies") 
-            and has_npc(state, player, "Messy Neighbour") 
-            and has_soul(state, player, "Toy Boat") 
-            and has_soul(state, player, "Portable Stool") 
-            and has_soul(state, player, "Dartboard") 
-            and has_soul(state, player, "Dart") 
-            and has_table_items(state, player) 
-            and has_soul(state, player, "Pail") 
-            and has_soul(state, player, "Pint Glass") 
-            and has_soul(state, player, "Bow") 
-            and has_soul(state, player, "Harmonica")
-        )
+    def can_access_final_pub_task(state, player):
+        # Without all of these, this is impossible
+        if (
+            not has_high_street(state, player)
+            or not has_npc(state, player, "Old Man")
+            or not has_npc(state, player, "Burly Man Soul")
+            or not has_soul(state, player, "Burly Mans Bucket")
+            or not has_soul(state, player, "Tomato")
+        ):
+            return False
+        
+        # Count total available tasks; the final task is available if we can do at least 5
+        task_count = 0
+        
+        if has_soul(state, player, "Toy Boat"):
+            task_count += 1
+        if has_soul(state, player, "Portable Stool"):
+            task_count += 1
+        if has_soul(state, player, "Dartboard") and has_soul(state, player, "Dart"):
+            task_count += 1
+        if has_table_items(state, player):
+            task_count += 1
+        if has_soul(state, player, "Pint Glass"):
+            task_count += 1
+        if has_npc(state, player, "Fancy Ladies") and has_soul(state, player, "Flower for Vase"):
+            task_count += 1
+        
+        return task_count >= 5
     
     return {
         # GARDEN PICKUPS
@@ -1288,11 +1686,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
                 and has_soul(state, player, "Gumboot")
             ),
         "Drag Gardener Sign":
-            lambda state: (
-                has_garden(state, player) 
-                and has_soul(state, player, "Gardener Sign")
-                and can_complete_garden_todos(state, player)
-            ),
+            lambda state: can_access_final_garden_task(state, player),
         "Drag Wooden Crate":
             lambda state: (
                 has_garden(state, player) 
@@ -1301,12 +1695,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Drag Fence Bolt":
             lambda state: True,  # Starting item - no requirements
         "Drag Mallet":
-            lambda state: (
-                has_garden(state, player)
-                and has_high_street(state, player) 
-                and has_soul(state, player, "Mallet")
-                and can_complete_garden_todos(state, player) 
-            ),
+            lambda state: can_access_final_garden_task(state, player),
         "Drag Topsoil Bag 1":
             lambda state: (
                 has_garden(state, player) 
@@ -1345,10 +1734,10 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
                 has_high_street(state, player) 
                 and has_soul(state, player, "Sunglasses")
             ),
-        "Pick up Toilet Paper":
+        "Pick up Loo Paper":
             lambda state: (
                 has_high_street(state, player) 
-                and has_soul(state, player, "Toilet Paper")
+                and has_soul(state, player, "Loo Paper")
             ),
         "Pick up Toy Car":
             lambda state: (
@@ -1527,8 +1916,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
             ),
         "Pick up Chalk":
             lambda state: (
-                has_high_street(state, player)
-                and can_complete_high_street_todos(state, player) 
+                can_access_final_high_street_task(state, player) 
                 and has_soul(state, player, "Chalk")
             ),
         
@@ -1551,7 +1939,9 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Drag Broken Broom Head":
             lambda state: (
                 has_high_street(state, player) 
-                and has_soul(state, player, "Broken Broom Head")
+                and has_soul(state, player, "Broken Broom Head") 
+                and has_soul(state, player, "Push Broom") 
+                and has_npc(state, player, "Market Lady")
             ),
         "Drag Dustbin":
             lambda state: (
@@ -1593,7 +1983,8 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Pick up Bow":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Bow")
+                and has_soul(state, player, "Bow") 
+                and has_soul(state, player, "Duck Statue")
             ),
         "Pick up Dummy":
             lambda state: (
@@ -1675,12 +2066,16 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Pick up Broken Vase Piece 1":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Vase Piece")
+                and has_soul(state, player, "Vase Piece") 
+                and has_soul(state, player, "Vase") 
+                and has_npc(state, player, "Tidy Neighbour")
             ),
         "Pick up Broken Vase Piece 2":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Vase Piece")
+                and has_soul(state, player, "Vase Piece") 
+                and has_soul(state, player, "Vase") 
+                and has_npc(state, player, "Tidy Neighbour")
             ),
         "Pick up Right Strap":
             lambda state: (
@@ -1690,19 +2085,21 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Pick up Badminton Racket":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Badminton Racket")
+                and can_access_final_back_gardens_task(state, player) 
+                and has_soul(state, player, "Badminton Racket") 
+                and has_soul(state, player, "Messy Sign")
             ),
         "Pick up Rose":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Rose")
+                and can_access_final_back_gardens_task(state, player)
             ),
         
         # BACK GARDENS DRAGS
         "Drag Rose Box":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Rose Box")
+                and can_access_final_back_gardens_task(state, player)
             ),
         "Drag Cricket Bat":
             lambda state: (
@@ -1737,6 +2134,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Drag Messy Sign":
             lambda state: (
                 has_back_gardens(state, player) 
+                and can_access_final_back_gardens_task(state, player) 
                 and has_soul(state, player, "Messy Sign")
             ),
         "Drag Drawer":
@@ -1752,7 +2150,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Drag Clean Sign":
             lambda state: (
                 has_back_gardens(state, player) 
-                and has_soul(state, player, "Clean Sign")
+                and can_access_final_back_gardens_task(state, player) 
             ),
         
         # PUB PICKUPS
@@ -1850,23 +2248,20 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Pick up Dart 1":
             lambda state: (
                 has_pub(state, player) 
-                and has_npc(state, player, "Old Man") 
-                and has_soul(state, player, "Dartboard") 
-                and has_soul(state, player, "Dart")
+                and has_soul(state, player, "Dart") 
+                and has_npc(state, player, "Old Man")
             ),
         "Pick up Dart 2":
             lambda state: (
                 has_pub(state, player) 
-                and has_npc(state, player, "Old Man") 
-                and has_soul(state, player, "Dartboard") 
-                and has_soul(state, player, "Dart")
+                and has_soul(state, player, "Dart") 
+                and has_npc(state, player, "Old Man")
             ),
         "Pick up Dart 3":
             lambda state: (
                 has_pub(state, player) 
-                and has_npc(state, player, "Old Man") 
-                and has_soul(state, player, "Dartboard") 
-                and has_soul(state, player, "Dart")
+                and has_soul(state, player, "Dart") 
+                and has_npc(state, player, "Old Man")
             ),
         "Pick up Harmonica":
             lambda state: (
@@ -1906,67 +2301,65 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 2":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 3":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 4":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 5":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 6":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 7":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 8":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 9":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
+                and can_access_final_pub_task(state, player)
             ),
         "Pick up Pub Tomato 10":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
             ),
         "Pick up Pub Tomato 11":
             lambda state: (
                 has_pub(state, player) 
                 and has_soul(state, player, "Tomato")
-                and can_complete_pub_todos(state, player)
             ),
         
         # PUB DRAGS
@@ -1993,7 +2386,7 @@ def get_pickup_rules(player, include_npc_souls, include_prop_souls):
         "Drag No Goose Sign":
             lambda state: (
                 has_pub(state, player)
-                and can_complete_pub_todos(state, player) 
+                and can_access_final_pub_task(state, player) 
                 and has_soul(state, player, "No Goose Sign")
             ),
         "Drag Portable Stool":

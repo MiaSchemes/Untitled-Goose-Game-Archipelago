@@ -49,7 +49,7 @@ location_table: Dict[str, GooseGameLocationData] = {
     "Get the toy boat": GooseGameLocationData(BASE_ID + 32, "Pub"),
     "Make the old man fall on his bum": GooseGameLocationData(BASE_ID + 33, "Pub"),
     "Be awarded a flower": GooseGameLocationData(BASE_ID + 34, "Pub"),
-    "Steal a pint glass": GooseGameLocationData(BASE_ID + 35, "Pub"),
+    "Steal a pint glass and drop it in the canal": GooseGameLocationData(BASE_ID + 35, "Pub"),
     "Set the table": GooseGameLocationData(BASE_ID + 36, "Pub"),
     "Drop a bucket on the burly man's head": GooseGameLocationData(BASE_ID + 37, "Pub"),
     
@@ -125,7 +125,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Horn-Rimmed Glasses": GooseGameLocationData(BASE_ID + 1022, "High Street"),
     "Pick up Red Glasses": GooseGameLocationData(BASE_ID + 1023, "High Street"),
     "Pick up Sunglasses": GooseGameLocationData(BASE_ID + 1024, "High Street"),
-    "Pick up Toilet Paper": GooseGameLocationData(BASE_ID + 1025, "High Street"),
+    "Pick up Loo Paper": GooseGameLocationData(BASE_ID + 1025, "High Street"),
     "Pick up Toy Car": GooseGameLocationData(BASE_ID + 1026, "High Street"),
     "Pick up Hairbrush": GooseGameLocationData(BASE_ID + 1027, "High Street"),
     "Pick up Toothbrush": GooseGameLocationData(BASE_ID + 1028, "High Street"),

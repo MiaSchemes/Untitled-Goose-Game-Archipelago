@@ -92,7 +92,7 @@ item_table: Dict[str, GooseGameItemData] = {
     "Horn-Rimmed Glasses Soul": GooseGameItemData(BASE_ID + 521, ItemClassification.progression),
     "Red Glasses Soul": GooseGameItemData(BASE_ID + 522, ItemClassification.progression),
     "Sunglasses Soul": GooseGameItemData(BASE_ID + 523, ItemClassification.progression),
-    "Toilet Paper Soul": GooseGameItemData(BASE_ID + 524, ItemClassification.progression),
+    "Loo Paper Soul": GooseGameItemData(BASE_ID + 524, ItemClassification.progression),
     "Toy Car Soul": GooseGameItemData(BASE_ID + 525, ItemClassification.progression),
     "Hairbrush Soul": GooseGameItemData(BASE_ID + 526, ItemClassification.progression),
     "Toothbrush Soul": GooseGameItemData(BASE_ID + 527, ItemClassification.progression),
@@ -182,10 +182,10 @@ item_table: Dict[str, GooseGameItemData] = {
     "Golden Bell Soul": GooseGameItemData(BASE_ID + 621, ItemClassification.progression),
     
     # === FILLER ITEMS ===
-    "Mega Honk": GooseGameItemData(BASE_ID + 200, ItemClassification.filler),
-    "Speedy Feet": GooseGameItemData(BASE_ID + 201, ItemClassification.filler),
-    "Silent Steps": GooseGameItemData(BASE_ID + 202, ItemClassification.filler),
-    "A Goose Day": GooseGameItemData(BASE_ID + 203, ItemClassification.useful),
+    "Mega Honk": GooseGameItemData(BASE_ID + 200, ItemClassification.useful),
+    "Speedy Feet": GooseGameItemData(BASE_ID + 201, ItemClassification.useful),
+    "Silent Steps": GooseGameItemData(BASE_ID + 202, ItemClassification.useful),
+    "A Goose Day": GooseGameItemData(BASE_ID + 203, ItemClassification.filler),
     
     # === TRAP ITEMS ===
     "Tired Goose": GooseGameItemData(BASE_ID + 300, ItemClassification.trap),
@@ -276,7 +276,7 @@ ITEM_GROUPS = {
         "Horn-Rimmed Glasses Soul",
         "Red Glasses Soul",
         "Sunglasses Soul",
-        "Toilet Paper Soul",
+        "Loo Paper Soul",
         "Toy Car Soul",
         "Hairbrush Soul",
         "Toothbrush Soul",
@@ -457,7 +457,7 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     "Horn-Rimmed Glasses": "Horn-Rimmed Glasses Soul",
     "Red Glasses": "Red Glasses Soul",
     "Sunglasses": "Sunglasses Soul",
-    "Toilet Paper": "Toilet Paper Soul",
+    "Loo Paper": "Loo Paper Soul",
     "Toy Car": "Toy Car Soul",
     "Hairbrush": "Hairbrush Soul",
     "Toothbrush": "Toothbrush Soul",

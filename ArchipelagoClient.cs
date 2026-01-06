@@ -332,6 +332,7 @@ namespace GooseGameAP
                 
                 ParsePlayerNames(data);
                 ParseSlotData(data);
+                ParseCheckedLocations(data);  // Load already-checked locations from server
                 
                 lastProcessedIndex = PlayerPrefs.GetInt("AP_LastItemIndex", -1);
                 Log.LogInfo($"[AP] Connected - lastProcessedIndex = {lastProcessedIndex}");
@@ -868,6 +869,49 @@ namespace GooseGameAP
             NPCSoulsEnabled = PlayerPrefs.GetInt("AP_NPCSoulsEnabled", 1) == 1;
             PropSoulsEnabled = PlayerPrefs.GetInt("AP_PropSoulsEnabled", 1) == 1;
             Log.LogInfo($"[AP] Loaded soul settings: NPCSouls={NPCSoulsEnabled}, PropSouls={PropSoulsEnabled}");
+        }
+        
+        /// <summary>
+        /// Parse checked_locations from Connected packet to know what's already been sent to server
+        /// Format: "checked_locations":[123456,123457,...]
+        /// </summary>
+        private void ParseCheckedLocations(string data)
+        {
+            int idx = data.IndexOf("\"checked_locations\":");
+            if (idx < 0)
+            {
+                Log.LogInfo("[AP] No checked_locations in Connected packet");
+                return;
+            }
+            
+            int arrStart = data.IndexOf("[", idx);
+            if (arrStart < 0) return;
+            
+            int arrEnd = data.IndexOf("]", arrStart);
+            if (arrEnd < 0) return;
+            
+            string arrContent = data.Substring(arrStart + 1, arrEnd - arrStart - 1);
+            if (string.IsNullOrEmpty(arrContent.Trim()))
+            {
+                Log.LogInfo("[AP] checked_locations is empty");
+                return;
+            }
+            
+            List<long> locationIds = new List<long>();
+            string[] parts = arrContent.Split(',');
+            foreach (string part in parts)
+            {
+                string trimmed = part.Trim();
+                if (long.TryParse(trimmed, out long locationId))
+                {
+                    locationIds.Add(locationId);
+                }
+            }
+            
+            if (locationIds.Count > 0)
+            {
+                plugin.LoadCheckedLocations(locationIds);
+            }
         }
         
         private void ParseReceivedItems(string data)

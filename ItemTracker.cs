@@ -381,6 +381,9 @@ namespace GooseGameAP
             if (locationId.HasValue)
             {
                 plugin.SendLocationCheck(locationId.Value);
+                
+                // Immediately remove highlight from this item
+                plugin.LocationHighlight?.OnLocationChecked(itemName);
             }
         }
         
@@ -390,6 +393,9 @@ namespace GooseGameAP
             if (locationId.HasValue)
             {
                 plugin.SendLocationCheck(locationId.Value);
+                
+                // Immediately remove highlight from this item
+                plugin.LocationHighlight?.OnLocationChecked(itemName);
             }
         }
         
@@ -481,5 +487,33 @@ namespace GooseGameAP
                 Log.LogError($"[Drag] ForceDropProp error: {ex.Message}");
             }
         }
+        
+        // === PUBLIC ACCESSORS FOR LOCATION HIGHLIGHTING ===
+        
+        /// <summary>
+        /// Check if an item has already been picked up (sent to AP)
+        /// </summary>
+        public bool HasPickedUp(string itemKey)
+        {
+            return firstTimePickups.Contains(itemKey);
+        }
+        
+        /// <summary>
+        /// Check if an item has already been dragged (sent to AP)
+        /// </summary>
+        public bool HasDragged(string itemKey)
+        {
+            return firstTimeDrags.Contains(itemKey);
+        }
+        
+        /// <summary>
+        /// Get count of picked up items
+        /// </summary>
+        public int PickupCount => firstTimePickups.Count;
+        
+        /// <summary>
+        /// Get count of dragged items
+        /// </summary>
+        public int DragCount => firstTimeDrags.Count;
     }
 }

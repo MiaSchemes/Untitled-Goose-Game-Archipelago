@@ -32,6 +32,7 @@ namespace GooseGameAP
         public GooseColourManager GooseColour { get; private set; }
         public NPCManager NPCManager { get; private set; }
         public PropManager PropManager { get; private set; }
+        public LocationHighlightManager LocationHighlight { get; private set; }
         
         // Area access flags (Hub is always accessible - starting area)
         public bool HasGardenAccess { get; set; } = false;
@@ -88,6 +89,7 @@ namespace GooseGameAP
             GooseColour = new GooseColourManager(this);
             NPCManager = new NPCManager(this);
             PropManager = new PropManager(this);
+            LocationHighlight = new LocationHighlightManager(this);
             Client = new ArchipelagoClient(this);
             
             harmony = new Harmony("com.archipelago.goosegame");
@@ -104,6 +106,7 @@ namespace GooseGameAP
                 GateManager?.ResetFinale();
                 NPCManager?.Reset();
                 PropManager?.Reset();
+                LocationHighlight?.Reset();
                 SwitchSystemPatches.ResetSandcastleTracking();
             }
             
@@ -162,6 +165,9 @@ namespace GooseGameAP
             
             // Track pickups/drags
             ItemTracker?.Update();
+            
+            // Update location highlights (visual feedback for unchecked items)
+            LocationHighlight?.Update();
         }
         
         private void LateUpdate()
@@ -180,6 +186,28 @@ namespace GooseGameAP
             if (Input.GetKeyDown(KeyCode.F3))
             {
                 UI?.ToggleServerLog();
+            }
+            
+            // F4 key: Toggle location highlighting (sparkles on unchecked items)
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                LocationHighlight?.Toggle();
+                string state = LocationHighlight?.HighlightingEnabled == true ? "ON" : "OFF";
+                UI?.ShowNotification($"Location highlighting: {state}");
+            }
+            
+            // F5 key: Cycle highlight color (Shift+F5 for backwards)
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
+                    LocationHighlight?.CycleColorBack();
+                }
+                else
+                {
+                    LocationHighlight?.CycleColor();
+                }
+                UI?.ShowNotification($"Highlight color: {LocationHighlight?.CurrentColorName}");
             }
 
 
@@ -552,6 +580,26 @@ namespace GooseGameAP
                 checkedLocations.Add(locationId);
                 Client?.SendLocationCheck(locationId);
             }
+        }
+        
+        /// <summary>
+        /// Check if a location has been sent to AP server
+        /// </summary>
+        public bool IsLocationChecked(long locationId)
+        {
+            return checkedLocations.Contains(locationId);
+        }
+        
+        /// <summary>
+        /// Load checked locations received from AP server on connect
+        /// </summary>
+        public void LoadCheckedLocations(List<long> locationIds)
+        {
+            foreach (var id in locationIds)
+            {
+                checkedLocations.Add(id);
+            }
+            Log.LogInfo($"[AP] Loaded {locationIds.Count} checked locations from server");
         }
         
         public void SendGoalComplete()

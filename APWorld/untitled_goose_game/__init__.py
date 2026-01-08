@@ -98,8 +98,11 @@ class GooseGameWorld(World):
         ]
         
         # Prop Soul items - required for picking up/dragging items
+        # NOTE: NPC-tied items (Keys, Gardener Hat, Boy's Glasses, Slipper, Wooly Hat, Pub Cloth)
+        # have been removed - they spawn with their NPCs and don't need separate souls
+        # Vase Piece Soul also removed - pieces spawn when vase is broken
         prop_souls = [
-            # Grouped Prop Souls (26)
+            # Grouped Prop Souls (24 - removed Vase Piece and Slipper)
             "Carrot Soul",
             "Tomato Soul",
             "Pumpkin Soul",
@@ -117,20 +120,20 @@ class GooseGameWorld(World):
             "Knife Soul",
             "Gumboot Soul",
             "Fork Soul",
-            "Vase Piece Soul",
+            # REMOVED: "Vase Piece Soul" - pieces spawn when vase is broken
             "Apple Core Soul",
             "Apple Soul",
             "Sandwich Soul",
-            "Slipper Soul",
+            # REMOVED: "Slipper Soul" - slippers spawn with neighbors
             "Bow Soul",
             "Walkie Talkie Soul",
             "Boot Soul",
             "Mini Person Soul",
             
-            # Garden Prop Souls (20)
+            # Garden Prop Souls (18 - removed Keys and Gardener Hat)
             "Radio Soul",
             "Trowel Soul",
-            "Keys Soul",
+            # REMOVED: "Keys Soul" - keys spawn with Groundskeeper
             "Tulip Soul",
             "Jam Soul",
             "Picnic Mug Soul",
@@ -138,7 +141,7 @@ class GooseGameWorld(World):
             "Straw Hat Soul",
             "Drink Can Soul",
             "Tennis Ball Soul",
-            "Gardener Hat Soul",
+            # REMOVED: "Gardener Hat Soul" - hat spawns with Groundskeeper
             "Rake Soul",
             "Picnic Basket Soul",
             "Esky Soul",
@@ -149,8 +152,8 @@ class GooseGameWorld(World):
             "Wooden Crate Soul",
             "Gardener Sign Soul",
             
-            # High Street Prop Souls (24)
-            "Boy's Glasses Soul",
+            # High Street Prop Souls (23 - removed Boy's Glasses, moved Boards to Back Gardens)
+            # REMOVED: "Boy's Glasses Soul" - glasses spawn with Boy
             "Horn-Rimmed Glasses Soul",
             "Red Glasses Soul",
             "Sunglasses Soul",
@@ -174,9 +177,10 @@ class GooseGameWorld(World):
             "Baby Doll Soul",
             "Pricing Gun Soul",
             "Adding Machine Soul",
-            "Boards Soul",
+            # MOVED: Boards Soul to Back Gardens
             
-            # Back Gardens Prop Souls (25)
+            # Back Gardens Prop Souls (26 - added Boards)
+            "Boards Soul",  # MOVED from High Street - boards are at entrance to Back Gardens
             "Dummy Soul",
             "Cricket Ball Soul",
             "Bust Pipe Soul",
@@ -203,14 +207,14 @@ class GooseGameWorld(World):
             "Enamel Jug Soul",
             "Clean Sign Soul",
             
-            # Pub Prop Souls (22)
+            # Pub Prop Souls (20 - removed Wooly Hat and Pub Cloth)
             "Fishing Bobber Soul",
             "Exit Letter Soul",
             "Pint Glass Soul",
             "Toy Boat Soul",
-            "Wooly Hat Soul",
+            # REMOVED: "Wooly Hat Soul" - hat spawns with Old Man
             "Pepper Grinder Soul",
-            "Pub Cloth Soul",
+            # REMOVED: "Pub Cloth Soul" - cloth spawns with Pub Lady
             "Cork Soul",
             "Candlestick Soul",
             "Flower for Vase Soul",
@@ -275,44 +279,66 @@ class GooseGameWorld(World):
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
         filler_needed = total_locations - items_added
         
-        # Capped filler items - these have maximum quantities
-        capped_items = {
-            "Mega Honk": 3,      # Max 3 levels
-            "Speedy Feet": 10,   # Max 10 (50% speed bonus cap)
-            "Silent Steps": 1,  # Only need 1
-            "A Goose Day": 3,   # Max 3 stored
-        }
+        # Build weighted filler pool from options
+        # Format: (item_name, weight, max_count or None for unlimited)
+        weighted_items = []
+        
+        # Filler items (capped)
+        if self.options.filler_weight_mega_honk.value > 0:
+            weighted_items.append(("Mega Honk", self.options.filler_weight_mega_honk.value, 3))
+        if self.options.filler_weight_speedy_feet.value > 0:
+            weighted_items.append(("Speedy Feet", self.options.filler_weight_speedy_feet.value, 10))
+        if self.options.filler_weight_silent_steps.value > 0:
+            weighted_items.append(("Silent Steps", self.options.filler_weight_silent_steps.value, 1))
+        if self.options.filler_weight_goose_day.value > 0:
+            weighted_items.append(("A Goose Day", self.options.filler_weight_goose_day.value, 3))
         
         # Trap items (unlimited)
-        trap_items = ["Tired Goose", "Confused Feet", "Butterbeak", "Suspicious Goose"]
+        if self.options.trap_weight_tired_goose.value > 0:
+            weighted_items.append(("Tired Goose", self.options.trap_weight_tired_goose.value, None))
+        if self.options.trap_weight_confused_feet.value > 0:
+            weighted_items.append(("Confused Feet", self.options.trap_weight_confused_feet.value, None))
+        if self.options.trap_weight_butterbeak.value > 0:
+            weighted_items.append(("Butterbeak", self.options.trap_weight_butterbeak.value, None))
+        if self.options.trap_weight_suspicious_goose.value > 0:
+            weighted_items.append(("Suspicious Goose", self.options.trap_weight_suspicious_goose.value, None))
         
-        trap_percentage = self.options.trap_percentage.value
-        
-        # Track how many of each capped item we've added
-        capped_counts = {name: 0 for name in capped_items}
+        # Track counts for capped items
+        item_counts = {}
         
         for _ in range(filler_needed):
-            if trap_percentage > 0 and self.random.randint(1, 100) <= trap_percentage:
-                # Add a trap
-                item_name = self.random.choice(trap_items)
-            else:
-                # Try to add a capped filler item
-                available_capped = [
-                    name for name, max_count in capped_items.items()
-                    if capped_counts[name] < max_count
-                ]
-                
-                if available_capped:
-                    item_name = self.random.choice(available_capped)
-                    capped_counts[item_name] += 1
-                else:
-                    # All capped items are maxed out, add a trap instead
-                    item_name = self.random.choice(trap_items)
+            # Build available items list (excluding maxed out capped items)
+            available = []
+            total_weight = 0
             
+            for item_name, weight, max_count in weighted_items:
+                current_count = item_counts.get(item_name, 0)
+                if max_count is None or current_count < max_count:
+                    available.append((item_name, weight, max_count))
+                    total_weight += weight
+            
+            if not available or total_weight == 0:
+                # No items available (all capped items maxed and no traps enabled)
+                # Fall back to A Goose Day as default filler (even if maxed)
+                item_name = "A Goose Day"
+            else:
+                # Weighted random selection
+                roll = self.random.randint(1, total_weight)
+                cumulative = 0
+                item_name = available[0][0]  # Default fallback
+                
+                for name, weight, _ in available:
+                    cumulative += weight
+                    if roll <= cumulative:
+                        item_name = name
+                        break
+            
+            # Track count for capped items
+            item_counts[item_name] = item_counts.get(item_name, 0) + 1
             self.multiworld.itempool.append(self.create_item(item_name))
     
     def pre_fill(self) -> None:
-        """Place the Golden Bell at its fixed location.
+        """Place victory-related items at their fixed locations.
         
         The Golden Bell is placed directly at 'Pick up Golden Bell' rather than
         being in the item pool. This ensures players must:
@@ -320,11 +346,24 @@ class GooseGameWorld(World):
         2. Have Model Village Access (to enter Model Village)
         3. Have Golden Bell Soul (to spawn/pick up the bell)
         
-        This makes the victory item properly gated behind its soul requirement.
+        Milestone items are placed based on goal option:
+        - Goal 1 (All Main Goals): "All Main Goals Complete" at milestone location
+        - Goal 2 (All Goals): "All Goals Complete" at milestone location
         """
         golden_bell = self.create_item("Golden Bell")
         golden_bell_location = self.multiworld.get_location("Pick up Golden Bell", self.player)
         golden_bell_location.place_locked_item(golden_bell)
+        
+        # Place milestone items based on goal option
+        goal = self.options.goal.value
+        if goal == 1:  # All Main Goals
+            milestone_item = self.create_item("All Main Goals Complete")
+            milestone_location = self.multiworld.get_location("All Main Task Lists Complete", self.player)
+            milestone_location.place_locked_item(milestone_item)
+        elif goal == 2:  # All Goals
+            milestone_item = self.create_item("All Goals Complete")
+            milestone_location = self.multiworld.get_location("All Tasks Complete", self.player)
+            milestone_location.place_locked_item(milestone_item)
     
     def set_rules(self) -> None:
         from .Rules import set_rules

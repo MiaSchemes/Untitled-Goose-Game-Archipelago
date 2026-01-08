@@ -98,6 +98,12 @@ completion_location: Dict[str, GooseGameLocationData] = {
     "Complete all goals": GooseGameLocationData(BASE_ID + 80, "Model Village"),
 }
 
+# Milestone locations for different goal options
+milestone_locations: Dict[str, GooseGameLocationData] = {
+    "All Main Task Lists Complete": GooseGameLocationData(BASE_ID + 81, "Model Village"),
+    "All Tasks Complete": GooseGameLocationData(BASE_ID + 82, "Model Village"),
+}
+
 # =============================================================================
 # ITEM PICKUP LOCATIONS - First time picking up each item (IDs 1001-1150)
 # =============================================================================
@@ -115,8 +121,8 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Sandwich (Right)": GooseGameLocationData(BASE_ID + 1011, "Garden"),
     "Pick up Sandwich (Left)": GooseGameLocationData(BASE_ID + 1012, "Garden"),
     "Pick up Straw Hat": GooseGameLocationData(BASE_ID + 1014, "Garden"),
-    "Pick up Drink Can": GooseGameLocationData(BASE_ID + 1015, "Garden"),
-    "Pick up Tennis Ball": GooseGameLocationData(BASE_ID + 1016, "Garden"),
+    "Pick up Drink Can": GooseGameLocationData(BASE_ID + 1015, "Hub"),  # Accessible from starting area
+    "Pick up Tennis Ball": GooseGameLocationData(BASE_ID + 1016, "Hub"),  # Accessible from starting area
     "Pick up Gardener Hat": GooseGameLocationData(BASE_ID + 1017, "Garden"),
     "Pick up Apple 2": GooseGameLocationData(BASE_ID + 1018, "Garden"),
     
@@ -150,7 +156,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Apple Core 2": GooseGameLocationData(BASE_ID + 1058, "High Street"),
     "Pick up Dustbin Lid": GooseGameLocationData(BASE_ID + 1047, "High Street"),
     "Pick up Pint Bottle 2": GooseGameLocationData(BASE_ID + 1048, "High Street"),
-    "Pick up Coin": GooseGameLocationData(BASE_ID + 1049, "High Street"),
+    "Pick up Coin": GooseGameLocationData(BASE_ID + 1049, "Hub"),  # Accessible from starting area
     "Pick up Chalk": GooseGameLocationData(BASE_ID + 1050, "High Street"),
     "Pick up Tomato 2": GooseGameLocationData(BASE_ID + 1051, "High Street"),
     "Pick up Orange 2": GooseGameLocationData(BASE_ID + 1052, "High Street"),
@@ -165,7 +171,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     
     # Back Gardens items (1071-1093)
     "Pick up Bow (Blue)": GooseGameLocationData(BASE_ID + 1071, "Back Gardens"),
-    "Pick up Dummy": GooseGameLocationData(BASE_ID + 1072, "Back Gardens"),
+    "Pick up Dummy": GooseGameLocationData(BASE_ID + 1072, "Hub"),  # Near Hub Boot, accessible from starting area
     "Pick up Cricket Ball": GooseGameLocationData(BASE_ID + 1073, "Back Gardens"),
     "Pick up Bust Pipe": GooseGameLocationData(BASE_ID + 1074, "Back Gardens"),
     "Pick up Bust Hat": GooseGameLocationData(BASE_ID + 1075, "Back Gardens"),
@@ -188,7 +194,7 @@ item_pickup_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Rose": GooseGameLocationData(BASE_ID + 1094, "Back Gardens"),  # Spawns when rose is pruned
     
     # Pub items (1101-1128)
-    "Pick up Fishing Bobber": GooseGameLocationData(BASE_ID + 1101, "Pub"),
+    "Pick up Fishing Bobber": GooseGameLocationData(BASE_ID + 1101, "Hub"),  # Accessible from starting area
     "Pick up Exit Letter": GooseGameLocationData(BASE_ID + 1102, "Pub"),
     # Pub Tomato removed - now tracked as unique Pub Tomato 1-10 in unique_item_locations
     "Pick up Plate": GooseGameLocationData(BASE_ID + 1104, "Pub"),
@@ -253,7 +259,7 @@ drag_item_locations: Dict[str, GooseGameLocationData] = {
     "Drag Gumboot 2": GooseGameLocationData(BASE_ID + 1212, "Garden"),
     "Drag Gardener Sign": GooseGameLocationData(BASE_ID + 1213, "Garden"),
     "Drag Wooden Crate": GooseGameLocationData(BASE_ID + 1214, "Garden"),
-    "Drag Fence Bolt": GooseGameLocationData(BASE_ID + 1215, "Garden"),
+    "Drag Fence Bolt": GooseGameLocationData(BASE_ID + 1215, "Hub"),  # At intro gate, accessible from starting area
     "Drag Mallet": GooseGameLocationData(BASE_ID + 1216, "Garden"),
     
     # High Street drags (1220-1229)
@@ -282,7 +288,7 @@ drag_item_locations: Dict[str, GooseGameLocationData] = {
     "Drag Clean Sign": GooseGameLocationData(BASE_ID + 1250, "Back Gardens"),
     
     # Pub drags (1270-1280)
-    "Drag Tackle Box": GooseGameLocationData(BASE_ID + 1270, "Pub"),
+    "Drag Tackle Box": GooseGameLocationData(BASE_ID + 1270, "Hub"),  # Accessible from starting area
     "Drag Traffic Cone": GooseGameLocationData(BASE_ID + 1271, "Pub"),
     "Drag Exit Parcel": GooseGameLocationData(BASE_ID + 1272, "Pub"),
     "Drag Stealth Box": GooseGameLocationData(BASE_ID + 1273, "Pub"),
@@ -309,12 +315,13 @@ drag_item_locations: Dict[str, GooseGameLocationData] = {
 
 interaction_locations: Dict[str, GooseGameLocationData] = {
     # Garden interactions (1301-1303)
-    "Ring the Bike Bell": GooseGameLocationData(BASE_ID + 1301, "Garden"),
+    "Ring the Bike Bell": GooseGameLocationData(BASE_ID + 1301, "Hub"),  # Before intro gate, first possible check
     "Turn on Garden Tap": GooseGameLocationData(BASE_ID + 1302, "Garden"),
     "Turn on Sprinkler": GooseGameLocationData(BASE_ID + 1303, "Garden"),
     
-    # Hub interactions (1306)
+    # Hub interactions (1306, 1500)
     "Open Intro Gate": GooseGameLocationData(BASE_ID + 1306, "Hub"),  # Very first gate at game start
+    "Drop Something in the Well": GooseGameLocationData(BASE_ID + 1500, "Hub"),  # Drop any item into the well
     
     # High Street interactions (1310-1317)
     "Break Through Boards": GooseGameLocationData(BASE_ID + 1310, "Back Gardens"),
@@ -381,7 +388,7 @@ unique_item_locations: Dict[str, GooseGameLocationData] = {
     "Pick up Pub Tomato 11": GooseGameLocationData(BASE_ID + 1431, "Pub"),
     
     # Boots (IDs 1440-1441)
-    "Pick up Garden Boot": GooseGameLocationData(BASE_ID + 1440, "Garden"),
+    "Pick up Garden Boot": GooseGameLocationData(BASE_ID + 1440, "Hub"),  # Actually at intro area, accessible from start
     "Pick up Hub Boot": GooseGameLocationData(BASE_ID + 1441, "Hub"),
     
     # Topsoil Bags (IDs 1450-1452)
@@ -475,6 +482,7 @@ def get_all_location_ids() -> Dict[str, int]:
     all_locs.update({name: data.id for name, data in extra_locations.items()})
     all_locs.update({name: data.id for name, data in speedrun_locations.items()})
     all_locs.update({name: data.id for name, data in completion_location.items()})
+    all_locs.update({name: data.id for name, data in milestone_locations.items()})
     all_locs.update({name: data.id for name, data in item_pickup_locations.items()})
     all_locs.update({name: data.id for name, data in drag_item_locations.items()})
     all_locs.update({name: data.id for name, data in interaction_locations.items()})

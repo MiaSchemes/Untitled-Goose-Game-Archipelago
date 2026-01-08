@@ -626,8 +626,9 @@ namespace GooseGameAP
                 case "GardenTap": return BASE_ID + 1302;     // Turn on garden water tank tap
                 case "Sprinkler": return BASE_ID + 1303;     // Turn on sprinkler
                 
-                // Hub interactions (1306)
+                // Hub interactions (1306, 1500)
                 case "IntroGate": return BASE_ID + 1306;     // Open intro gate at game start
+                case "WellDrop": return BASE_ID + 1500;      // Drop something in the well
                 
                 // High Street interactions (1310-1317)
                 case "BreakBoards": return BASE_ID + 1310;   // Break through fence boards
@@ -796,6 +797,7 @@ namespace GooseGameAP
                 case 1305: return "Greenhouse Window";
                 case 1306: return "Intro Gate";
                 case 1307: return "TV Remote";
+                case 1500: return "Well Drop";
                 case 1308: return "Open Umbrella (Black)";
                 case 1309: return "Turn on Tap";
                 case 1310: return "Open Phone Booth";

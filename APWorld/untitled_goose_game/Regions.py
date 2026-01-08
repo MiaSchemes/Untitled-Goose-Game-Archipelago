@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from BaseClasses import Region
 from .Locations import (
     location_table, extra_locations, speedrun_locations, 
-    completion_location, item_pickup_locations, drag_item_locations,
+    completion_location, milestone_locations, item_pickup_locations, drag_item_locations,
     interaction_locations, unique_item_locations, sandcastle_peck_locations, GooseGameLocation
 )
 
@@ -79,6 +79,17 @@ def create_regions(world: "GooseGameWorld") -> None:
         for loc_name, loc_data in speedrun_locations.items():
             add_location(loc_name, loc_data.id, loc_data.region)
     
+    # Add milestone locations based on goal option
+    goal = world.options.goal.value
+    if goal == 1:  # All Main Goals
+        for loc_name, loc_data in milestone_locations.items():
+            if loc_name == "All Main Task Lists Complete":
+                add_location(loc_name, loc_data.id, loc_data.region)
+    elif goal == 2:  # All Goals
+        for loc_name, loc_data in milestone_locations.items():
+            if loc_name == "All Tasks Complete":
+                add_location(loc_name, loc_data.id, loc_data.region)
+    
     # Add item pickup locations if enabled
     if world.options.include_item_pickups:
         for loc_name, loc_data in item_pickup_locations.items():
@@ -102,28 +113,86 @@ def create_regions(world: "GooseGameWorld") -> None:
     for loc_name, loc_data in sandcastle_peck_locations.items():
         add_location(loc_name, loc_data.id, loc_data.region)
     
-    # Victory condition - need the Golden Bell and all access items
-    # Timber Handle Soul and Golden Bell Soul are always required (can't complete without them)
+    # Victory condition - depends on goal option
+    # Goal 0: Steal Bell - just need the Golden Bell and all access items
+    # Goal 1: All Main Goals - need all main task lists complete
+    # Goal 2: All Goals - need all goals including extras and speedrun
     include_prop_souls = bool(world.options.include_prop_souls.value)
+    goal = world.options.goal.value
+    
+    # Base items always needed
+    base_items = [
+        "Garden Access", "High Street Access", "Back Gardens Access", 
+        "Pub Access", "Model Village Access"
+    ]
     
     if include_prop_souls:
-        multiworld.completion_condition[player] = lambda state, p=player: (
-            state.has("Golden Bell", p) and
-            state.has("Timber Handle Soul", p) and
-            state.has("Golden Bell Soul", p) and
-            state.has("Garden Access", p) and
-            state.has("High Street Access", p) and
-            state.has("Back Gardens Access", p) and
-            state.has("Pub Access", p) and
-            state.has("Model Village Access", p)
-        )
-    else:
-        # Without prop souls, just need the bell and access
-        multiworld.completion_condition[player] = lambda state, p=player: (
-            state.has("Golden Bell", p) and
-            state.has("Garden Access", p) and
-            state.has("High Street Access", p) and
-            state.has("Back Gardens Access", p) and
-            state.has("Pub Access", p) and
-            state.has("Model Village Access", p)
-        )
+        base_items.extend(["Timber Handle Soul", "Golden Bell Soul"])
+    
+    if goal == 0:  # Steal Bell
+        if include_prop_souls:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("Timber Handle Soul", p) and
+                state.has("Golden Bell Soul", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )
+        else:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )
+    elif goal == 1:  # All Main Goals
+        if include_prop_souls:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("All Main Goals Complete", p) and
+                state.has("Timber Handle Soul", p) and
+                state.has("Golden Bell Soul", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )
+        else:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("All Main Goals Complete", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )
+    else:  # All Goals (goal == 2)
+        if include_prop_souls:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("All Goals Complete", p) and
+                state.has("Timber Handle Soul", p) and
+                state.has("Golden Bell Soul", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )
+        else:
+            multiworld.completion_condition[player] = lambda state, p=player: (
+                state.has("Golden Bell", p) and
+                state.has("All Goals Complete", p) and
+                state.has("Garden Access", p) and
+                state.has("High Street Access", p) and
+                state.has("Back Gardens Access", p) and
+                state.has("Pub Access", p) and
+                state.has("Model Village Access", p)
+            )

@@ -55,11 +55,13 @@ item_table: Dict[str, GooseGameItemData] = {
     "Knife Soul": GooseGameItemData(BASE_ID + 414, ItemClassification.progression),
     "Gumboot Soul": GooseGameItemData(BASE_ID + 415, ItemClassification.progression),
     "Fork Soul": GooseGameItemData(BASE_ID + 416, ItemClassification.progression),
-    "Vase Piece Soul": GooseGameItemData(BASE_ID + 417, ItemClassification.progression),
+    # REMOVED: Vase Piece Soul - pieces spawn when vase is broken, no soul needed
+    # "Vase Piece Soul": GooseGameItemData(BASE_ID + 417, ItemClassification.progression),
     "Apple Core Soul": GooseGameItemData(BASE_ID + 418, ItemClassification.progression),
     "Apple Soul": GooseGameItemData(BASE_ID + 419, ItemClassification.progression),
     "Sandwich Soul": GooseGameItemData(BASE_ID + 420, ItemClassification.progression),
-    "Slipper Soul": GooseGameItemData(BASE_ID + 421, ItemClassification.progression),
+    # REMOVED: Slipper Soul - slippers are worn by neighbors, spawn with NPC
+    # "Slipper Soul": GooseGameItemData(BASE_ID + 421, ItemClassification.progression),
     "Bow Soul": GooseGameItemData(BASE_ID + 422, ItemClassification.progression),
     "Walkie Talkie Soul": GooseGameItemData(BASE_ID + 423, ItemClassification.progression),
     "Boot Soul": GooseGameItemData(BASE_ID + 424, ItemClassification.progression),
@@ -68,7 +70,8 @@ item_table: Dict[str, GooseGameItemData] = {
     # === GARDEN ONE-OFF PROP SOULS (IDs 500-519) ===
     "Radio Soul": GooseGameItemData(BASE_ID + 500, ItemClassification.progression),
     "Trowel Soul": GooseGameItemData(BASE_ID + 501, ItemClassification.progression),
-    "Keys Soul": GooseGameItemData(BASE_ID + 502, ItemClassification.progression),
+    # REMOVED: Keys Soul - Groundskeeper carries keys, spawn with NPC
+    # "Keys Soul": GooseGameItemData(BASE_ID + 502, ItemClassification.progression),
     "Tulip Soul": GooseGameItemData(BASE_ID + 503, ItemClassification.progression),
     "Jam Soul": GooseGameItemData(BASE_ID + 504, ItemClassification.progression),
     "Picnic Mug Soul": GooseGameItemData(BASE_ID + 505, ItemClassification.progression),
@@ -76,7 +79,8 @@ item_table: Dict[str, GooseGameItemData] = {
     "Straw Hat Soul": GooseGameItemData(BASE_ID + 507, ItemClassification.progression),
     "Drink Can Soul": GooseGameItemData(BASE_ID + 508, ItemClassification.progression),
     "Tennis Ball Soul": GooseGameItemData(BASE_ID + 509, ItemClassification.progression),
-    "Gardener Hat Soul": GooseGameItemData(BASE_ID + 510, ItemClassification.progression),
+    # REMOVED: Gardener Hat Soul - Groundskeeper wears it, spawns with NPC
+    # "Gardener Hat Soul": GooseGameItemData(BASE_ID + 510, ItemClassification.progression),
     "Rake Soul": GooseGameItemData(BASE_ID + 511, ItemClassification.progression),
     "Picnic Basket Soul": GooseGameItemData(BASE_ID + 512, ItemClassification.progression),
     "Esky Soul": GooseGameItemData(BASE_ID + 513, ItemClassification.progression),
@@ -88,7 +92,8 @@ item_table: Dict[str, GooseGameItemData] = {
     "Gardener Sign Soul": GooseGameItemData(BASE_ID + 519, ItemClassification.progression),
     
     # === HIGH STREET ONE-OFF PROP SOULS (IDs 520-549) ===
-    "Boy's Glasses Soul": GooseGameItemData(BASE_ID + 520, ItemClassification.progression),
+    # REMOVED: Boy's Glasses Soul - Boy wears them, spawn with NPC
+    # "Boy's Glasses Soul": GooseGameItemData(BASE_ID + 520, ItemClassification.progression),
     "Horn-Rimmed Glasses Soul": GooseGameItemData(BASE_ID + 521, ItemClassification.progression),
     "Red Glasses Soul": GooseGameItemData(BASE_ID + 522, ItemClassification.progression),
     "Sunglasses Soul": GooseGameItemData(BASE_ID + 523, ItemClassification.progression),
@@ -146,9 +151,11 @@ item_table: Dict[str, GooseGameItemData] = {
     "Exit Letter Soul": GooseGameItemData(BASE_ID + 581, ItemClassification.progression),
     "Pint Glass Soul": GooseGameItemData(BASE_ID + 582, ItemClassification.progression),
     "Toy Boat Soul": GooseGameItemData(BASE_ID + 583, ItemClassification.progression),
-    "Wooly Hat Soul": GooseGameItemData(BASE_ID + 584, ItemClassification.progression),
+    # REMOVED: Wooly Hat Soul - Old Man wears it, spawns with NPC
+    # "Wooly Hat Soul": GooseGameItemData(BASE_ID + 584, ItemClassification.progression),
     "Pepper Grinder Soul": GooseGameItemData(BASE_ID + 585, ItemClassification.progression),
-    "Pub Cloth Soul": GooseGameItemData(BASE_ID + 586, ItemClassification.progression),
+    # REMOVED: Pub Cloth Soul - Pub Lady carries it, spawns with NPC
+    # "Pub Cloth Soul": GooseGameItemData(BASE_ID + 586, ItemClassification.progression),
     "Cork Soul": GooseGameItemData(BASE_ID + 587, ItemClassification.progression),
     "Candlestick Soul": GooseGameItemData(BASE_ID + 588, ItemClassification.progression),
     "Flower for Vase Soul": GooseGameItemData(BASE_ID + 589, ItemClassification.progression),
@@ -192,6 +199,10 @@ item_table: Dict[str, GooseGameItemData] = {
     "Confused Feet": GooseGameItemData(BASE_ID + 301, ItemClassification.trap),
     "Butterbeak": GooseGameItemData(BASE_ID + 302, ItemClassification.trap),
     "Suspicious Goose": GooseGameItemData(BASE_ID + 303, ItemClassification.trap),
+    
+    # === MILESTONE ITEMS (for goal completion) ===
+    "All Main Goals Complete": GooseGameItemData(BASE_ID + 310, ItemClassification.progression),
+    "All Goals Complete": GooseGameItemData(BASE_ID + 311, ItemClassification.progression),
     
     # Victory
     
@@ -239,11 +250,11 @@ ITEM_GROUPS = {
         "Knife Soul",
         "Gumboot Soul",
         "Fork Soul",
-        "Vase Piece Soul",
+        # REMOVED: "Vase Piece Soul" - pieces spawn when vase is broken
         "Apple Core Soul",
         "Apple Soul",
         "Sandwich Soul",
-        "Slipper Soul",
+        # REMOVED: "Slipper Soul" - slippers spawn with neighbors
         "Bow Soul",
         "Walkie Talkie Soul",
         "Boot Soul",
@@ -252,7 +263,7 @@ ITEM_GROUPS = {
     "Garden Prop Souls": {
         "Radio Soul",
         "Trowel Soul",
-        "Keys Soul",
+        # REMOVED: "Keys Soul" - keys spawn with Groundskeeper
         "Tulip Soul",
         "Jam Soul",
         "Picnic Mug Soul",
@@ -260,7 +271,7 @@ ITEM_GROUPS = {
         "Straw Hat Soul",
         "Drink Can Soul",
         "Tennis Ball Soul",
-        "Gardener Hat Soul",
+        # REMOVED: "Gardener Hat Soul" - hat spawns with Groundskeeper
         "Rake Soul",
         "Picnic Basket Soul",
         "Esky Soul",
@@ -272,7 +283,7 @@ ITEM_GROUPS = {
         "Gardener Sign Soul",
     },
     "High Street Prop Souls": {
-        "Boy's Glasses Soul",
+        # REMOVED: "Boy's Glasses Soul" - glasses spawn with Boy
         "Horn-Rimmed Glasses Soul",
         "Red Glasses Soul",
         "Sunglasses Soul",
@@ -296,9 +307,10 @@ ITEM_GROUPS = {
         "Baby Doll Soul",
         "Pricing Gun Soul",
         "Adding Machine Soul",
-        "Boards Soul",
+        # MOVED: Boards Soul to Back Gardens (boards are at entrance to Back Gardens)
     },
     "Back Gardens Prop Souls": {
+        "Boards Soul",  # MOVED from High Street - boards are at entrance to Back Gardens
         "Dummy Soul",
         "Cricket Ball Soul",
         "Bust Pipe Soul",
@@ -330,9 +342,9 @@ ITEM_GROUPS = {
         "Exit Letter Soul",
         "Pint Glass Soul",
         "Toy Boat Soul",
-        "Wooly Hat Soul",
+        # REMOVED: "Wooly Hat Soul" - hat spawns with Old Man
         "Pepper Grinder Soul",
-        "Pub Cloth Soul",
+        # REMOVED: "Pub Cloth Soul" - cloth spawns with Pub Lady
         "Cork Soul",
         "Candlestick Soul",
         "Flower for Vase Soul",
@@ -416,13 +428,15 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     "Knife": "Knife Soul",
     "Gumboot": "Gumboot Soul",
     "Fork": "Fork Soul",
-    "Broken Vase Piece": "Vase Piece Soul",
+    # REMOVED: Vase pieces spawn when vase is broken
+    # "Broken Vase Piece": "Vase Piece Soul",
     "Apple Core": "Apple Core Soul",
     "Apple": "Apple Soul",
     "Sandwich": "Sandwich Soul",
-    "Slipper": "Slipper Soul",
-    "Left Slipper": "Slipper Soul",
-    "Right Slipper": "Slipper Soul",
+    # REMOVED: Slippers spawn with neighbors
+    # "Slipper": "Slipper Soul",
+    # "Left Slipper": "Slipper Soul",
+    # "Right Slipper": "Slipper Soul",
     "Bow": "Bow Soul",
     "Walkie Talkie": "Walkie Talkie Soul",
     "Boot": "Boot Soul",
@@ -433,7 +447,8 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     # Garden one-offs
     "Radio": "Radio Soul",
     "Trowel": "Trowel Soul",
-    "Keys": "Keys Soul",
+    # REMOVED: Keys spawn with Groundskeeper
+    # "Keys": "Keys Soul",
     "Tulip": "Tulip Soul",
     "Jam": "Jam Soul",
     "Picnic Mug": "Picnic Mug Soul",
@@ -441,7 +456,8 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     "Straw Hat": "Straw Hat Soul",
     "Drink Can": "Drink Can Soul",
     "Tennis Ball": "Tennis Ball Soul",
-    "Gardener Hat": "Gardener Hat Soul",
+    # REMOVED: Gardener Hat spawns with Groundskeeper
+    # "Gardener Hat": "Gardener Hat Soul",
     "Rake": "Rake Soul",
     "Picnic Basket": "Picnic Basket Soul",
     "Esky": "Esky Soul",
@@ -453,7 +469,8 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     "Gardener Sign": "Gardener Sign Soul",
     
     # High Street one-offs
-    "Boy's Glasses": "Boy's Glasses Soul",
+    # REMOVED: Boy's Glasses spawn with Boy
+    # "Boy's Glasses": "Boy's Glasses Soul",
     "Horn-Rimmed Glasses": "Horn-Rimmed Glasses Soul",
     "Red Glasses": "Red Glasses Soul",
     "Sunglasses": "Sunglasses Soul",
@@ -511,9 +528,11 @@ LOCATION_TO_SOUL: Dict[str, str] = {
     "Exit Letter": "Exit Letter Soul",
     "Pint Glass": "Pint Glass Soul",
     "Toy Boat": "Toy Boat Soul",
-    "Wooly Hat": "Wooly Hat Soul",
+    # REMOVED: Wooly Hat spawns with Old Man
+    # "Wooly Hat": "Wooly Hat Soul",
     "Pepper Grinder": "Pepper Grinder Soul",
-    "Pub Woman's Cloth": "Pub Cloth Soul",
+    # REMOVED: Pub Cloth spawns with Pub Lady
+    # "Pub Woman's Cloth": "Pub Cloth Soul",
     "Cork": "Cork Soul",
     "Candlestick": "Candlestick Soul",
     "Flower for Vase": "Flower for Vase Soul",

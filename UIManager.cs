@@ -324,7 +324,7 @@ namespace GooseGameAP
             if (notificationTimer > 0 && !string.IsNullOrEmpty(currentNotification))
             {
                 GUI.color = new Color(0.55f, 0.45f, 0.1f);
-                GUI.Label(new Rect(x, y, w, lineH), $"<size={textSize}><b>▶ {currentNotification}</b></size>");
+                GUI.Label(new Rect(x, y, w, lineH), $"<size={textSize}><b>â–¶ {currentNotification}</b></size>");
                 GUI.color = Color.white;
                 y += lineH;
             }
@@ -695,7 +695,7 @@ namespace GooseGameAP
         {
             int checkSize = textSize + 4;
             GUI.color = hasAccess ? new Color(0.2f, 0.5f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
-            GUI.Label(new Rect(x, y, w, 26), $"<size={checkSize}>{(hasAccess ? "✓" : "✗")}</size><size={textSize}> {label}</size>");
+            GUI.Label(new Rect(x, y, w, 26), $"<size={checkSize}>{(hasAccess ? "âœ“" : "âœ—")}</size><size={textSize}> {label}</size>");
             GUI.color = Color.white;
         }
         
@@ -896,7 +896,7 @@ namespace GooseGameAP
             {
                 // Green for collected, gray for not
                 GUI.color = soul.HasSoul ? new Color(0.2f, 0.5f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
-                GUI.Label(new Rect(8 * s, y, width - 8 * s, lineH), $"<size={checkSize}>{(soul.HasSoul ? "✓" : "✗")}</size><size={itemSize}> {soul.Name}</size>");
+                GUI.Label(new Rect(8 * s, y, width - 8 * s, lineH), $"<size={checkSize}>{(soul.HasSoul ? "âœ“" : "âœ—")}</size><size={itemSize}> {soul.Name}</size>");
                 GUI.color = Color.white;
                 y += lineH;
             }
@@ -915,86 +915,87 @@ namespace GooseGameAP
         };
         
         private List<SoulInfo> GetGardenPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Radio", m?.HasSoul("Radio Soul") ?? false), new SoulInfo("Trowel", m?.HasSoul("Trowel Soul") ?? false),
-            new SoulInfo("Keys", m?.HasSoul("Keys Soul") ?? false), new SoulInfo("Tulip", m?.HasSoul("Tulip Soul") ?? false),
-            new SoulInfo("Jam", m?.HasSoul("Jam Soul") ?? false), new SoulInfo("Picnic Mug", m?.HasSoul("Picnic Mug Soul") ?? false),
-            new SoulInfo("Thermos", m?.HasSoul("Thermos Soul") ?? false), new SoulInfo("Straw Hat", m?.HasSoul("Straw Hat Soul") ?? false),
-            new SoulInfo("Drink Can", m?.HasSoul("Drink Can Soul") ?? false), new SoulInfo("Tennis Ball", m?.HasSoul("Tennis Ball Soul") ?? false),
-            new SoulInfo("Gardener Hat", m?.HasSoul("Gardener Hat Soul") ?? false), new SoulInfo("Rake", m?.HasSoul("Rake Soul") ?? false),
-            new SoulInfo("Picnic Basket", m?.HasSoul("Picnic Basket Soul") ?? false), new SoulInfo("Esky", m?.HasSoul("Esky Soul") ?? false),
-            new SoulInfo("Shovel", m?.HasSoul("Shovel Soul") ?? false), new SoulInfo("Watering Can", m?.HasSoul("Watering Can Soul") ?? false),
-            new SoulInfo("Fence Bolt", m?.HasSoul("Fence Bolt Soul") ?? false), new SoulInfo("Mallet", m?.HasSoul("Mallet Soul") ?? false),
-            new SoulInfo("Wooden Crate", m?.HasSoul("Wooden Crate Soul") ?? false), new SoulInfo("Gardener Sign", m?.HasSoul("Gardener Sign Soul") ?? false)
+            new SoulInfo("Radio", m?.HasReceivedSoul("Radio Soul") ?? false), new SoulInfo("Trowel", m?.HasReceivedSoul("Trowel Soul") ?? false),
+            new SoulInfo("Tulip", m?.HasReceivedSoul("Tulip Soul") ?? false),
+            new SoulInfo("Jam", m?.HasReceivedSoul("Jam Soul") ?? false), new SoulInfo("Picnic Mug", m?.HasReceivedSoul("Picnic Mug Soul") ?? false),
+            new SoulInfo("Thermos", m?.HasReceivedSoul("Thermos Soul") ?? false), new SoulInfo("Straw Hat", m?.HasReceivedSoul("Straw Hat Soul") ?? false),
+            new SoulInfo("Drink Can", m?.HasReceivedSoul("Drink Can Soul") ?? false), new SoulInfo("Tennis Ball", m?.HasReceivedSoul("Tennis Ball Soul") ?? false),
+            new SoulInfo("Rake", m?.HasReceivedSoul("Rake Soul") ?? false),
+            new SoulInfo("Picnic Basket", m?.HasReceivedSoul("Picnic Basket Soul") ?? false), new SoulInfo("Esky", m?.HasReceivedSoul("Esky Soul") ?? false),
+            new SoulInfo("Shovel", m?.HasReceivedSoul("Shovel Soul") ?? false), new SoulInfo("Watering Can", m?.HasReceivedSoul("Watering Can Soul") ?? false),
+            new SoulInfo("Fence Bolt", m?.HasReceivedSoul("Fence Bolt Soul") ?? false), new SoulInfo("Mallet", m?.HasReceivedSoul("Mallet Soul") ?? false),
+            new SoulInfo("Wooden Crate", m?.HasReceivedSoul("Wooden Crate Soul") ?? false), new SoulInfo("Gardener Sign", m?.HasReceivedSoul("Gardener Sign Soul") ?? false)
         }; }
         
         private List<SoulInfo> GetHighStreetPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Boy's Glasses", m?.HasSoul("Boy's Glasses Soul") ?? false), new SoulInfo("Horn-Rimmed Glasses", m?.HasSoul("Horn-Rimmed Glasses Soul") ?? false),
-            new SoulInfo("Red Glasses", m?.HasSoul("Red Glasses Soul") ?? false), new SoulInfo("Sunglasses", m?.HasSoul("Sunglasses Soul") ?? false),
-            new SoulInfo("Toilet Paper", m?.HasSoul("Toilet Paper Soul") ?? false), new SoulInfo("Toy Car", m?.HasSoul("Toy Car Soul") ?? false),
-            new SoulInfo("Hairbrush", m?.HasSoul("Hairbrush Soul") ?? false), new SoulInfo("Toothbrush", m?.HasSoul("Toothbrush Soul") ?? false),
-            new SoulInfo("Stereoscope", m?.HasSoul("Stereoscope Soul") ?? false), new SoulInfo("Dish Soap Bottle", m?.HasSoul("Dish Soap Bottle Soul") ?? false),
-            new SoulInfo("Spray Bottle", m?.HasSoul("Spray Bottle Soul") ?? false), new SoulInfo("Weed Tool", m?.HasSoul("Weed Tool Soul") ?? false),
-            new SoulInfo("Lily Flower", m?.HasSoul("Lily Flower Soul") ?? false), new SoulInfo("Fusilage", m?.HasSoul("Fusilage Soul") ?? false),
-            new SoulInfo("Coin", m?.HasSoul("Coin Soul") ?? false), new SoulInfo("Chalk", m?.HasSoul("Chalk Soul") ?? false),
-            new SoulInfo("Dustbin Lid", m?.HasSoul("Dustbin Lid Soul") ?? false), new SoulInfo("Shopping Basket", m?.HasSoul("Shopping Basket Soul") ?? false),
-            new SoulInfo("Push Broom", m?.HasSoul("Push Broom Soul") ?? false), new SoulInfo("Broken Broom Head", m?.HasSoul("Broken Broom Head Soul") ?? false),
-            new SoulInfo("Dustbin", m?.HasSoul("Dustbin Soul") ?? false), new SoulInfo("Baby Doll", m?.HasSoul("Baby Doll Soul") ?? false),
-            new SoulInfo("Pricing Gun", m?.HasSoul("Pricing Gun Soul") ?? false), new SoulInfo("Adding Machine", m?.HasSoul("Adding Machine Soul") ?? false)
+            new SoulInfo("Horn-Rimmed Glasses", m?.HasReceivedSoul("Horn-Rimmed Glasses Soul") ?? false),
+            new SoulInfo("Red Glasses", m?.HasReceivedSoul("Red Glasses Soul") ?? false), new SoulInfo("Sunglasses", m?.HasReceivedSoul("Sunglasses Soul") ?? false),
+            new SoulInfo("Toilet Paper", m?.HasReceivedSoul("Toilet Paper Soul") ?? false), new SoulInfo("Toy Car", m?.HasReceivedSoul("Toy Car Soul") ?? false),
+            new SoulInfo("Hairbrush", m?.HasReceivedSoul("Hairbrush Soul") ?? false), new SoulInfo("Toothbrush", m?.HasReceivedSoul("Toothbrush Soul") ?? false),
+            new SoulInfo("Stereoscope", m?.HasReceivedSoul("Stereoscope Soul") ?? false), new SoulInfo("Dish Soap Bottle", m?.HasReceivedSoul("Dish Soap Bottle Soul") ?? false),
+            new SoulInfo("Spray Bottle", m?.HasReceivedSoul("Spray Bottle Soul") ?? false), new SoulInfo("Weed Tool", m?.HasReceivedSoul("Weed Tool Soul") ?? false),
+            new SoulInfo("Lily Flower", m?.HasReceivedSoul("Lily Flower Soul") ?? false), new SoulInfo("Fusilage", m?.HasReceivedSoul("Fusilage Soul") ?? false),
+            new SoulInfo("Coin", m?.HasReceivedSoul("Coin Soul") ?? false), new SoulInfo("Chalk", m?.HasReceivedSoul("Chalk Soul") ?? false),
+            new SoulInfo("Dustbin Lid", m?.HasReceivedSoul("Dustbin Lid Soul") ?? false), new SoulInfo("Shopping Basket", m?.HasReceivedSoul("Shopping Basket Soul") ?? false),
+            new SoulInfo("Push Broom", m?.HasReceivedSoul("Push Broom Soul") ?? false), new SoulInfo("Broken Broom Head", m?.HasReceivedSoul("Broken Broom Head Soul") ?? false),
+            new SoulInfo("Dustbin", m?.HasReceivedSoul("Dustbin Soul") ?? false), new SoulInfo("Baby Doll", m?.HasReceivedSoul("Baby Doll Soul") ?? false),
+            new SoulInfo("Pricing Gun", m?.HasReceivedSoul("Pricing Gun Soul") ?? false), new SoulInfo("Adding Machine", m?.HasReceivedSoul("Adding Machine Soul") ?? false)
         }; }
         
         private List<SoulInfo> GetBackGardensPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Dummy", m?.HasSoul("Dummy Soul") ?? false), new SoulInfo("Cricket Ball", m?.HasSoul("Cricket Ball Soul") ?? false),
-            new SoulInfo("Bust Pipe", m?.HasSoul("Bust Pipe Soul") ?? false), new SoulInfo("Bust Hat", m?.HasSoul("Bust Hat Soul") ?? false),
-            new SoulInfo("Bust Glasses", m?.HasSoul("Bust Glasses Soul") ?? false), new SoulInfo("Tea Cup", m?.HasSoul("Tea Cup Soul") ?? false),
-            new SoulInfo("Newspaper", m?.HasSoul("Newspaper Soul") ?? false), new SoulInfo("Badminton Racket", m?.HasSoul("Badminton Racket Soul") ?? false),
-            new SoulInfo("Pot Stack", m?.HasSoul("Pot Stack Soul") ?? false), new SoulInfo("Soap", m?.HasSoul("Soap Soul") ?? false),
-            new SoulInfo("Paintbrush", m?.HasSoul("Paintbrush Soul") ?? false), new SoulInfo("Vase", m?.HasSoul("Vase Soul") ?? false),
-            new SoulInfo("Right Strap", m?.HasSoul("Right Strap Soul") ?? false), new SoulInfo("Rose", m?.HasSoul("Rose Soul") ?? false),
-            new SoulInfo("Rose Box", m?.HasSoul("Rose Box Soul") ?? false), new SoulInfo("Cricket Bat", m?.HasSoul("Cricket Bat Soul") ?? false),
-            new SoulInfo("Tea Pot", m?.HasSoul("Tea Pot Soul") ?? false), new SoulInfo("Clippers", m?.HasSoul("Clippers Soul") ?? false),
-            new SoulInfo("Duck Statue", m?.HasSoul("Duck Statue Soul") ?? false), new SoulInfo("Frog Statue", m?.HasSoul("Frog Statue Soul") ?? false),
-            new SoulInfo("Jeremy Fish", m?.HasSoul("Jeremy Fish Soul") ?? false), new SoulInfo("Messy Sign", m?.HasSoul("Messy Sign Soul") ?? false),
-            new SoulInfo("Drawer", m?.HasSoul("Drawer Soul") ?? false), new SoulInfo("Enamel Jug", m?.HasSoul("Enamel Jug Soul") ?? false),
-            new SoulInfo("Clean Sign", m?.HasSoul("Clean Sign Soul") ?? false)
+            new SoulInfo("Boards", m?.HasReceivedSoul("Boards Soul") ?? false),
+            new SoulInfo("Dummy", m?.HasReceivedSoul("Dummy Soul") ?? false), new SoulInfo("Cricket Ball", m?.HasReceivedSoul("Cricket Ball Soul") ?? false),
+            new SoulInfo("Bust Pipe", m?.HasReceivedSoul("Bust Pipe Soul") ?? false), new SoulInfo("Bust Hat", m?.HasReceivedSoul("Bust Hat Soul") ?? false),
+            new SoulInfo("Bust Glasses", m?.HasReceivedSoul("Bust Glasses Soul") ?? false), new SoulInfo("Tea Cup", m?.HasReceivedSoul("Tea Cup Soul") ?? false),
+            new SoulInfo("Newspaper", m?.HasReceivedSoul("Newspaper Soul") ?? false), new SoulInfo("Badminton Racket", m?.HasReceivedSoul("Badminton Racket Soul") ?? false),
+            new SoulInfo("Pot Stack", m?.HasReceivedSoul("Pot Stack Soul") ?? false), new SoulInfo("Soap", m?.HasReceivedSoul("Soap Soul") ?? false),
+            new SoulInfo("Paintbrush", m?.HasReceivedSoul("Paintbrush Soul") ?? false), new SoulInfo("Vase", m?.HasReceivedSoul("Vase Soul") ?? false),
+            new SoulInfo("Right Strap", m?.HasReceivedSoul("Right Strap Soul") ?? false), new SoulInfo("Rose", m?.HasReceivedSoul("Rose Soul") ?? false),
+            new SoulInfo("Rose Box", m?.HasReceivedSoul("Rose Box Soul") ?? false), new SoulInfo("Cricket Bat", m?.HasReceivedSoul("Cricket Bat Soul") ?? false),
+            new SoulInfo("Tea Pot", m?.HasReceivedSoul("Tea Pot Soul") ?? false), new SoulInfo("Clippers", m?.HasReceivedSoul("Clippers Soul") ?? false),
+            new SoulInfo("Duck Statue", m?.HasReceivedSoul("Duck Statue Soul") ?? false), new SoulInfo("Frog Statue", m?.HasReceivedSoul("Frog Statue Soul") ?? false),
+            new SoulInfo("Jeremy Fish", m?.HasReceivedSoul("Jeremy Fish Soul") ?? false), new SoulInfo("Messy Sign", m?.HasReceivedSoul("Messy Sign Soul") ?? false),
+            new SoulInfo("Drawer", m?.HasReceivedSoul("Drawer Soul") ?? false), new SoulInfo("Enamel Jug", m?.HasReceivedSoul("Enamel Jug Soul") ?? false),
+            new SoulInfo("Clean Sign", m?.HasReceivedSoul("Clean Sign Soul") ?? false)
         }; }
         
         private List<SoulInfo> GetPubPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Fishing Bobber", m?.HasSoul("Fishing Bobber Soul") ?? false), new SoulInfo("Exit Letter", m?.HasSoul("Exit Letter Soul") ?? false),
-            new SoulInfo("Pint Glass", m?.HasSoul("Pint Glass Soul") ?? false), new SoulInfo("Toy Boat", m?.HasSoul("Toy Boat Soul") ?? false),
-            new SoulInfo("Wooly Hat", m?.HasSoul("Wooly Hat Soul") ?? false), new SoulInfo("Pepper Grinder", m?.HasSoul("Pepper Grinder Soul") ?? false),
-            new SoulInfo("Pub Cloth", m?.HasSoul("Pub Cloth Soul") ?? false), new SoulInfo("Cork", m?.HasSoul("Cork Soul") ?? false),
-            new SoulInfo("Candlestick", m?.HasSoul("Candlestick Soul") ?? false), new SoulInfo("Flower for Vase", m?.HasSoul("Flower for Vase Soul") ?? false),
-            new SoulInfo("Harmonica", m?.HasSoul("Harmonica Soul") ?? false), new SoulInfo("Tackle Box", m?.HasSoul("Tackle Box Soul") ?? false),
-            new SoulInfo("Traffic Cone", m?.HasSoul("Traffic Cone Soul") ?? false), new SoulInfo("Exit Parcel", m?.HasSoul("Exit Parcel Soul") ?? false),
-            new SoulInfo("Stealth Box", m?.HasSoul("Stealth Box Soul") ?? false), new SoulInfo("No Goose Sign", m?.HasSoul("No Goose Sign Soul") ?? false),
-            new SoulInfo("Portable Stool", m?.HasSoul("Portable Stool Soul") ?? false), new SoulInfo("Dartboard", m?.HasSoul("Dartboard Soul") ?? false),
-            new SoulInfo("Mop Bucket", m?.HasSoul("Mop Bucket Soul") ?? false), new SoulInfo("Mop", m?.HasSoul("Mop Soul") ?? false),
-            new SoulInfo("Delivery Box", m?.HasSoul("Delivery Box Soul") ?? false), new SoulInfo("Burly Mans Bucket", m?.HasSoul("Burly Mans Bucket Soul") ?? false)
+            new SoulInfo("Fishing Bobber", m?.HasReceivedSoul("Fishing Bobber Soul") ?? false), new SoulInfo("Exit Letter", m?.HasReceivedSoul("Exit Letter Soul") ?? false),
+            new SoulInfo("Pint Glass", m?.HasReceivedSoul("Pint Glass Soul") ?? false), new SoulInfo("Toy Boat", m?.HasReceivedSoul("Toy Boat Soul") ?? false),
+            new SoulInfo("Pepper Grinder", m?.HasReceivedSoul("Pepper Grinder Soul") ?? false),
+            new SoulInfo("Cork", m?.HasReceivedSoul("Cork Soul") ?? false),
+            new SoulInfo("Candlestick", m?.HasReceivedSoul("Candlestick Soul") ?? false), new SoulInfo("Flower for Vase", m?.HasReceivedSoul("Flower for Vase Soul") ?? false),
+            new SoulInfo("Harmonica", m?.HasReceivedSoul("Harmonica Soul") ?? false), new SoulInfo("Tackle Box", m?.HasReceivedSoul("Tackle Box Soul") ?? false),
+            new SoulInfo("Traffic Cone", m?.HasReceivedSoul("Traffic Cone Soul") ?? false), new SoulInfo("Exit Parcel", m?.HasReceivedSoul("Exit Parcel Soul") ?? false),
+            new SoulInfo("Stealth Box", m?.HasReceivedSoul("Stealth Box Soul") ?? false), new SoulInfo("No Goose Sign", m?.HasReceivedSoul("No Goose Sign Soul") ?? false),
+            new SoulInfo("Portable Stool", m?.HasReceivedSoul("Portable Stool Soul") ?? false), new SoulInfo("Dartboard", m?.HasReceivedSoul("Dartboard Soul") ?? false),
+            new SoulInfo("Mop Bucket", m?.HasReceivedSoul("Mop Bucket Soul") ?? false), new SoulInfo("Mop", m?.HasReceivedSoul("Mop Soul") ?? false),
+            new SoulInfo("Delivery Box", m?.HasReceivedSoul("Delivery Box Soul") ?? false), new SoulInfo("Burly Mans Bucket", m?.HasReceivedSoul("Burly Mans Bucket Soul") ?? false)
         }; }
         
         private List<SoulInfo> GetModelVillagePropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Mini Mail Pillar", m?.HasSoul("Mini Mail Pillar Soul") ?? false), new SoulInfo("Mini Phone Door", m?.HasSoul("Mini Phone Door Soul") ?? false),
-            new SoulInfo("Mini Shovel", m?.HasSoul("Mini Shovel Soul") ?? false), new SoulInfo("Poppy Flower", m?.HasSoul("Poppy Flower Soul") ?? false),
-            new SoulInfo("Timber Handle", m?.HasSoul("Timber Handle Soul") ?? false), new SoulInfo("Birdbath", m?.HasSoul("Birdbath Soul") ?? false),
-            new SoulInfo("Easel", m?.HasSoul("Easel Soul") ?? false), new SoulInfo("Mini Bench", m?.HasSoul("Mini Bench Soul") ?? false),
-            new SoulInfo("Mini Pump", m?.HasSoul("Mini Pump Soul") ?? false), new SoulInfo("Mini Street Bench", m?.HasSoul("Mini Street Bench Soul") ?? false),
-            new SoulInfo("Sun Lounge", m?.HasSoul("Sun Lounge Soul") ?? false), new SoulInfo("Golden Bell", m?.HasSoul("Golden Bell Soul") ?? false)
+            new SoulInfo("Mini Mail Pillar", m?.HasReceivedSoul("Mini Mail Pillar Soul") ?? false), new SoulInfo("Mini Phone Door", m?.HasReceivedSoul("Mini Phone Door Soul") ?? false),
+            new SoulInfo("Mini Shovel", m?.HasReceivedSoul("Mini Shovel Soul") ?? false), new SoulInfo("Poppy Flower", m?.HasReceivedSoul("Poppy Flower Soul") ?? false),
+            new SoulInfo("Timber Handle", m?.HasReceivedSoul("Timber Handle Soul") ?? false), new SoulInfo("Birdbath", m?.HasReceivedSoul("Birdbath Soul") ?? false),
+            new SoulInfo("Easel", m?.HasReceivedSoul("Easel Soul") ?? false), new SoulInfo("Mini Bench", m?.HasReceivedSoul("Mini Bench Soul") ?? false),
+            new SoulInfo("Mini Pump", m?.HasReceivedSoul("Mini Pump Soul") ?? false), new SoulInfo("Mini Street Bench", m?.HasReceivedSoul("Mini Street Bench Soul") ?? false),
+            new SoulInfo("Sun Lounge", m?.HasReceivedSoul("Sun Lounge Soul") ?? false), new SoulInfo("Golden Bell", m?.HasReceivedSoul("Golden Bell Soul") ?? false)
         }; }
         
         private List<SoulInfo> GetSharedPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Carrot", m?.HasSoul("Carrot Soul") ?? false), new SoulInfo("Tomato", m?.HasSoul("Tomato Soul") ?? false),
-            new SoulInfo("Pumpkin", m?.HasSoul("Pumpkin Soul") ?? false), new SoulInfo("Topsoil Bag", m?.HasSoul("Topsoil Bag Soul") ?? false),
-            new SoulInfo("Quoit", m?.HasSoul("Quoit Soul") ?? false), new SoulInfo("Plate", m?.HasSoul("Plate Soul") ?? false),
-            new SoulInfo("Orange", m?.HasSoul("Orange Soul") ?? false), new SoulInfo("Leek", m?.HasSoul("Leek Soul") ?? false),
-            new SoulInfo("Cucumber", m?.HasSoul("Cucumber Soul") ?? false), new SoulInfo("Dart", m?.HasSoul("Dart Soul") ?? false),
-            new SoulInfo("Umbrella", m?.HasSoul("Umbrella Soul") ?? false), new SoulInfo("Tinned Food", m?.HasSoul("Tinned Food Soul") ?? false),
-            new SoulInfo("Sock", m?.HasSoul("Sock Soul") ?? false), new SoulInfo("Pint Bottle", m?.HasSoul("Pint Bottle Soul") ?? false),
-            new SoulInfo("Knife", m?.HasSoul("Knife Soul") ?? false), new SoulInfo("Gumboot", m?.HasSoul("Gumboot Soul") ?? false),
-            new SoulInfo("Fork", m?.HasSoul("Fork Soul") ?? false), new SoulInfo("Vase Piece", m?.HasSoul("Vase Piece Soul") ?? false),
-            new SoulInfo("Apple Core", m?.HasSoul("Apple Core Soul") ?? false), new SoulInfo("Apple", m?.HasSoul("Apple Soul") ?? false),
-            new SoulInfo("Sandwich", m?.HasSoul("Sandwich Soul") ?? false), new SoulInfo("Slipper", m?.HasSoul("Slipper Soul") ?? false),
-            new SoulInfo("Bow", m?.HasSoul("Bow Soul") ?? false), new SoulInfo("Walkie Talkie", m?.HasSoul("Walkie Talkie Soul") ?? false),
-            new SoulInfo("Boot", m?.HasSoul("Boot Soul") ?? false), new SoulInfo("Mini Person", m?.HasSoul("Mini Person Soul") ?? false)
+            new SoulInfo("Carrot", m?.HasReceivedSoul("Carrot Soul") ?? false), new SoulInfo("Tomato", m?.HasReceivedSoul("Tomato Soul") ?? false),
+            new SoulInfo("Pumpkin", m?.HasReceivedSoul("Pumpkin Soul") ?? false), new SoulInfo("Topsoil Bag", m?.HasReceivedSoul("Topsoil Bag Soul") ?? false),
+            new SoulInfo("Quoit", m?.HasReceivedSoul("Quoit Soul") ?? false), new SoulInfo("Plate", m?.HasReceivedSoul("Plate Soul") ?? false),
+            new SoulInfo("Orange", m?.HasReceivedSoul("Orange Soul") ?? false), new SoulInfo("Leek", m?.HasReceivedSoul("Leek Soul") ?? false),
+            new SoulInfo("Cucumber", m?.HasReceivedSoul("Cucumber Soul") ?? false), new SoulInfo("Dart", m?.HasReceivedSoul("Dart Soul") ?? false),
+            new SoulInfo("Umbrella", m?.HasReceivedSoul("Umbrella Soul") ?? false), new SoulInfo("Tinned Food", m?.HasReceivedSoul("Tinned Food Soul") ?? false),
+            new SoulInfo("Sock", m?.HasReceivedSoul("Sock Soul") ?? false), new SoulInfo("Pint Bottle", m?.HasReceivedSoul("Pint Bottle Soul") ?? false),
+            new SoulInfo("Knife", m?.HasReceivedSoul("Knife Soul") ?? false), new SoulInfo("Gumboot", m?.HasReceivedSoul("Gumboot Soul") ?? false),
+            new SoulInfo("Fork", m?.HasReceivedSoul("Fork Soul") ?? false), new SoulInfo("Vase Piece", m?.HasReceivedSoul("Vase Piece Soul") ?? false),
+            new SoulInfo("Apple Core", m?.HasReceivedSoul("Apple Core Soul") ?? false), new SoulInfo("Apple", m?.HasReceivedSoul("Apple Soul") ?? false),
+            new SoulInfo("Sandwich", m?.HasReceivedSoul("Sandwich Soul") ?? false), new SoulInfo("Slipper", m?.HasReceivedSoul("Slipper Soul") ?? false),
+            new SoulInfo("Bow", m?.HasReceivedSoul("Bow Soul") ?? false), new SoulInfo("Walkie Talkie", m?.HasReceivedSoul("Walkie Talkie Soul") ?? false),
+            new SoulInfo("Boot", m?.HasReceivedSoul("Boot Soul") ?? false), new SoulInfo("Mini Person", m?.HasReceivedSoul("Mini Person Soul") ?? false)
         }; }
     }
 }

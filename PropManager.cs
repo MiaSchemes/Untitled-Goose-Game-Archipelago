@@ -53,12 +53,14 @@ namespace GooseGameAP
             { "knife", "Knife Soul" },
             { "gumboot", "Gumboot Soul" },
             { "fork", "Fork Soul" },
-            { "brokenvasepiece", "Vase Piece Soul" },
-            { "brokenbit", "Vase Piece Soul" },
+            // REMOVED: Vase pieces spawn when vase is broken
+            // { "brokenvasepiece", "Vase Piece Soul" },
+            // { "brokenbit", "Vase Piece Soul" },
             { "applecore", "Apple Core Soul" },
             { "apple", "Apple Soul" },
             { "sandwich", "Sandwich Soul" },
-            { "slipper", "Slipper Soul" },
+            // REMOVED: Slippers spawn with neighbors
+            // { "slipper", "Slipper Soul" },
             { "bow", "Bow Soul" },
             { "walkietalkie", "Walkie Talkie Soul" },
             { "boot", "Boot Soul" },
@@ -67,9 +69,10 @@ namespace GooseGameAP
             // Garden one-offs
             { "radio", "Radio Soul" },
             { "trowel", "Trowel Soul" },
-            { "keys", "Keys Soul" },
-            { "keyring", "Keys Soul" },
-            { "carkeys", "Keys Soul" },
+            // REMOVED: Keys spawn with Groundskeeper
+            // { "keys", "Keys Soul" },
+            // { "keyring", "Keys Soul" },
+            // { "carkeys", "Keys Soul" },
             { "tulip", "Tulip Soul" },
             { "jam", "Jam Soul" },
             { "picnicmug", "Picnic Mug Soul" },
@@ -78,7 +81,8 @@ namespace GooseGameAP
             { "sunhat", "Straw Hat Soul" },
             { "drinkcan", "Drink Can Soul" },
             { "tennisball", "Tennis Ball Soul" },
-            { "gardenerhat", "Gardener Hat Soul" },
+            // REMOVED: Gardener Hat spawns with Groundskeeper
+            // { "gardenerhat", "Gardener Hat Soul" },
             { "gardenershat", "Gardener Hat Soul" },
             { "hatgardener", "Gardener Hat Soul" },
             { "gardenerssunhat", "Gardener Hat Soul" },
@@ -99,7 +103,8 @@ namespace GooseGameAP
             
             // High Street one-offs
             { "boysglasses", "Boy's Glasses Soul" },
-            { "boyglasses", "Boy's Glasses Soul" },
+            // REMOVED: Boy's Glasses spawn with Boy
+            // { "boyglasses", "Boy's Glasses Soul" },
             { "glassesboy", "Boy's Glasses Soul" },
             { "wimpglasses", "Boy's Glasses Soul" },
             { "hornrimmedglasses", "Horn-Rimmed Glasses Soul" },
@@ -170,10 +175,12 @@ namespace GooseGameAP
             { "exitletter", "Exit Letter Soul" },
             { "pintglass", "Pint Glass Soul" },
             { "toyboat", "Toy Boat Soul" },
-            { "woolyhat", "Wooly Hat Soul" },
+            // REMOVED: Wooly Hat spawns with Old Man
+            // { "woolyhat", "Wooly Hat Soul" },
             { "woollyhat", "Wooly Hat Soul" },
             { "peppergrinder", "Pepper Grinder Soul" },
-            { "pubcloth", "Pub Cloth Soul" },
+            // REMOVED: Pub Cloth spawns with Pub Lady
+            // { "pubcloth", "Pub Cloth Soul" },
             { "cork", "Cork Soul" },
             { "candlestick", "Candlestick Soul" },
             { "flowerforvase", "Flower for Vase Soul" },
@@ -576,11 +583,24 @@ namespace GooseGameAP
         /// </summary>
         public bool HasSoul(string soulName)
         {
-            // Always-enabled props don't need souls
+            // Always-enabled props don't need souls for interaction purposes
             if (AlwaysEnabledProps.Contains(soulName))
                 return true;
             
             // If souls are disabled, always return true
+            if (!PropSoulsEnabled)
+                return true;
+            
+            return receivedSouls.Contains(soulName);
+        }
+        
+        /// <summary>
+        /// Check if the player has actually received a specific soul (for tracker display)
+        /// Unlike HasSoul, this doesn't return true for AlwaysEnabledProps
+        /// </summary>
+        public bool HasReceivedSoul(string soulName)
+        {
+            // If souls are disabled, show as having all souls
             if (!PropSoulsEnabled)
                 return true;
             

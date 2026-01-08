@@ -59,12 +59,68 @@ class IncludePropSouls(Toggle):
     default = True
 
 
-class TrapPercentage(Range):
-    """Percentage of filler items that will be traps."""
-    display_name = "Trap Percentage"
+class FillerWeightMegaHonk(Range):
+    """Weight for Mega Honk in filler pool. Set to 0 to disable."""
+    display_name = "Filler Weight: Mega Honk"
     range_start = 0
     range_end = 100
     default = 10
+
+
+class FillerWeightSpeedyFeet(Range):
+    """Weight for Speedy Feet in filler pool. Set to 0 to disable."""
+    display_name = "Filler Weight: Speedy Feet"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+
+class FillerWeightSilentSteps(Range):
+    """Weight for Silent Steps in filler pool. Set to 0 to disable."""
+    display_name = "Filler Weight: Silent Steps"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class FillerWeightGooseDay(Range):
+    """Weight for A Goose Day (stored buff) in filler pool. Set to 0 to disable."""
+    display_name = "Filler Weight: A Goose Day"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+
+class TrapWeightTiredGoose(Range):
+    """Weight for Tired Goose trap. Set to 0 to disable this trap."""
+    display_name = "Trap Weight: Tired Goose"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class TrapWeightConfusedFeet(Range):
+    """Weight for Confused Feet trap. Set to 0 to disable this trap."""
+    display_name = "Trap Weight: Confused Feet"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class TrapWeightButterbeak(Range):
+    """Weight for Butterbeak trap. Set to 0 to disable this trap."""
+    display_name = "Trap Weight: Butterbeak"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class TrapWeightSuspiciousGoose(Range):
+    """Weight for Suspicious Goose trap. Set to 0 to disable this trap."""
+    display_name = "Trap Weight: Suspicious Goose"
+    range_start = 0
+    range_end = 100
+    default = 5
 
 
 class Goal(Choice):
@@ -92,6 +148,13 @@ class GooseGameOptions(PerGameCommonOptions):
     include_interactions: IncludeInteractions
     include_npc_souls: IncludeNPCSouls
     include_prop_souls: IncludePropSouls
-    trap_percentage: TrapPercentage
+    filler_weight_mega_honk: FillerWeightMegaHonk
+    filler_weight_speedy_feet: FillerWeightSpeedyFeet
+    filler_weight_silent_steps: FillerWeightSilentSteps
+    filler_weight_goose_day: FillerWeightGooseDay
+    trap_weight_tired_goose: TrapWeightTiredGoose
+    trap_weight_confused_feet: TrapWeightConfusedFeet
+    trap_weight_butterbeak: TrapWeightButterbeak
+    trap_weight_suspicious_goose: TrapWeightSuspiciousGoose
     goal: Goal
     death_link: DeathLink

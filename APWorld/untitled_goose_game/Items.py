@@ -35,7 +35,7 @@ item_table: Dict[str, GooseGameItemData] = {
     "Old Man Soul": GooseGameItemData(BASE_ID + 127, ItemClassification.progression),
     "Pub Lady Soul": GooseGameItemData(BASE_ID + 128, ItemClassification.progression),
     "Fancy Ladies Soul": GooseGameItemData(BASE_ID + 129, ItemClassification.progression),
-    "Cook Soul": GooseGameItemData(BASE_ID + 130, ItemClassification.filler),  # Not required for any goals
+    "Cook Soul": GooseGameItemData(BASE_ID + 130, ItemClassification.progression),
     
     # === GROUPED PROP SOULS (IDs 400-499) - Multiple instances share one soul ===
     "Carrot Soul": GooseGameItemData(BASE_ID + 400, ItemClassification.progression),

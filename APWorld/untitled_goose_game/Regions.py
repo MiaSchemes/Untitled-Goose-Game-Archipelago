@@ -7,6 +7,7 @@ from .Locations import (
     sandcastle_first_peck_locations, milestone_locations_main_tasks, GooseGameLocation
 )
 from .Rules import UntitledGooseRules
+from .names import itemNames, locationNames, regionNames
 
 if TYPE_CHECKING:
     from . import GooseGameWorld
@@ -36,13 +37,13 @@ def create_regions(world: "GooseGameWorld") -> None:
     rules = UntitledGooseRules(world)
     
     # Create regions
-    menu = Region("Menu", player, multiworld)
-    hub = Region("Hub", player, multiworld)  # Starting area at the well
-    garden = Region("Garden", player, multiworld)
-    high_street = Region("High Street", player, multiworld)
-    back_gardens = Region("Back Gardens", player, multiworld)
-    pub = Region("Pub", player, multiworld)
-    model_village = Region("Model Village", player, multiworld)
+    menu = Region(regionNames.MENU, player, multiworld)
+    hub = Region(regionNames.HUB, player, multiworld)  # Starting area at the well
+    garden = Region(regionNames.GARDEN, player, multiworld)
+    high_street = Region(regionNames.HIGH_STREET, player, multiworld)
+    back_gardens = Region(regionNames.BACK_GARDENS, player, multiworld)
+    pub = Region(regionNames.PUB, player, multiworld)
+    model_village = Region(regionNames.MODEL_VILLAGE, player, multiworld)
     
     # Add regions to multiworld
     multiworld.regions += [menu, hub, garden, high_street, back_gardens, pub, model_village]
@@ -118,39 +119,39 @@ def create_regions(world: "GooseGameWorld") -> None:
     
         # Add extra task milestone if enabled
         if world.options.include_extra_tasks:
-            add_location("All To Do (As Well) Tasks Complete", BASE_ID + 85, "Hub")
+            add_location(locationNames.MILESTONE_ALL_EXTRA, BASE_ID + 85, regionNames.HUB)
         
         # Add speedrun task milestone if enabled
         if world.options.include_speedrun_tasks:
-            add_location("All Speedrun Tasks Complete", BASE_ID + 86, "Hub")
+            add_location(locationNames.MILESTONE_ALL_SPEEDRUN, BASE_ID + 86, regionNames.HUB)
     
         # Add all tasks milestone if both extra and speedrun are enabled
         if world.options.include_extra_tasks and world.options.include_speedrun_tasks:
-            add_location("All Tasks Complete", BASE_ID + 90, "Hub")
+            add_location(locationNames.MILESTONE_ALL_TASKS, BASE_ID + 90, regionNames.HUB)
         
     
     # Add locations based on goal option
     goal = world.options.goal.value
     if goal == 0:  # Just reach the bell
-        add_location("Get into the Model Village (Golden Bell Soul)", BASE_ID + 93, "Model Village")
+        add_location(locationNames.GOAL_MODEL_VILLAGE_ENTRY, BASE_ID + 93, regionNames.MODEL_VILLAGE)
     # elif goal == 1:  # Find bell
     elif goal == 2:  # All main tasks
-        add_location("All Main Task Lists Complete (Golden Bell Soul)", BASE_ID + 89, "Hub")
+        add_location(locationNames.GOAL_ALL_MAIN, BASE_ID + 89, regionNames.HUB)
     elif goal == 3:  # Only speedrun tasks
-        add_location("All Speedrun Tasks Complete (Golden Bell Soul)", BASE_ID + 87, "Hub")
+        add_location(locationNames.GOAL_ALL_SPEEDRUN, BASE_ID + 87, regionNames.HUB)
     elif goal == 4:  # All except speedrun tasks
-        add_location("All Main Task Lists + To Do (As Well) Complete (Golden Bell Soul)", BASE_ID + 92, "Hub")
+        add_location(locationNames.GOAL_ALL_NON_SPEEDRUN, BASE_ID + 92, regionNames.HUB)
     elif goal == 5:  # All tasks
-        add_location("All Tasks Complete (Golden Bell Soul)", BASE_ID + 91, "Hub")
+        add_location(locationNames.GOAL_ALL_TASKS, BASE_ID + 91, regionNames.HUB)
     elif goal == 6:  # Four Final Tasks
-        add_location("Complete the Four Final Area Tasks (Golden Bell Soul)", BASE_ID + 94, "Hub")
+        add_location(locationNames.GOAL_ALL_FINAL_TASKS, BASE_ID + 94, regionNames.HUB)
     
     
     # Base items always needed
     base_items = [
-        "Garden Access", "High Street Access", "Back Gardens Access", 
-        "Pub Access", "Model Village Access", "Golden Bell Soul"
+        itemNames.GARDEN_ACCESS, itemNames.HIGH_STREET_ACCESS, itemNames.BACK_GARDENS_ACCESS, 
+        itemNames.PUB_ACCESS, itemNames.MODEL_VILLAGE_ACCESS, itemNames.PROP_GOLDEN_BELL
     ]
     
     if world.options.include_prop_souls.value:
-        base_items.extend(["Timber Handle Soul"])
+        base_items.extend([itemNames.PROP_TIMBER_HANDLE])

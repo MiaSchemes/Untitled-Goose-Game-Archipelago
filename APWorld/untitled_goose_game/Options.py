@@ -50,11 +50,11 @@ class LogicallyRequireNPCSouls(Toggle):
     default = False
 
 
-class IncludePropSouls(Toggle):
-    """When enabled, items can't be picked up or dragged until you receive their soul.
-    This adds prop souls to the item pool and gates item interactions behind them.
-    If the find_bell goal is chosen and this option is disabled, the Golden Bell prop soul will be the only one added to the pool."""
-    display_name = "Include Prop Souls"
+class IncludeProps(Toggle):
+    """When enabled, items can't be picked up or dragged until you receive them.
+    This adds props to the item pool and gates item interactions behind them.
+    If the find_bell goal is chosen and this option is disabled, the Golden Bell will be the only one added to the pool."""
+    display_name = "Include Props"
     default = True
 
 
@@ -196,7 +196,7 @@ class GooseGameOptions(PerGameCommonOptions):
     goal: Goal
     include_npc_souls: IncludeNPCSouls
     logically_require_npc_souls: LogicallyRequireNPCSouls
-    include_prop_souls: IncludePropSouls
+    include_prop_souls: IncludeProps
     include_extra_tasks: IncludeExtraTasks
     include_speedrun_tasks: IncludeSpeedrunTasks
     include_item_pickups: IncludeItemPickups

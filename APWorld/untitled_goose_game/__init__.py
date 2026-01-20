@@ -6,6 +6,7 @@ from .Items import item_table, GooseGameItem, ITEM_GROUPS
 from .Locations import location_table, GooseGameLocation, get_all_location_ids
 from .Regions import create_regions
 from .Options import GooseGameOptions
+from .names import itemNames, locationNames, regionNames
 
 
 class GooseGameWeb(WebWorld):
@@ -71,10 +72,10 @@ class GooseGameWorld(World):
         
         # Only 4 valid starting areas (Model Village excluded - it's the finale!)
         area_names = [
-            "Garden Access",
-            "High Street Access", 
-            "Back Gardens Access",
-            "Pub Access"
+            itemNames.GARDEN_ACCESS,
+            itemNames.HIGH_STREET_ACCESS,
+            itemNames.BACK_GARDENS_ACCESS,
+            itemNames.PUB_ACCESS,
         ]
         
         if starting_option == 4:  # Random
@@ -88,157 +89,159 @@ class GooseGameWorld(World):
         
         # All area access items (5 total)
         area_items = [
-            "Garden Access",
-            "High Street Access",
-            "Back Gardens Access", 
-            "Pub Access",
-            "Model Village Access"
+            itemNames.GARDEN_ACCESS,
+            itemNames.HIGH_STREET_ACCESS,
+            itemNames.BACK_GARDENS_ACCESS,
+            itemNames.PUB_ACCESS,
+            itemNames.MODEL_VILLAGE_ACCESS,
         ]
         
         # NPC Soul items (11 total) - required for NPC-related goals
         npc_souls = [
-            "Groundskeeper Soul",
-            "Boy Soul",
-            "TV Shop Owner Soul",
-            "Market Lady Soul",
-            "Tidy Neighbour Soul",
-            "Messy Neighbour Soul",
-            "Burly Man Soul",
-            "Old Man Soul",
-            "Pub Lady Soul",
-            "Fancy Ladies Soul",
-            "Cook Soul",
+            itemNames.NPC_GROUNDSKEEPER,
+            itemNames.NPC_BOY,
+            itemNames.NPC_TV_SHOP_OWNER,
+            itemNames.NPC_MARKET_LADY,
+            itemNames.NPC_TIDY_NEIGHBOUR,
+            itemNames.NPC_MESSY_NEIGHBOUR,
+            itemNames.NPC_BURLY_MAN,
+            itemNames.NPC_OLD_MAN,
+            itemNames.NPC_PUB_LADY,
+            itemNames.NPC_FANCY_LADIES,
+            itemNames.NPC_COOK,
         ]
         
         # Prop Soul items - required for picking up/dragging items
         # NOTE: NPC-tied items (Keys, Gardener Hat, Boy's Glasses, Slipper, Wooly Hat, Pub Cloth, etc)
         prop_souls = [
-            # Grouped Prop Souls (23)
-            "Carrot Soul",
-            "Tomato Soul",
-            "Pumpkin Soul",
-            "Topsoil Bag Soul",
-            "Quoit Soul",
-            "Plate Soul",
-            "Orange Soul",
-            "Leek Soul",
-            "Cucumber Soul",
-            "Umbrella Soul",
-            "Tinned Food Soul",
-            "Sock Soul",
-            "Pint Bottle Soul",
-            "Knife Soul",
-            "Gumboot Soul",
-            "Fork Soul",
-            "Apple Core Soul",
-            "Apple Soul",
-            "Sandwich Soul",
-            "Bow Soul",
-            "Walkie Talkie Soul",
-            "Boot Soul",
-            "Mini Person Soul",
+            # Grouped Props (25)
+            itemNames.PROP_CARROTS,
+            itemNames.PROP_TOMATOES,
+            itemNames.PROP_PUMPKINS,
+            itemNames.PROP_TOPSOIL_BAGS,
+            itemNames.PROP_GREEN_QUOITS,
+            itemNames.PROP_PLATES,
+            itemNames.PROP_ORANGES,
+            itemNames.PROP_LEEKS,
+            itemNames.PROP_CUCUMBERS,
+            itemNames.PROP_UMBRELLAS,
+            itemNames.PROP_TINNED_FOOD,
+            itemNames.PROP_SOCKS,
+            itemNames.PROP_PINT_BOTTLES,
+            itemNames.PROP_KNIVES,
+            itemNames.PROP_GUMBOOTS,
+            itemNames.PROP_FORKS,
+            itemNames.PROP_APPLE_CORES,
+            itemNames.PROP_APPLES,
+            itemNames.PROP_SANDWICH,
+            itemNames.PROP_RIBBONS,
+            itemNames.PROP_WALKIE_TALKIES,
+            itemNames.PROP_BOOTS,
+            itemNames.PROP_MINI_PEOPLE,
+            itemNames.PROP_MINI_BENCHES,
+            itemNames.PROP_WEED_TOOLS,
+
+            # Start Area One-Off Props (5)
+            itemNames.PROP_DRINK_CAN,
+            itemNames.PROP_TENNIS_BALL,
+            itemNames.PROP_DUMMY,
+            itemNames.PROP_FISHING_BOBBER,
+            itemNames.PROP_TACKLE_BOX,
             
-            # Garden Prop Souls (17)
-            "Radio Soul",
-            "Trowel Soul",
-            "Tulip Soul",
-            "Jam Soul",
-            "Picnic Mug Soul",
-            "Thermos Soul",
-            "Straw Hat Soul",
-            "Drink Can Soul",
-            "Tennis Ball Soul",
-            "Rake Soul",
-            "Picnic Basket Soul",
-            "Esky Soul",
-            "Shovel Soul",
-            "Watering Can Soul",
-            "Mallet Soul",
-            "Wooden Crate Soul",
+            # Garden One-Off Props (14)
+            itemNames.PROP_RADIO,
+            itemNames.PROP_TROWEL,
+            itemNames.PROP_TULIP,
+            itemNames.PROP_JAM,
+            itemNames.PROP_PICNIC_MUG,
+            itemNames.PROP_THERMOS,
+            itemNames.PROP_STRAW_HAT,
+            itemNames.PROP_RAKE,
+            itemNames.PROP_PICNIC_BASKET,
+            itemNames.PROP_ESKY,
+            itemNames.PROP_SHOVEL,
+            itemNames.PROP_WATERING_CAN,
+            itemNames.PROP_MALLET,
+            itemNames.PROP_WOODEN_CRATE,
             
-            # High Street Prop Souls (22)
-            "Horn-Rimmed Glasses Soul",
-            "Red Glasses Soul",
-            "Sunglasses Soul",
-            "Loo Paper Soul",
-            "Toy Car Soul",
-            "Hairbrush Soul",
-            "Toothbrush Soul",
-            "Stereoscope Soul",
-            "Dish Soap Bottle Soul",
-            "Spray Bottle Soul",
-            "Weed Tool Soul",
-            "Lily Flower Soul",
-            "Fusilage Soul",
-            "Chalk Soul",
-            "Dustbin Lid Soul",
-            "Shopping Basket Soul",
-            "Push Broom Soul",
-            "Dustbin Soul",
-            "Baby Doll Soul",
-            "Pricing Gun Soul",
-            "Adding Machine Soul",
+            # High Street One-Off Props (20)
+            itemNames.PROP_HORN_RIMMED_GLASSES,
+            itemNames.PROP_RED_GLASSES,
+            itemNames.PROP_SUNGLASSES,
+            itemNames.PROP_LOO_PAPER,
+            itemNames.PROP_TOY_CAR,
+            itemNames.PROP_HAIRBRUSH,
+            itemNames.PROP_TOOTHRBRUSH,
+            itemNames.PROP_STEREOSCOPE,
+            itemNames.PROP_DISH_SOAP_BOTTLE,
+            itemNames.PROP_SPRAY_BOTTLE,
+            itemNames.PROP_LILY_FLOWER,
+            itemNames.PROP_TOY_PLANE,
+            itemNames.PROP_CHALK,
+            itemNames.PROP_DUSTBIN_LID,
+            itemNames.PROP_SHOPPING_BASKET,
+            itemNames.PROP_PUSH_BROOM,
+            itemNames.PROP_DUSTBIN,
+            itemNames.PROP_BABY_DOLL,
+            itemNames.PROP_PRICING_GUN,
+            itemNames.PROP_ADDING_MACHINE,
             
-            # Back Gardens Prop Souls (25)
-            "Dummy Soul",
-            "Cricket Ball Soul",
-            "Bust Pipe Soul",
-            "Bust Hat Soul",
-            "Bust Glasses Soul",
-            "Tea Cup Soul",
-            "Newspaper Soul",
-            "Badminton Racket Soul",
-            "Pot Stack Soul",
-            "Soap Soul",
-            "Paintbrush Soul",
-            "Vase Soul",
-            "Bra Soul",
-            "Rose Soul",
+            # Back Gardens One-Off Props (23 with no rose box)
+            itemNames.PROP_CRICKET_BALL,
+            itemNames.PROP_BUST_PIPE,
+            itemNames.PROP_BUST_HAT,
+            itemNames.PROP_BUST_GLASSES,
+            itemNames.PROP_TEA_CUP,
+            itemNames.PROP_NEWSPAPER,
+            itemNames.PROP_BADMINTON_RACKET,
+            itemNames.PROP_POT_STACK,
+            itemNames.PROP_SOAP,
+            itemNames.PROP_PAINTBRUSH,
+            itemNames.PROP_VASE,
+            itemNames.PROP_BRA,
+            itemNames.PROP_ROSE,
             # Removing Rose Box Soul until I can solve the physics issues with it
-            # "Rose Box Soul",
-            "Cricket Bat Soul",
-            "Tea Pot Soul",
-            "Clippers Soul",
-            "Duck Statue Soul",
-            "Frog Statue Soul",
-            "Jeremy Fish Soul",
-            "Messy Sign Soul",
-            "Drawer Soul",
-            "Enamel Jug Soul",
-            "Clean Sign Soul",
+            # itemNames.PROP_ROSE_BOX,
+            itemNames.PROP_CRICKET_BAT,
+            itemNames.PROP_TEA_POT,
+            itemNames.PROP_CLIPPERS,
+            itemNames.PROP_DUCK_STATUE,
+            itemNames.PROP_FROG_STATUE,
+            itemNames.PROP_JEREMY_FISH,
+            itemNames.PROP_NO_GOOSE_SIGN_MESSY,
+            itemNames.PROP_DRAWER,
+            itemNames.PROP_ENAMEL_JUG,
+            itemNames.PROP_NO_GOOSE_SIGN_CLEAN,
             
-            # Pub Prop Souls (19)
-            "Fishing Bobber Soul",
-            "Exit Letter Soul",
-            "Pint Glass Soul",
-            "Toy Boat Soul",
-            "Pepper Grinder Soul",
-            "Cork Soul",
-            "Candlestick Soul",
-            "Flower for Vase Soul",
-            "Harmonica Soul",
-            "Tackle Box Soul",
-            "Traffic Cone Soul",
-            "Exit Parcel Soul",
-            "Stealth Box Soul",
-            "No Goose Sign Soul",
-            "Portable Stool Soul",
-            "Dartboard Soul",
-            "Mop Bucket Soul",
-            "Mop Soul",
-            "Burly Mans Bucket Soul",
+            # Pub Prop One-Off Props (17)
+            itemNames.PROP_LETTER,
+            itemNames.PROP_PINT_GLASSES,
+            itemNames.PROP_TOY_BOAT,
+            itemNames.PROP_PEPPER_GRINDER,
+            itemNames.PROP_CORK,
+            itemNames.PROP_CANDLESTICK,
+            itemNames.PROP_FLOWER_FOR_VASE,
+            itemNames.PROP_HARMONICA,
+            itemNames.PROP_TRAFFIC_CONE,
+            itemNames.PROP_PARCEL,
+            itemNames.PROP_STEALTH_BOX,
+            itemNames.PROP_NO_GOOSE_SIGN_PUB,
+            itemNames.PROP_PORTABLE_STOOL,
+            itemNames.PROP_DARTBOARD,
+            itemNames.PROP_MOP_BUCKET,
+            itemNames.PROP_MOP,
+            itemNames.PROP_BUCKET,
             
-            # Model Village Prop Souls (11)
-            "Mini Mail Pillar Soul",
-            "Mini Phone Door Soul",
-            "Mini Shovel Soul",
-            "Poppy Flower Soul",
-            "Timber Handle Soul",
-            "Birdbath Soul",
-            "Easel Soul",
-            "Mini Bench Soul",
-            "Mini Pump Soul",
-            "Sun Lounge Soul",
+            # Model Village One-Off Props (9)
+            itemNames.PROP_MINI_MAIL_PILLAR,
+            itemNames.PROP_MINI_PHONE_DOOR,
+            itemNames.PROP_MINI_SHOVEL,
+            itemNames.PROP_POPPY_FLOWER,
+            itemNames.PROP_TIMBER_HANDLE,
+            itemNames.PROP_MINI_BIRDBATH,
+            itemNames.PROP_MINI_EASEL,
+            itemNames.PROP_MINI_PUMP,
+            itemNames.PROP_MINI_SUN_LOUNGE,
             
             # Golden Bell Soul is always required even when prop souls are turned off, so it's not in this list
         ]
@@ -246,7 +249,7 @@ class GooseGameWorld(World):
         # Add Golden Bell Soul to pool if the chosen goal is to find the bell
         # If the chosen goal is NOT to find the bell, Golden Bell Soul is placed in pre_fill()
         if self.options.goal.value == 1:
-            self.multiworld.itempool.append(self.create_item("Golden Bell Soul"))
+            self.multiworld.itempool.append(self.create_item(itemNames.PROP_GOLDEN_BELL))
 
         # Track items added for filler calculation
         items_added = 2 # pre-fill item(s) + Golden Bell Soul
@@ -283,18 +286,18 @@ class GooseGameWorld(World):
 
         # Add Silent Steps first since there can only be one
         if self.options.filler_active_silent_steps:
-            self.multiworld.itempool.append(self.create_item("Silent Steps"))
+            self.multiworld.itempool.append(self.create_item(itemNames.FILLER_SILENT_STEPS))
             filler_needed -= 1
 
         # Add other capped fillers next
         for i in range (self.options.filler_amount_mega_honk.value): # Max 3
-            self.multiworld.itempool.append(self.create_item("Mega Honk"))
+            self.multiworld.itempool.append(self.create_item(itemNames.FILLER_MEGA_HONK))
             filler_needed -= 1
         for i in range (self.options.filler_amount_speedy_feet.value): # Max 10
-            self.multiworld.itempool.append(self.create_item("Speedy Feet"))
+            self.multiworld.itempool.append(self.create_item(itemNames.FILLER_SPEEDY_FEET))
             filler_needed -= 1
         for i in range (self.options.filler_amount_goose_day.value): # Max 3
-            self.multiworld.itempool.append(self.create_item("A Goose Day"))
+            self.multiworld.itempool.append(self.create_item(itemNames.FILLER_A_GOOSE_DAY))
             filler_needed -= 1
         
         # Remaining filler items based on weights
@@ -310,17 +313,17 @@ class GooseGameWorld(World):
             
             # Filler items
             if coins_weight > 0:
-                weighted_items.append(("Coin", coins_weight))
+                weighted_items.append((itemNames.FILLER_COIN, coins_weight))
             
             # Trap items
             if tired_goose_weight > 0:
-                weighted_items.append(("Tired Goose", tired_goose_weight))
+                weighted_items.append((itemNames.TRAP_TIRED_GOOSE, tired_goose_weight))
             if confused_feet_weight > 0:
-                weighted_items.append(("Confused Feet", confused_feet_weight))
+                weighted_items.append((itemNames.TRAP_CONFUSED_FEET, confused_feet_weight))
             if butterbeak_weight > 0:
-                weighted_items.append(("Butterbeak", butterbeak_weight))
+                weighted_items.append((itemNames.TRAP_BUTTERBEAK, butterbeak_weight))
             if suspicious_goose_weight > 0:
-                weighted_items.append(("Suspicious Goose", suspicious_goose_weight))
+                weighted_items.append((itemNames.TRAP_SUSPICIOUS_GOOSE, suspicious_goose_weight))
                 
             total_weight = 0
             for item_name, weight in weighted_items:
@@ -329,22 +332,22 @@ class GooseGameWorld(World):
             for _ in range(filler_needed):
                 if total_weight == 0:
                     # All weighted filler has been turned off, so Coins are forced
-                    item_name = "Coin"
+                    item_name = itemNames.FILLER_COIN
                 else:
                     # Weighted random selection
                     roll = self.random.randint(1, total_weight)
                     if roll <= coins_weight:
-                        item_name = "Coin"
+                        item_name = itemNames.FILLER_COIN
                     elif roll <= coins_weight + tired_goose_weight:
-                        item_name = "Tired Goose"
+                        item_name = itemNames.TRAP_TIRED_GOOSE
                     elif roll <= coins_weight + tired_goose_weight + confused_feet_weight:
-                        item_name = "Confused Feet"
+                        item_name = itemNames.TRAP_CONFUSED_FEET
                     elif roll <= coins_weight + tired_goose_weight + confused_feet_weight + butterbeak_weight:
-                        item_name = "Butterbeak"
+                        item_name = itemNames.TRAP_BUTTERBEAK
                     elif roll <= coins_weight + tired_goose_weight + confused_feet_weight + butterbeak_weight + suspicious_goose_weight:
-                        item_name = "Suspicious Goose"
+                        item_name = itemNames.TRAP_SUSPICIOUS_GOOSE
                     else:
-                        item_name = "Coin" # We shouldn't reach this, but if something goes wrong, we fall back on Coins
+                        item_name = itemNames.FILLER_COIN # We shouldn't reach this, but if something goes wrong, we fall back on Coins
                 
                 self.multiworld.itempool.append(self.create_item(item_name))
     
@@ -356,36 +359,32 @@ class GooseGameWorld(World):
         1. Have Pub Access (to reach Model Village area)
         2. Have Model Village Access (to enter Model Village)
         3. Have Golden Bell Soul (to spawn/pick up the bell)
-        
-        Milestone items are placed based on goal option:
-        - Goal 1 (All Main Goals): "All Main Goals Complete" at milestone location
-        - Goal 2 (All Goals): "All Goals Complete" at milestone location
         """
-        golden_bell = self.create_item("Golden Bell")
-        golden_bell_location = self.multiworld.get_location("Pick up Golden Bell", self.player)
+        golden_bell = self.create_item(itemNames.ESCAPE_SEQUENCE)
+        golden_bell_location = self.multiworld.get_location(locationNames.PICKUP_GOLDEN_BELL, self.player)
         golden_bell_location.place_locked_item(golden_bell)
 
         # Pre-fill Golden Bell Soul depending on goal
-        golden_bell_soul = self.create_item("Golden Bell Soul")
+        golden_bell_soul = self.create_item(itemNames.PROP_GOLDEN_BELL)
         goal = self.options.goal.value
         if goal == 0:  # Just reach the bell
-            goal_0_location = self.multiworld.get_location("Get into the Model Village (Golden Bell Soul)", self.player)
+            goal_0_location = self.multiworld.get_location(locationNames.GOAL_MODEL_VILLAGE_ENTRY, self.player)
             goal_0_location.place_locked_item(golden_bell_soul)
         # elif goal == 1:  # Find bell
         elif goal == 2:  # All main tasks
-            goal_2_location = self.multiworld.get_location("All Main Task Lists Complete (Golden Bell Soul)", self.player)
+            goal_2_location = self.multiworld.get_location(locationNames.GOAL_ALL_MAIN, self.player)
             goal_2_location.place_locked_item(golden_bell_soul)
         elif goal == 3:  # Only speedrun tasks
-            goal_3_location = self.multiworld.get_location("All Speedrun Tasks Complete (Golden Bell Soul)", self.player)
+            goal_3_location = self.multiworld.get_location(locationNames.GOAL_ALL_SPEEDRUN, self.player)
             goal_3_location.place_locked_item(golden_bell_soul)
         elif goal == 4:  # All except speedrun tasks
-            goal_4_location = self.multiworld.get_location("All Main Task Lists + To Do (As Well) Complete (Golden Bell Soul)", self.player)
+            goal_4_location = self.multiworld.get_location(locationNames.GOAL_ALL_NON_SPEEDRUN, self.player)
             goal_4_location.place_locked_item(golden_bell_soul)
         elif goal == 5:  # All tasks
-            goal_5_location = self.multiworld.get_location("All Tasks Complete (Golden Bell Soul)", self.player)
+            goal_5_location = self.multiworld.get_location(locationNames.GOAL_ALL_TASKS, self.player)
             goal_5_location.place_locked_item(golden_bell_soul)
         elif goal == 6:  # Four Final Tasks
-            goal_6_location = self.multiworld.get_location("Complete the Four Final Area Tasks (Golden Bell Soul)", self.player)
+            goal_6_location = self.multiworld.get_location(locationNames.GOAL_ALL_FINAL_TASKS, self.player)
             goal_6_location.place_locked_item(golden_bell_soul)
     
     def set_rules(self) -> None:

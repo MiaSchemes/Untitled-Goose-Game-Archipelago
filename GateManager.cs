@@ -13,15 +13,17 @@ namespace GooseGameAP
         private static ManualLogSource Log => Plugin.Log;
         private Plugin plugin;
         
-        public static readonly Vector3 WellPosition = new Vector3(1.0f, 1.5f, -1.5f);
-        public static readonly Vector3 StartPosition = new Vector3(-38.2f, 1.0f, -21.5f);     // On the tree stump
+        public static readonly Vector3 WellPosition = new Vector3(1.0f, 1.5f, -1.5f);                   // On the well
+        public static readonly Vector3 StartPosition = new Vector3(-38.2f, 1.0f, -21.5f);               // On the tree stump
         
         // Area warp positions (approximate entry points)
-        public static readonly Vector3 GardenPosition = new Vector3(-16.3f, 0.5f, -17.5f);     // Near garden entrance (OOB)
-        public static readonly Vector3 HighStreetPosition = new Vector3(13.9f, 0.9f, -17.7f);  // High street area (OOB)
-        public static readonly Vector3 BackGardensPosition = new Vector3(18.7f, 1.4f, 14.0f); // Back gardens (Currently coming out at the right edge of high street near the walky talkies.)
-        public static readonly Vector3 PubPosition = new Vector3(-15.9f, 1.2f, 1.6f); // Back area of the Pub right near the Pub tomatoes. 
-        public static readonly Vector3 ModelVillagePosition = new Vector3(-49.3f, 0.5f, 2.1f); // Model village (actually in the village at the high street part of it.)
+        public static readonly Vector3 GardenPosition = new Vector3(-16.3f, 0.5f, -17.5f);              // Near garden entrance
+        public static readonly Vector3 HighStreetPosition = new Vector3(19.9f, 1.0f, -14.7f);           // By the bench
+        public static readonly Vector3 BackGardensPosition = new Vector3(21.5f, 1.4f, 13.5f);           // Back gardens, just outside Tidy Neighbour's yard
+        public static readonly Vector3 BackGardensUpdatedPosition = new Vector3(18.7f, 1.4f, 14.0f);    // Back gardens, in Tidy Neighbour's yard
+        public static readonly Vector3 PubPosition = new Vector3(-10.1f, 1.2f, 6.9f);                   // Outside the Pub by the van
+        public static readonly Vector3 PubUpdatedPosition = new Vector3(-20.2f, 1.2f, -1.0f);            // In the Pub by the Fancy Ladies
+        public static readonly Vector3 ModelVillagePosition = new Vector3(-49.3f, 0.5f, 2.1f);          // In the river just inside the Model Village
         
         // Track if finale is active - gates should close
         public bool FinaleActive { get; private set; } = false;

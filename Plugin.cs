@@ -41,6 +41,10 @@ namespace GooseGameAP
         public bool HasPubAccess { get; set; } = false;
         public bool HasModelVillageAccess { get; set; } = false;
         public bool HasGoldenBell { get; set; } = false;
+
+        // Extra area access flags for teleporting
+        public bool HasEnteredBackGardens { get; set; } = false;
+        public bool HasEnteredPub { get; set; } = false;
         
         // NPC Soul flags
         public bool HasGroundskeeperSoul { get; set; } = false;
@@ -240,11 +244,25 @@ namespace GooseGameAP
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
             {
-                WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensPosition);
+                if (!HasEnteredBackGardens)
+                {
+                    WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensPosition);
+                }
+                else
+                {
+                    WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensUpdatedPosition);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
             {
-                WarpToArea("Pub", HasPubAccess, GateManager.PubPosition);
+                if (!HasEnteredPub)
+                {
+                    WarpToArea("Pub", HasPubAccess, GateManager.PubPosition);
+                }
+                else
+                {
+                    WarpToArea("Pub", HasPubAccess, GateManager.PubUpdatedPosition);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
             {
@@ -656,6 +674,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 20: case 21: case 22: case 23: case 24: case 25: // All Back Gardens Tasks Complete
+                    HasEnteredBackGardens = true;
                     if (checkedLocations.Contains(20 + BASE_ID) && checkedLocations.Contains(21 + BASE_ID)
                         && checkedLocations.Contains(22 + BASE_ID) && checkedLocations.Contains(23 + BASE_ID) && checkedLocations.Contains(24 + BASE_ID)
                         && checkedLocations.Contains(25 + BASE_ID) && checkedLocations.Contains(26 + BASE_ID))
@@ -664,6 +683,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 26: // All Back Gardens Tasks Complete, and Four Final Tasks
+                    HasEnteredBackGardens = true;
                     if (checkedLocations.Contains(20 + BASE_ID) && checkedLocations.Contains(21 + BASE_ID)
                         && checkedLocations.Contains(22 + BASE_ID) && checkedLocations.Contains(23 + BASE_ID) && checkedLocations.Contains(24 + BASE_ID)
                         && checkedLocations.Contains(25 + BASE_ID) && checkedLocations.Contains(26 + BASE_ID))
@@ -677,6 +697,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 30: case 31: case 32: case 33: case 34: case 35: case 36: // All Pub Tasks Complete
+                    HasEnteredPub = true;
                     if (checkedLocations.Contains(30 + BASE_ID) && checkedLocations.Contains(31 + BASE_ID) && checkedLocations.Contains(32 + BASE_ID)
                         && checkedLocations.Contains(33 + BASE_ID) && checkedLocations.Contains(34 + BASE_ID) && checkedLocations.Contains(35 + BASE_ID)
                         && checkedLocations.Contains(36 + BASE_ID) && checkedLocations.Contains(37 + BASE_ID))
@@ -685,6 +706,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 37: // All Pub Tasks Complete, and Four Final Tasks
+                    HasEnteredPub = true;
                     if (checkedLocations.Contains(30 + BASE_ID) && checkedLocations.Contains(31 + BASE_ID) && checkedLocations.Contains(32 + BASE_ID)
                         && checkedLocations.Contains(33 + BASE_ID) && checkedLocations.Contains(34 + BASE_ID) && checkedLocations.Contains(35 + BASE_ID)
                         && checkedLocations.Contains(36 + BASE_ID) && checkedLocations.Contains(37 + BASE_ID))
@@ -740,6 +762,11 @@ namespace GooseGameAP
                     {
                         SendLocationCheck(92 + BASE_ID);
                     }
+                    break;
+
+                // Break boards
+                case 1310:
+                    HasEnteredBackGardens = true;
                     break;
 
                 // Model church first-time pecks
@@ -1029,6 +1056,9 @@ namespace GooseGameAP
             HasPubAccess = false;
             HasModelVillageAccess = false;
             HasGoldenBell = false;
+
+            HasEnteredBackGardens = false;
+            HasEnteredPub = false;
             
             HasGroundskeeperSoul = false;
             HasBoySoul = false;
@@ -1070,6 +1100,9 @@ namespace GooseGameAP
             PlayerPrefs.SetInt("AP_Pub", HasPubAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_ModelVillage", HasModelVillageAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_GoldenBell", HasGoldenBell ? 1 : 0);
+
+            PlayerPrefs.SetInt("AP_HasEntered_BackGardens", HasEnteredBackGardens ? 1 : 0);
+            PlayerPrefs.SetInt("AP_HasEntered_Pub", HasEnteredPub ? 1 : 0);
             
             PlayerPrefs.SetInt("AP_GroundskeeperSoul", HasGroundskeeperSoul ? 1 : 0);
             PlayerPrefs.SetInt("AP_BoySoul", HasBoySoul ? 1 : 0);
@@ -1111,6 +1144,10 @@ namespace GooseGameAP
                 HasPubAccess = PlayerPrefs.GetInt("AP_Pub") == 1;
                 HasModelVillageAccess = PlayerPrefs.GetInt("AP_ModelVillage") == 1;
                 HasGoldenBell = PlayerPrefs.GetInt("AP_GoldenBell") == 1;
+
+                HasEnteredBackGardens = PlayerPrefs.GetInt("AP_HasEntered_BackGardens") == 1;
+                HasEnteredPub = PlayerPrefs.GetInt("AP_HasEntered_Pub") == 1;
+
                 
                 HasGroundskeeperSoul = PlayerPrefs.GetInt("AP_GroundskeeperSoul", 0) == 1;
                 HasBoySoul = PlayerPrefs.GetInt("AP_BoySoul", 0) == 1;
@@ -1134,6 +1171,9 @@ namespace GooseGameAP
             HasPubAccess = false;
             HasModelVillageAccess = false;
             HasGoldenBell = false;
+
+            HasEnteredBackGardens = false;
+            HasEnteredPub = false;
             
             HasGroundskeeperSoul = false;
             HasBoySoul = false;

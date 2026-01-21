@@ -48,7 +48,7 @@ class UntitledGooseRules:
             self.pickup_rules = {
                 locationNames.PICKUP_RADIO: self.pickup_radio,
                 locationNames.PICKUP_TROWEL: self.pickup_trowel,
-                locationNames.PICKUP_KEYS: self.pickup_gardener_gear,
+                locationNames.PICKUP_KEYS: self.pickup_keys,
                 locationNames.PICKUP_TULIP: self.pickup_tulip,
                 locationNames.PICKUP_APPLE_1: self.pickup_apples,
                 locationNames.PICKUP_JAM: self.pickup_jam,
@@ -59,7 +59,7 @@ class UntitledGooseRules:
                 locationNames.PICKUP_STRAW_HAT: self.pickup_straw_hat,
                 locationNames.PICKUP_DRINK_CAN: self.pickup_drink_can,
                 locationNames.PICKUP_TENNIS_BALL: self.pickup_tennis_ball,
-                locationNames.PICKUP_GROUNDSKEEPERS_HAT: self.pickup_gardener_gear,
+                locationNames.PICKUP_GROUNDSKEEPERS_HAT: self.pickup_grounsdkeepers_hat,
                 locationNames.PICKUP_APPLE_2: self.pickup_apples,
                 locationNames.PICKUP_BOYS_GLASSES: self.pickup_boys_glasses,
                 locationNames.PICKUP_HORN_RIMMED_GLASSES: self.pickup_horn_rimmed_glasses,
@@ -1344,10 +1344,17 @@ class UntitledGooseRules:
             and self.has_prop(state, itemNames.PROP_TROWEL)
         )
     
-    def pickup_gardener_gear(self, state: CollectionState) -> bool:
+    def pickup_keys(self, state: CollectionState) -> bool:
         return (
             self.has_garden(state)
             and self.has_npc(state, itemNames.NPC_GROUNDSKEEPER)
+        )
+    
+    def pickup_grounsdkeepers_hat(self, state: CollectionState) -> bool:
+        return (
+            self.has_garden(state)
+            and self.has_npc(state, itemNames.NPC_GROUNDSKEEPER)
+            and self.has_prop(state, itemNames.PROP_TULIP)
         )
     
     def pickup_tulip(self, state: CollectionState) -> bool:

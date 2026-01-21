@@ -76,11 +76,15 @@ Untitled Goose Game:
 
 | Key | Action |
 |-----|--------|
-| F1 | Toggle UI visibility |
+| F1 | Toggle AP UI visibility |
+| F2| Toggle Soul UI Visibility|
+| F2 Toggle Server UI Visibility |
 | G | Use stored Goose Day |
-| C | Cycle goose colour | (Keep in mind this will end up as a black void eventually for now)
+| C | Cycle goose colour |
 | Ctrl+C | Reset goose colour |
 | F9 | Resync gates (use if gates get stuck after reconnect) |
+|1-5 | Warp to unlocked regions 1= Garden, 2 = High Street, 3 = Back Gardens, 4 = Pub & 5 = Model Village. 
+You cannot have anything in your beak when warping |
 
 ## Gameplay Notes
 

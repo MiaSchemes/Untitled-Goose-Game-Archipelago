@@ -30,7 +30,6 @@ namespace GooseGameAP
         {
             "dart",
             "tomatobox",
-            "roseboxprop",
         };
         
         // Prop names that have to be a perfect match in the PropToSoul dictionary so that they aren't erroneously attached to the wrong souls
@@ -38,7 +37,7 @@ namespace GooseGameAP
         {
             "minishovelprop",
             "minipersonvariant-goose",
-            "rosebox",
+            "roseboxprop",
         };
         
         // Map item name patterns to soul names
@@ -151,7 +150,7 @@ namespace GooseGameAP
             { "rightstrap", "Bra" },
             { "rose", "Rose" },
             // Removing Rose Box Soul until I can solve the physics issues with it
-            { "rosebox", "Rose Box" },
+            { "roseboxprop", "Rose Box" },
             { "cricketbat", "Cricket Bat" },
             { "teapot", "Tea Pot" },
             { "clippers", "Clippers" },
@@ -352,6 +351,19 @@ namespace GooseGameAP
                 GameObject garageRope = null;
                 GameObject garageRope2 = null;
                 GameObject roseBox = null;
+                GameObject umbrella1 = null;
+                GameObject umbrella2 = null;
+                GameObject umbrella3 = null;
+                GameObject umbrella4 = null;
+                GameObject umbrella5 = null;
+                GameObject umbrella6 = null;
+                GameObject umbrella7 = null;
+                GameObject umbrella8 = null;
+                GameObject umbrella9 = null;
+                GameObject umbrella10 = null;
+                GameObject umbrella11 = null;
+                GameObject umbrella12 = null;
+                GameObject bucket = null;
 
                 var checkAllGameObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
                 Log.LogInfo($"[Prop] Found {checkAllGameObjects.Length} GameObjects");
@@ -359,22 +371,13 @@ namespace GooseGameAP
                 {
                     if (gameObj == null) continue;
                     /*Log.LogInfo($"[Prop DEBUG] Noting existence of game object with name: '{gameObj.name}'");
-
-                    if (gameObj.name.ToLower().Contains("proplaunchzone") || gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name.ToLower().Contains("proplaunchzone"))
-                    {
-                        string hierarchy = GetHierarchy(gameObj.transform);
-                        Log.LogInfo($"             {hierarchy}");
-                    }
                     
-                    if (gameObj.name.ToLower().Contains("bucket") || gameObj.name.ToLower().Contains("pail"))
+                    if (gameObj.name.ToLower().Contains("umbrella_") || gameObj.transform != null && gameObj.transform.parent != null && (gameObj.transform.parent.name.ToLower().Contains("umbrella_") ||
+                        gameObj.transform.parent.parent != null && gameObj.transform.parent.parent.name.ToLower().Contains("umbrella_")))
                     {
                         string hierarchy = GetHierarchy(gameObj.transform);
-                        Log.LogInfo($"[Prop DEBUG] Noting existence of bucket game object with name: '{gameObj.name}': {hierarchy}");
+                        Log.LogInfo($"[Prop DEBUG] Noting existence of umbrella game object with name: '{gameObj.name}': {hierarchy}");
                     }*/
-                    
-                    // TO DO: fix bucket bug
-                    // TO DO: make sure rose box works right
-                    // TO DO: fix umbrellas spawning in wrong
 
                     if (gameObj.name == "braSkinned")
                     {
@@ -472,6 +475,71 @@ namespace GooseGameAP
                         roseBox = gameObj;
                         Log.LogInfo($"[Prop] Using '{gameObj.name}' for rosebox");
                     }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella1 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella1");
+                    }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella2 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella2");
+                    }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella3 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella3");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella4 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella4");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella5 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella5");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella6 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella6");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella7 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella7");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella8 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella8");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella9 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella9");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand1")
+                    {
+                        umbrella10 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella10");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand2")
+                    {
+                        umbrella11 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella11");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand3")
+                    {
+                        umbrella12 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella12");
+                    }
+                    else if (gameObj.name == "PailHomeOnWall")
+                    {
+                        bucket = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for bucket");
+                    }
                 }
 
                 var allProps = UnityEngine.Object.FindObjectsOfType<Prop>();
@@ -482,7 +550,7 @@ namespace GooseGameAP
                 foreach (var prop in allProps)
                 {
                     if (prop == null) continue;
-                    if (logCount < 20)//500)
+                    if (logCount < 500)
                     {
                         string cleanName = CleanPropName(prop.name);
                         Log.LogInfo($"[Prop DEBUG] Raw: '{prop.name}' -> Clean: '{cleanName}'");
@@ -591,12 +659,39 @@ namespace GooseGameAP
                                     propCacheUsingProps[soul].Add(prop);
                                 }
                             }
-                            else if (cleanName == "rosebox")
+                            else if (cleanName == "roseboxprop")
                             {
                                 if (roseBox != null && !propCache[soul].Contains(roseBox))
                                 {
                                     Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
                                     propCache[soul].Add(roseBox);
+                                }
+                            }
+                            else if (cleanName == "umbrella")
+                            {
+                                if (umbrella1 != null && !propCache[soul].Contains(umbrella1))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
+                                    propCache[soul].Add(umbrella1);
+                                    propCache[soul].Add(umbrella2);
+                                    propCache[soul].Add(umbrella3);
+                                    propCache[soul].Add(umbrella4);
+                                    propCache[soul].Add(umbrella5);
+                                    propCache[soul].Add(umbrella6);
+                                    propCache[soul].Add(umbrella7);
+                                    propCache[soul].Add(umbrella8);
+                                    propCache[soul].Add(umbrella9);
+                                    propCache[soul].Add(umbrella10);
+                                    propCache[soul].Add(umbrella11);
+                                    propCache[soul].Add(umbrella12);
+                                }
+                            }
+                            else if (cleanName == "pail")
+                            {
+                                if (bucket != null && !propCache[soul].Contains(bucket))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
+                                    propCache[soul].Add(bucket);
                                 }
                             }
                             continue;
@@ -667,16 +762,10 @@ namespace GooseGameAP
                         return current.parent.gameObject;
                     }
                 }
-                
-                // Topsoil bags - check if there's a parent with mesh/collider
-                /*if (cleanName.Contains("top") && (parentName.Contains("top") || parentName.Contains("soil") || parentName.Contains("fertil")))
-                {
-                    Log.LogInfo($"[Prop] Using parent '{current.parent.name}' for topsoil");
-                    return current.parent.gameObject;
-                }*/
 
                 // Objects that need to be handled differently (eg, bra). basket is == instead of Contains else it ruins the shopping basket
-                if (cleanName.Contains("rightstrap") && parentName == "brahome" || cleanName.Contains("drawer") || cleanName == "basket" || cleanName == "top" || cleanName == "rosebox")
+                if (cleanName.Contains("rightstrap") && parentName == "brahome" || cleanName.Contains("drawer") || cleanName == "basket" ||
+                    cleanName == "top" || cleanName == "roseboxprop" || cleanName == "umbrella" || cleanName == "pail")
                 {
                     return null;
                 }

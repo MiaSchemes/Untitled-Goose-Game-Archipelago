@@ -419,7 +419,7 @@ namespace GooseGameAP
 
                     Plugin.Log.LogInfo($"[INTERACT DEBUG] Noting existence of Job '{foundJob.name}' with owner: '{foundJob.owner}'");
                 }
-            }*/
+            }
             
             if (parentLower != "goldenbell" && parentLower != "irongate" && objLower != "pubgatesystem" && objLower != "pubtohubgatesystem" && objLower != "sluicegatesystem" &&
                 parentLower != "chimeswitches" && objLower != "gardenareatrigger" && parentLower != "teachingzoom" && objLower != "getinthegardendetector" && parentLower != "dartthrowjob" &&
@@ -433,7 +433,7 @@ namespace GooseGameAP
                 parentLower != "hubgatesystem" && objLower != "speedygoaltimersystem" && parentLower != "rake")
             {
                 Plugin.Log.LogInfo($"[INTERACT] Detected interaction: '{objLower}' (parent: '{parentLower}')");
-            }
+            }*/
 
             if (objLower == "slidetomatoboxsystem" && parentLower == "pubsignjobsandhomes")
             {

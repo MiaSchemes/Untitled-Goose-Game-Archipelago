@@ -308,7 +308,21 @@ namespace GooseGameAP
                 };
                 
                 // Get renderers
-                highlighted.renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                if (highlighted.itemKey != "dartboard")
+                {
+                    highlighted.renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                }
+                else
+                {
+                    var renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        if (renderer == null) continue;
+                        if (!renderer.name.Contains("dartboard")) continue;
+
+                        highlighted.renderers = [renderer];
+                    }
+                }
                 
                 if (highlighted.renderers != null && highlighted.renderers.Length > 0)
                 {
@@ -341,7 +355,6 @@ namespace GooseGameAP
                 {
                     HighlightSpecificGameObject(gameObj, "top_2");
                 }
-                // TO DO: check if darts highlighting can be separate from each other & dartboard
             }
         }
 

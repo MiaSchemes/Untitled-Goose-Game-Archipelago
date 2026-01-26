@@ -128,7 +128,7 @@ class IncludeNewTasks(Toggle):
     - Break a pint glass
     - Perform at the pub with a harmonica"""
     display_name = "Include New Tasks"
-    default = True
+    default = False
 
 
 class FillerAmountMegaHonk(Range):

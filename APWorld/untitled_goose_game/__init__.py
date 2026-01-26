@@ -114,7 +114,7 @@ class GooseGameWorld(World):
         # Prop Soul items - required for picking up/dragging items
         # NOTE: NPC-tied items (Keys, Gardener Hat, Boy's Glasses, Slipper, Wooly Hat, Pub Cloth, etc)
         prop_souls = [
-            # Grouped Props (25)
+            # Grouped Props (26)
             itemNames.PROP_CARROTS,
             itemNames.PROP_TOMATOES,
             itemNames.PROP_PUMPKINS,
@@ -149,7 +149,7 @@ class GooseGameWorld(World):
             itemNames.PROP_FISHING_BOBBER,
             itemNames.PROP_TACKLE_BOX,
             
-            # Garden One-Off Props (14)
+            # Garden One-Off Props (15)
             itemNames.PROP_RADIO,
             itemNames.PROP_TROWEL,
             itemNames.PROP_TULIP,
@@ -166,7 +166,7 @@ class GooseGameWorld(World):
             itemNames.PROP_WOODEN_CRATE,
             itemNames.PROP_CABBAGES,
             
-            # High Street One-Off Props (21)
+            # High Street One-Off Props (22)
             itemNames.PROP_HORN_RIMMED_GLASSES,
             itemNames.PROP_RED_GLASSES,
             itemNames.PROP_SUNGLASSES,
@@ -190,7 +190,7 @@ class GooseGameWorld(World):
             itemNames.PROP_ADDING_MACHINE,
             itemNames.PROP_GARAGE_ROPE,
             
-            # Back Gardens One-Off Props (23 with no rose box)
+            # Back Gardens One-Off Props (24)
             itemNames.PROP_CRICKET_BALL,
             itemNames.PROP_BUST_PIPE,
             itemNames.PROP_BUST_HAT,
@@ -204,7 +204,6 @@ class GooseGameWorld(World):
             itemNames.PROP_VASE,
             itemNames.PROP_BRA,
             itemNames.PROP_ROSE,
-            # Removing Rose Box Soul until I can solve the physics issues with it
             itemNames.PROP_ROSE_BOX,
             itemNames.PROP_CRICKET_BAT,
             itemNames.PROP_TEA_POT,
@@ -236,7 +235,7 @@ class GooseGameWorld(World):
             itemNames.PROP_MOP,
             itemNames.PROP_BUCKET,
             
-            # Model Village One-Off Props (9)
+            # Model Village One-Off Props (10)
             itemNames.PROP_MINI_GOOSE,
             itemNames.PROP_MINI_MAIL_PILLAR,
             itemNames.PROP_MINI_PHONE_DOOR,

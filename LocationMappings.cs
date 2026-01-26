@@ -163,7 +163,6 @@ namespace GooseGameAP
                 case 561: return "Vase";
                 case 562: return "Bra";
                 case 563: return "Rose";
-                // Removing Rose Box Soul until I can solve the physics issues with it
                 case 564: return "Rose Box";
                 case 565: return "Cricket Bat";
                 case 566: return "Tea Pot";

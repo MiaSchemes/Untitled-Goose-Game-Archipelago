@@ -149,7 +149,6 @@ namespace GooseGameAP
             { "vase", "Vase" },
             { "rightstrap", "Bra" },
             { "rose", "Rose" },
-            // Removing Rose Box Soul until I can solve the physics issues with it
             { "roseboxprop", "Rose Box" },
             { "cricketbat", "Cricket Bat" },
             { "teapot", "Tea Pot" },

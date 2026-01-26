@@ -625,6 +625,7 @@ class UntitledGooseRules:
                 or self.has_prop(state, itemNames.PROP_LEEKS)
                 or self.has_prop(state, itemNames.PROP_CARROTS)
                 or self.has_prop(state, itemNames.PROP_TOMATOES)
+                # TO DO: Test if apple cores work
                 or self.has_garden(state) and self.has_prop(state, itemNames.PROP_APPLES)
             )
         )
@@ -740,7 +741,6 @@ class UntitledGooseRules:
                     and self.make_man_barefoot(state)
                     and self.do_washing(state)
                     and self.has_prop(state, itemNames.PROP_ROSE)
-                    # Removing Rose Box Soul until I can solve the physics issues with it
                     and self.has_prop(state, itemNames.PROP_ROSE_BOX)
                     and self.has_prop(state, itemNames.PROP_CLIPPERS)
                     and self.has_prop(state, itemNames.PROP_NO_GOOSE_SIGN_CLEAN)
@@ -769,7 +769,6 @@ class UntitledGooseRules:
             and self.has_npc(state, itemNames.NPC_MESSY_NEIGHBOUR)
             and self.has_prop(state, itemNames.PROP_DRAWER)
             and self.has_prop(state, itemNames.PROP_ROSE)
-            # Removing Rose Box Soul until I can solve the physics issues with it
             and self.has_prop(state, itemNames.PROP_ROSE_BOX)
             and self.has_prop(state, itemNames.PROP_CLIPPERS)
             and self.has_prop(state, itemNames.PROP_NO_GOOSE_SIGN_CLEAN)
@@ -1203,7 +1202,6 @@ class UntitledGooseRules:
             and self.has_npc(state, itemNames.NPC_MESSY_NEIGHBOUR)
             and self.has_prop(state, itemNames.PROP_DRAWER)
             and self.has_prop(state, itemNames.PROP_ROSE)
-            # Removing Rose Box Soul until I can solve the physics issues with it
             and self.has_prop(state, itemNames.PROP_ROSE_BOX)
             and self.has_prop(state, itemNames.PROP_CLIPPERS)
             and self.has_prop(state, itemNames.PROP_NO_GOOSE_SIGN_CLEAN)
@@ -2057,7 +2055,6 @@ class UntitledGooseRules:
         
         return (
             self.has_npc(state, itemNames.NPC_TIDY_NEIGHBOUR)
-            # Removing Rose Box Soul until I can solve the physics issues with it
             and self.has_prop(state, itemNames.PROP_ROSE_BOX)
             and self.has_prop(state, itemNames.PROP_NO_GOOSE_SIGN_CLEAN)
             and task_count >= 5

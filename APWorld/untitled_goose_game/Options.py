@@ -50,11 +50,11 @@ class LogicallyRequireNPCSouls(Toggle):
     default = False
 
 
-class IncludePropSouls(Toggle):
-    """When enabled, items can't be picked up or dragged until you receive their soul.
-    This adds prop souls to the item pool and gates item interactions behind them.
-    If the find_bell goal is chosen and this option is disabled, the Golden Bell prop soul will be the only one added to the pool."""
-    display_name = "Include Prop Souls"
+class IncludeProps(Toggle):
+    """When enabled, items can't be picked up or dragged until you receive them.
+    This adds props to the item pool and gates item interactions behind them.
+    If the find_bell goal is chosen and this option is disabled, the Golden Bell will be the only one added to the pool."""
+    display_name = "Include Props"
     default = True
 
 
@@ -108,6 +108,27 @@ class IncludeMilestoneLocations(Toggle):
     - Including speedrun tasks adds a milestone for completing all speedrun tasks"""
     display_name = "Include Milestone Locations"
     default = True
+
+
+class IncludeNewTasks(Toggle):
+    """Include locations for new tasks created for this archipelago!
+    Some of these happen naturally throughout gameplay, and some are more involved.
+    You can view these tasks at any time in-game by pressing F4. New tasks include:
+    - Break the intro gate
+    - Drop some mail in the well
+    - Short out the garden radio
+    - Lock the groundskeeper IN the garden
+    - Trap the TV shop owner in the garage
+    - Break through the boards to the back gardens
+    - Make the woman fix the topiary
+    - Pose as a duck statue
+    - Dress up the bush with both ribbons
+    - Do some interior redecorating
+    - Trip the burly man
+    - Break a pint glass
+    - Perform at the pub with a harmonica"""
+    display_name = "Include New Tasks"
+    default = False
 
 
 class FillerAmountMegaHonk(Range):
@@ -185,7 +206,7 @@ class TrapWeightSuspiciousGoose(Range):
 
 
 class DeathLink(Toggle):
-    """When you get caught/shooed, everyone dies. When someone else dies, you get teleported to the hub."""
+    """When you get caught/shooed, everyone dies. When someone else dies, you drop whatever you're holding and get teleported to the hub."""
     display_name = "Death Link"
     default = False
 
@@ -196,7 +217,7 @@ class GooseGameOptions(PerGameCommonOptions):
     goal: Goal
     include_npc_souls: IncludeNPCSouls
     logically_require_npc_souls: LogicallyRequireNPCSouls
-    include_prop_souls: IncludePropSouls
+    include_prop_souls: IncludeProps
     include_extra_tasks: IncludeExtraTasks
     include_speedrun_tasks: IncludeSpeedrunTasks
     include_item_pickups: IncludeItemPickups
@@ -204,6 +225,7 @@ class GooseGameOptions(PerGameCommonOptions):
     include_interactions: IncludeInteractions
     include_model_church_pecks: IncludeModelChurchPecks
     include_milestone_locations: IncludeMilestoneLocations
+    include_new_tasks: IncludeNewTasks
     filler_amount_mega_honk: FillerAmountMegaHonk
     filler_amount_speedy_feet: FillerAmountSpeedyFeet
     filler_active_silent_steps: FillerActiveSilentSteps

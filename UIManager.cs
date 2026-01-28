@@ -53,6 +53,18 @@ namespace GooseGameAP
         private const string SOUL_SCALE_KEY = "AP_SoulTrackerScale";
         private const string SOUL_X_KEY = "AP_SoulTrackerX";
         private const string SOUL_Y_KEY = "AP_SoulTrackerY";
+
+        // New Tasks List Window
+        private bool showNewTasksTracker = false;
+        private Rect newTasksTrackerWindowRect;
+        private bool isDraggingNewTasksTracker = false;
+        private Vector2 newTasksDragOffset = Vector2.zero;
+        private bool newTasksTrackerPositionInitialized = false;
+        private float newTasksTrackerScale = 1.0f;
+        private Vector2 newTasksScrollPosition = Vector2.zero;
+        private const string NEW_TASKS_SCALE_KEY = "AP_NewTasksTrackerScale";
+        private const string NEW_TASKS_X_KEY = "AP_NewTasksTrackerX";
+        private const string NEW_TASKS_Y_KEY = "AP_NewTasksTrackerY";
         
         private const float MIN_SCALE = 0.5f;
         private const float MAX_SCALE = 2.0f;
@@ -79,6 +91,9 @@ namespace GooseGameAP
             
             soulTrackerScale = PlayerPrefs.GetFloat(SOUL_SCALE_KEY, 1.0f);
             soulTrackerScale = Mathf.Clamp(soulTrackerScale, MIN_SCALE, MAX_SCALE);
+            
+            newTasksTrackerScale = PlayerPrefs.GetFloat(NEW_TASKS_SCALE_KEY, 1.0f);
+            newTasksTrackerScale = Mathf.Clamp(newTasksTrackerScale, MIN_SCALE, MAX_SCALE);
         }
         
         public void ShowNotification(string message)
@@ -93,8 +108,10 @@ namespace GooseGameAP
         public void ClearReceivedItems() { receivedItemNames.Clear(); }
         public int ReceivedItemCount => receivedItemNames.Count;
         public void ToggleSoulTracker() { showSoulTracker = !showSoulTracker; }
+        public void ToggleNewTasksTracker() { showNewTasksTracker = !showNewTasksTracker; }
         public void ToggleServerLog() { showServerLog = !showServerLog; }
         public bool IsSoulTrackerVisible => showSoulTracker;
+        public bool IsNewTasksTrackerVisible => showNewTasksTracker;
         public bool IsServerLogVisible => showServerLog;
         
         private void InitializeTextures()
@@ -370,7 +387,7 @@ namespace GooseGameAP
             // Footers
             GUI.color = new Color(0.4f, 0.4f, 0.45f);
             GUI.Label(new Rect(x, winY + winH - 66 * s, w, 20 * s), 
-                $"<size={Mathf.RoundToInt(9 * s)}>F1=Toggle | F2=Souls | F3=Log</size>");
+                $"<size={Mathf.RoundToInt(9 * s)}>F1=Toggle | F2=Souls | F3=Log | F4=New Tasks</size>");
             GUI.color = Color.white;
             
             // Footer 2
@@ -882,12 +899,13 @@ namespace GooseGameAP
             float h = headerH + 11 * lineH + 6 * s;
             if (plugin.PropSoulsEnabled)
             {
+                h += headerH + 3 * lineH + 6 * s;
+                h += headerH + 6 * lineH + 6 * s;
                 h += headerH + 20 * lineH + 6 * s;
-                h += headerH + 24 * lineH + 6 * s;
-                h += headerH + 25 * lineH + 6 * s;
+                h += headerH + 31 * lineH + 6 * s;
+                h += headerH + 26 * lineH + 6 * s;
                 h += headerH + 22 * lineH + 6 * s;
                 h += headerH + 12 * lineH + 6 * s;
-                h += headerH + 26 * lineH + 6 * s;
             }
             return h + 20 * s;
         }
@@ -934,145 +952,144 @@ namespace GooseGameAP
         };
         
         private List<SoulInfo> GetStartingAreaPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Boot", m?.HasReceivedSoul("Boot Soul") ?? false),
-            new SoulInfo("Drink Can", m?.HasReceivedSoul("Drink Can Soul") ?? false),
-            new SoulInfo("Tennis Ball", m?.HasReceivedSoul("Tennis Ball Soul") ?? false),
+            new SoulInfo("Boots", m?.HasReceivedSoul("Boots") ?? false),
+            new SoulInfo("Drink Can", m?.HasReceivedSoul("Drink Can") ?? false),
+            new SoulInfo("Tennis Ball", m?.HasReceivedSoul("Tennis Ball") ?? false),
         }; }
         
         private List<SoulInfo> GetHubPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Boot", m?.HasReceivedSoul("Boot Soul") ?? false),
-            new SoulInfo("Bow", m?.HasReceivedSoul("Bow Soul") ?? false),
-            new SoulInfo("Dummy", m?.HasReceivedSoul("Dummy Soul") ?? false),
-            new SoulInfo("Fishing Bobber", m?.HasReceivedSoul("Fishing Bobber Soul") ?? false),
-            new SoulInfo("Pint Bottle", m?.HasReceivedSoul("Pint Bottle Soul") ?? false),
-            new SoulInfo("Tackle Box", m?.HasReceivedSoul("Tackle Box Soul") ?? false),
+            new SoulInfo("Boots", m?.HasReceivedSoul("Boots") ?? false),
+            new SoulInfo("Dummy", m?.HasReceivedSoul("Dummy") ?? false),
+            new SoulInfo("Fishing Bobber", m?.HasReceivedSoul("Fishing Bobber") ?? false),
+            new SoulInfo("Pint Bottles", m?.HasReceivedSoul("Pint Bottles") ?? false),
+            new SoulInfo("Ribbons", m?.HasReceivedSoul("Ribbons") ?? false),
+            new SoulInfo("Tackle Box", m?.HasReceivedSoul("Tackle Box") ?? false),
         }; }
         
         private List<SoulInfo> GetGardenPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Apple", m?.HasReceivedSoul("Apple Soul") ?? false),
-            new SoulInfo("Carrot", m?.HasReceivedSoul("Carrot Soul") ?? false),
-            new SoulInfo("Esky", m?.HasReceivedSoul("Esky Soul") ?? false),
-            new SoulInfo("Gumboot", m?.HasReceivedSoul("Gumboot Soul") ?? false),
-            new SoulInfo("Jam", m?.HasReceivedSoul("Jam Soul") ?? false),
-            new SoulInfo("Mallet", m?.HasReceivedSoul("Mallet Soul") ?? false),
-            new SoulInfo("Picnic Basket", m?.HasReceivedSoul("Picnic Basket Soul") ?? false),
-            new SoulInfo("Picnic Mug", m?.HasReceivedSoul("Picnic Mug Soul") ?? false),
-            new SoulInfo("Pumpkin", m?.HasReceivedSoul("Pumpkin Soul") ?? false),
-            new SoulInfo("Radio", m?.HasReceivedSoul("Radio Soul") ?? false),
-            new SoulInfo("Rake", m?.HasReceivedSoul("Rake Soul") ?? false),
-            new SoulInfo("Sandwich", m?.HasReceivedSoul("Sandwich Soul") ?? false),
-            new SoulInfo("Shovel", m?.HasReceivedSoul("Shovel Soul") ?? false),
-            new SoulInfo("Straw Hat", m?.HasReceivedSoul("Straw Hat Soul") ?? false),
-            new SoulInfo("Thermos", m?.HasReceivedSoul("Thermos Soul") ?? false),
-            new SoulInfo("Topsoil Bag", m?.HasReceivedSoul("Topsoil Bag Soul") ?? false),
-            new SoulInfo("Trowel", m?.HasReceivedSoul("Trowel Soul") ?? false),
-            new SoulInfo("Tulip", m?.HasReceivedSoul("Tulip Soul") ?? false),
-            new SoulInfo("Watering Can", m?.HasReceivedSoul("Watering Can Soul") ?? false),
-            new SoulInfo("Wooden Crate", m?.HasReceivedSoul("Wooden Crate Soul") ?? false),
+            new SoulInfo("Apples", m?.HasReceivedSoul("Apples") ?? false),
+            new SoulInfo("Carrots", m?.HasReceivedSoul("Carrots") ?? false),
+            new SoulInfo("Esky", m?.HasReceivedSoul("Esky") ?? false),
+            new SoulInfo("Gumboots", m?.HasReceivedSoul("Gumboots") ?? false),
+            new SoulInfo("Jam", m?.HasReceivedSoul("Jam") ?? false),
+            new SoulInfo("Mallet", m?.HasReceivedSoul("Mallet") ?? false),
+            new SoulInfo("Picnic Basket", m?.HasReceivedSoul("Picnic Basket") ?? false),
+            new SoulInfo("Picnic Mug", m?.HasReceivedSoul("Picnic Mug") ?? false),
+            new SoulInfo("Pumpkins", m?.HasReceivedSoul("Pumpkins") ?? false),
+            new SoulInfo("Radio", m?.HasReceivedSoul("Radio") ?? false),
+            new SoulInfo("Rake", m?.HasReceivedSoul("Rake") ?? false),
+            new SoulInfo("Sandwich", m?.HasReceivedSoul("Sandwich") ?? false),
+            new SoulInfo("Shovel", m?.HasReceivedSoul("Shovel") ?? false),
+            new SoulInfo("Sun Hat", m?.HasReceivedSoul("Sun Hat") ?? false),
+            new SoulInfo("Thermos", m?.HasReceivedSoul("Thermos") ?? false),
+            new SoulInfo("Topsoil Bag", m?.HasReceivedSoul("Topsoil Bags") ?? false),
+            new SoulInfo("Trowel", m?.HasReceivedSoul("Trowel") ?? false),
+            new SoulInfo("Tulip", m?.HasReceivedSoul("Tulip") ?? false),
+            new SoulInfo("Watering Can", m?.HasReceivedSoul("Watering Can") ?? false),
+            new SoulInfo("Wooden Crate", m?.HasReceivedSoul("Wooden Crate") ?? false),
         }; }
         
         private List<SoulInfo> GetHighStreetPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Adding Machine", m?.HasReceivedSoul("Adding Machine Soul") ?? false),
-            new SoulInfo("Apple Core", m?.HasReceivedSoul("Apple Core Soul") ?? false),
-            new SoulInfo("Baby Doll", m?.HasReceivedSoul("Baby Doll Soul") ?? false),
-            new SoulInfo("Carrot", m?.HasReceivedSoul("Carrot Soul") ?? false),
-            new SoulInfo("Cucumber", m?.HasReceivedSoul("Cucumber Soul") ?? false),
-            new SoulInfo("Dish Soap Bottle", m?.HasReceivedSoul("Dish Soap Bottle Soul") ?? false),
-            new SoulInfo("Dustbin", m?.HasReceivedSoul("Dustbin Soul") ?? false),
-            new SoulInfo("Dustbin Lid", m?.HasReceivedSoul("Dustbin Lid Soul") ?? false),
-            new SoulInfo("Chalk", m?.HasReceivedSoul("Chalk Soul") ?? false),
-            new SoulInfo("Fusilage", m?.HasReceivedSoul("Fusilage Soul") ?? false),
-            new SoulInfo("Hairbrush", m?.HasReceivedSoul("Hairbrush Soul") ?? false),
-            new SoulInfo("Horn-Rimmed Glasses", m?.HasReceivedSoul("Horn-Rimmed Glasses Soul") ?? false),
-            new SoulInfo("Leek", m?.HasReceivedSoul("Leek Soul") ?? false),
-            new SoulInfo("Lily Flower", m?.HasReceivedSoul("Lily Flower Soul") ?? false),
-            new SoulInfo("Loo Paper", m?.HasReceivedSoul("Loo Paper Soul") ?? false),
-            new SoulInfo("Orange", m?.HasReceivedSoul("Orange Soul") ?? false),
-            new SoulInfo("Pint Bottle", m?.HasReceivedSoul("Pint Bottle Soul") ?? false),
-            new SoulInfo("Pricing Gun", m?.HasReceivedSoul("Pricing Gun Soul") ?? false),
-            new SoulInfo("Push Broom", m?.HasReceivedSoul("Push Broom Soul") ?? false),
-            new SoulInfo("Red Glasses", m?.HasReceivedSoul("Red Glasses Soul") ?? false),
-            new SoulInfo("Shopping Basket", m?.HasReceivedSoul("Shopping Basket Soul") ?? false),
-            new SoulInfo("Spray Bottle", m?.HasReceivedSoul("Spray Bottle Soul") ?? false),
-            new SoulInfo("Stereoscope", m?.HasReceivedSoul("Stereoscope Soul") ?? false),
-            new SoulInfo("Sunglasses", m?.HasReceivedSoul("Sunglasses Soul") ?? false),
-            new SoulInfo("Umbrella", m?.HasReceivedSoul("Umbrella Soul") ?? false),
-            new SoulInfo("Tinned Food", m?.HasReceivedSoul("Tinned Food Soul") ?? false),
-            new SoulInfo("Tomato", m?.HasReceivedSoul("Tomato Soul") ?? false),
-            new SoulInfo("Toothbrush", m?.HasReceivedSoul("Toothbrush Soul") ?? false),
-            new SoulInfo("Toy Car", m?.HasReceivedSoul("Toy Car Soul") ?? false),
-            new SoulInfo("Walkie Talkie", m?.HasReceivedSoul("Walkie Talkie Soul") ?? false),
-            new SoulInfo("Weed Tool", m?.HasReceivedSoul("Weed Tool Soul") ?? false),
+            new SoulInfo("Adding Machine", m?.HasReceivedSoul("Adding Machine") ?? false),
+            new SoulInfo("Apple Cores", m?.HasReceivedSoul("Apple Cores") ?? false),
+            new SoulInfo("Baby Doll", m?.HasReceivedSoul("Baby Doll") ?? false),
+            new SoulInfo("Carrots", m?.HasReceivedSoul("Carrots") ?? false),
+            new SoulInfo("Cucumbers", m?.HasReceivedSoul("Cucumbers") ?? false),
+            new SoulInfo("Dish Soap Bottle", m?.HasReceivedSoul("Dish Soap Bottle") ?? false),
+            new SoulInfo("Dustbin", m?.HasReceivedSoul("Dustbin") ?? false),
+            new SoulInfo("Dustbin Lid", m?.HasReceivedSoul("Dustbin Lid") ?? false),
+            new SoulInfo("Chalk", m?.HasReceivedSoul("Chalk") ?? false),
+            new SoulInfo("Hairbrush", m?.HasReceivedSoul("Hairbrush") ?? false),
+            new SoulInfo("Horn-Rimmed Glasses", m?.HasReceivedSoul("Horn-Rimmed Glasses") ?? false),
+            new SoulInfo("Leeks", m?.HasReceivedSoul("Leeks") ?? false),
+            new SoulInfo("Lily Flower", m?.HasReceivedSoul("Lily Flower") ?? false),
+            new SoulInfo("Loo Paper", m?.HasReceivedSoul("Loo Paper") ?? false),
+            new SoulInfo("Oranges", m?.HasReceivedSoul("Oranges") ?? false),
+            new SoulInfo("Pint Bottles", m?.HasReceivedSoul("Pint Bottles") ?? false),
+            new SoulInfo("Pricing Gun", m?.HasReceivedSoul("Pricing Gun") ?? false),
+            new SoulInfo("Push Broom", m?.HasReceivedSoul("Push Broom") ?? false),
+            new SoulInfo("Red Glasses", m?.HasReceivedSoul("Red Glasses") ?? false),
+            new SoulInfo("Shopping Basket", m?.HasReceivedSoul("Shopping Basket") ?? false),
+            new SoulInfo("Spray Bottle", m?.HasReceivedSoul("Spray Bottle") ?? false),
+            new SoulInfo("Stereoscope", m?.HasReceivedSoul("Stereoscope") ?? false),
+            new SoulInfo("Sunglasses", m?.HasReceivedSoul("Sunglasses") ?? false),
+            new SoulInfo("Tinned Food", m?.HasReceivedSoul("Tinned Food") ?? false),
+            new SoulInfo("Tomatoes", m?.HasReceivedSoul("Tomatoes") ?? false),
+            new SoulInfo("Toothbrush", m?.HasReceivedSoul("Toothbrush") ?? false),
+            new SoulInfo("Toy Car", m?.HasReceivedSoul("Toy Car") ?? false),
+            new SoulInfo("Toy Plane", m?.HasReceivedSoul("Toy Plane") ?? false),
+            new SoulInfo("Umbrellas", m?.HasReceivedSoul("Umbrellas") ?? false),
+            new SoulInfo("Walkie Talkies", m?.HasReceivedSoul("Walkie Talkies") ?? false),
+            new SoulInfo("Weed Tools", m?.HasReceivedSoul("Weed Tools") ?? false),
         }; }
         
         private List<SoulInfo> GetBackGardensPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Badminton Racket", m?.HasReceivedSoul("Badminton Racket Soul") ?? false),
-            new SoulInfo("Bow", m?.HasReceivedSoul("Bow Soul") ?? false),
-            new SoulInfo("Bra", m?.HasReceivedSoul("Bra Soul") ?? false),
-            new SoulInfo("Bust Pipe", m?.HasReceivedSoul("Bust Pipe Soul") ?? false),
-            new SoulInfo("Bust Glasses", m?.HasReceivedSoul("Bust Glasses Soul") ?? false),
-            new SoulInfo("Bust Hat", m?.HasReceivedSoul("Bust Hat Soul") ?? false),
-            new SoulInfo("Clean Sign", m?.HasReceivedSoul("Clean Sign Soul") ?? false),
-            new SoulInfo("Clippers", m?.HasReceivedSoul("Clippers Soul") ?? false),
-            new SoulInfo("Cricket Ball", m?.HasReceivedSoul("Cricket Ball Soul") ?? false),
-            new SoulInfo("Cricket Bat", m?.HasReceivedSoul("Cricket Bat Soul") ?? false),
-            new SoulInfo("Drawer", m?.HasReceivedSoul("Drawer Soul") ?? false),
-            new SoulInfo("Duck Statue", m?.HasReceivedSoul("Duck Statue Soul") ?? false),
-            new SoulInfo("Enamel Jug", m?.HasReceivedSoul("Enamel Jug Soul") ?? false),
-            new SoulInfo("Frog Statue", m?.HasReceivedSoul("Frog Statue Soul") ?? false),
-            new SoulInfo("Jeremy Fish", m?.HasReceivedSoul("Jeremy Fish Soul") ?? false),
-            new SoulInfo("Messy Sign", m?.HasReceivedSoul("Messy Sign Soul") ?? false),
-            new SoulInfo("Newspaper", m?.HasReceivedSoul("Newspaper Soul") ?? false),
-            new SoulInfo("Paintbrush", m?.HasReceivedSoul("Paintbrush Soul") ?? false),
-            new SoulInfo("Pot Stack", m?.HasReceivedSoul("Pot Stack Soul") ?? false),
-            new SoulInfo("Rose", m?.HasReceivedSoul("Rose Soul") ?? false),
-            // new SoulInfo("Rose Box", m?.HasReceivedSoul("Rose Box Soul") ?? false),
-            new SoulInfo("Soap", m?.HasReceivedSoul("Soap Soul") ?? false),
-            new SoulInfo("Sock", m?.HasReceivedSoul("Sock Soul") ?? false),
-            new SoulInfo("Tea Cup", m?.HasReceivedSoul("Tea Cup Soul") ?? false),
-            new SoulInfo("Tea Pot", m?.HasReceivedSoul("Tea Pot Soul") ?? false),
-            new SoulInfo("Vase", m?.HasReceivedSoul("Vase Soul") ?? false),
+            new SoulInfo("Badminton Racket", m?.HasReceivedSoul("Badminton Racket") ?? false),
+            new SoulInfo("Bra", m?.HasReceivedSoul("Bra") ?? false),
+            new SoulInfo("Bust Pipe", m?.HasReceivedSoul("Bust Pipe") ?? false),
+            new SoulInfo("Bust Glasses", m?.HasReceivedSoul("Bust Glasses") ?? false),
+            new SoulInfo("Bust Hat", m?.HasReceivedSoul("Bust Hat") ?? false),
+            new SoulInfo("Clippers", m?.HasReceivedSoul("Clippers") ?? false),
+            new SoulInfo("Cricket Ball", m?.HasReceivedSoul("Cricket Ball") ?? false),
+            new SoulInfo("Cricket Bat", m?.HasReceivedSoul("Cricket Bat") ?? false),
+            new SoulInfo("Drawer", m?.HasReceivedSoul("Drawer") ?? false),
+            new SoulInfo("Duck Statue", m?.HasReceivedSoul("Duck Statue") ?? false),
+            new SoulInfo("Enamel Jug", m?.HasReceivedSoul("Enamel Jug") ?? false),
+            new SoulInfo("Frog Statue", m?.HasReceivedSoul("Frog Statue") ?? false),
+            new SoulInfo("Jeremy Fish", m?.HasReceivedSoul("Jeremy Fish") ?? false),
+            new SoulInfo("Newspaper", m?.HasReceivedSoul("Newspaper") ?? false),
+            new SoulInfo("No Goose Sign (Clean)", m?.HasReceivedSoul("No Goose Sign (Clean)") ?? false),
+            new SoulInfo("No Goose Sign (Messy)", m?.HasReceivedSoul("No Goose Sign (Messy)") ?? false),
+            new SoulInfo("Paintbrush", m?.HasReceivedSoul("Paintbrush") ?? false),
+            new SoulInfo("Pot Stack", m?.HasReceivedSoul("Pot Stack") ?? false),
+            new SoulInfo("Ribbons", m?.HasReceivedSoul("Ribbons") ?? false),
+            new SoulInfo("Rose", m?.HasReceivedSoul("Rose") ?? false),
+            new SoulInfo("Rose Box", m?.HasReceivedSoul("Rose Box") ?? false),
+            new SoulInfo("Soap", m?.HasReceivedSoul("Soap") ?? false),
+            new SoulInfo("Socks", m?.HasReceivedSoul("Socks") ?? false),
+            new SoulInfo("Tea Cup", m?.HasReceivedSoul("Tea Cup") ?? false),
+            new SoulInfo("Tea Pot", m?.HasReceivedSoul("Tea Pot") ?? false),
+            new SoulInfo("Vase", m?.HasReceivedSoul("Vase") ?? false),
         }; }
         
         private List<SoulInfo> GetPubPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Burly Mans Bucket", m?.HasReceivedSoul("Burly Mans Bucket Soul") ?? false),
-            new SoulInfo("Dartboard", m?.HasReceivedSoul("Dartboard Soul") ?? false),
-            new SoulInfo("Candlestick", m?.HasReceivedSoul("Candlestick Soul") ?? false),
-            new SoulInfo("Cork", m?.HasReceivedSoul("Cork Soul") ?? false),
-            new SoulInfo("Exit Letter", m?.HasReceivedSoul("Exit Letter Soul") ?? false),
-            new SoulInfo("Exit Parcel", m?.HasReceivedSoul("Exit Parcel Soul") ?? false),
-            new SoulInfo("Flower for Vase", m?.HasReceivedSoul("Flower for Vase Soul") ?? false),
-            new SoulInfo("Fork", m?.HasReceivedSoul("Fork Soul") ?? false),
-            new SoulInfo("Harmonica", m?.HasReceivedSoul("Harmonica Soul") ?? false),
-            new SoulInfo("Knife", m?.HasReceivedSoul("Knife Soul") ?? false),
-            new SoulInfo("Mop", m?.HasReceivedSoul("Mop Soul") ?? false),
-            new SoulInfo("Mop Bucket", m?.HasReceivedSoul("Mop Bucket Soul") ?? false),
-            new SoulInfo("No Goose Sign", m?.HasReceivedSoul("No Goose Sign Soul") ?? false),
-            new SoulInfo("Pepper Grinder", m?.HasReceivedSoul("Pepper Grinder Soul") ?? false),
-            new SoulInfo("Plate", m?.HasReceivedSoul("Plate Soul") ?? false),
-            new SoulInfo("Pint Glass", m?.HasReceivedSoul("Pint Glass Soul") ?? false),
-            new SoulInfo("Portable Stool", m?.HasReceivedSoul("Portable Stool Soul") ?? false),
-            new SoulInfo("Quoit", m?.HasReceivedSoul("Quoit Soul") ?? false),
-            new SoulInfo("Stealth Box", m?.HasReceivedSoul("Stealth Box Soul") ?? false),
-            new SoulInfo("Tomato", m?.HasReceivedSoul("Tomato Soul") ?? false),
-            new SoulInfo("Toy Boat", m?.HasReceivedSoul("Toy Boat Soul") ?? false),
-            new SoulInfo("Traffic Cone", m?.HasReceivedSoul("Traffic Cone Soul") ?? false),
+            new SoulInfo("Bucket", m?.HasReceivedSoul("Bucket") ?? false),
+            new SoulInfo("Dartboard", m?.HasReceivedSoul("Dartboard") ?? false),
+            new SoulInfo("Candlestick", m?.HasReceivedSoul("Candlestick") ?? false),
+            new SoulInfo("Cork", m?.HasReceivedSoul("Cork") ?? false),
+            new SoulInfo("Flower for Vase", m?.HasReceivedSoul("Flower for Vase") ?? false),
+            new SoulInfo("Forks", m?.HasReceivedSoul("Forks") ?? false),
+            new SoulInfo("Harmonica", m?.HasReceivedSoul("Harmonica") ?? false),
+            new SoulInfo("Knives", m?.HasReceivedSoul("Knives") ?? false),
+            new SoulInfo("Letter", m?.HasReceivedSoul("Letter") ?? false),
+            new SoulInfo("Mop", m?.HasReceivedSoul("Mop") ?? false),
+            new SoulInfo("Mop Bucket", m?.HasReceivedSoul("Mop Bucket") ?? false),
+            new SoulInfo("No Goose Sign (Pub)", m?.HasReceivedSoul("No Goose Sign (Pub)") ?? false),
+            new SoulInfo("Parcel", m?.HasReceivedSoul("Parcel") ?? false),
+            new SoulInfo("Pepper Grinder", m?.HasReceivedSoul("Pepper Grinder") ?? false),
+            new SoulInfo("Plates", m?.HasReceivedSoul("Plates") ?? false),
+            new SoulInfo("Pint Glasses", m?.HasReceivedSoul("Pint Glasses") ?? false),
+            new SoulInfo("Portable Stool", m?.HasReceivedSoul("Portable Stool") ?? false),
+            new SoulInfo("Quoits", m?.HasReceivedSoul("Quoits") ?? false),
+            new SoulInfo("Stealth Box", m?.HasReceivedSoul("Stealth Box") ?? false),
+            new SoulInfo("Tomatoes", m?.HasReceivedSoul("Tomatoes") ?? false),
+            new SoulInfo("Toy Boat", m?.HasReceivedSoul("Toy Boat") ?? false),
+            new SoulInfo("Traffic Cone", m?.HasReceivedSoul("Traffic Cone") ?? false),
         }; }
         
         private List<SoulInfo> GetModelVillagePropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
-            new SoulInfo("Birdbath", m?.HasReceivedSoul("Birdbath Soul") ?? false),
-            new SoulInfo("Easel", m?.HasReceivedSoul("Easel Soul") ?? false),
-            new SoulInfo("Golden Bell", m?.HasReceivedSoul("Golden Bell Soul") ?? false),
-            new SoulInfo("Mini Bench", m?.HasReceivedSoul("Mini Bench Soul") ?? false),
-            new SoulInfo("Mini Mail Pillar", m?.HasReceivedSoul("Mini Mail Pillar Soul") ?? false),
-            new SoulInfo("Mini Person", m?.HasReceivedSoul("Mini Person Soul") ?? false),
-            new SoulInfo("Mini Phone Door", m?.HasReceivedSoul("Mini Phone Door Soul") ?? false),
-            new SoulInfo("Mini Pump", m?.HasReceivedSoul("Mini Pump Soul") ?? false),
-            new SoulInfo("Mini Shovel", m?.HasReceivedSoul("Mini Shovel Soul") ?? false),
-            new SoulInfo("Mini Street Bench", m?.HasReceivedSoul("Mini Street Bench Soul") ?? false),
-            new SoulInfo("Poppy Flower", m?.HasReceivedSoul("Poppy Flower Soul") ?? false),
-            new SoulInfo("Sun Lounge", m?.HasReceivedSoul("Sun Lounge Soul") ?? false),
-            new SoulInfo("Timber Handle", m?.HasReceivedSoul("Timber Handle Soul") ?? false),
+            new SoulInfo("Golden Bell", m?.HasReceivedSoul("Golden Bell") ?? false),
+            new SoulInfo("Miniature Benches", m?.HasReceivedSoul("Miniature Benches") ?? false),
+            new SoulInfo("Miniature Birdbath", m?.HasReceivedSoul("Miniature Birdbath") ?? false),
+            new SoulInfo("Miniature Easel", m?.HasReceivedSoul("Miniature Easel") ?? false),
+            new SoulInfo("Miniature Mail Pillar", m?.HasReceivedSoul("Miniature Mail Pillar") ?? false),
+            new SoulInfo("Miniature People", m?.HasReceivedSoul("Miniature People") ?? false),
+            new SoulInfo("Miniature Phone Door", m?.HasReceivedSoul("Miniature Phone Door") ?? false),
+            new SoulInfo("Miniature Pump", m?.HasReceivedSoul("Miniature Pump") ?? false),
+            new SoulInfo("Miniature Shovel", m?.HasReceivedSoul("Miniature Shovel") ?? false),
+            new SoulInfo("Miniature Sun Lounge", m?.HasReceivedSoul("Miniature Sun Lounge") ?? false),
+            new SoulInfo("Poppy Flower", m?.HasReceivedSoul("Poppy Flower") ?? false),
+            new SoulInfo("Timber Handle", m?.HasReceivedSoul("Timber Handle") ?? false),
         }; }
         
         private List<SoulInfo> GetSharedPropSouls(Plugin p) { var m = p.PropManager; return new List<SoulInfo> {
@@ -1099,6 +1116,217 @@ namespace GooseGameAP
             // new SoulInfo("Walkie Talkie", m?.HasReceivedSoul("Walkie Talkie Soul") ?? false),
             // new SoulInfo("Boot", m?.HasReceivedSoul("Boot Soul") ?? false),
             // new SoulInfo("Mini Person", m?.HasReceivedSoul("Mini Person Soul") ?? false)
+        }; }
+        
+        // ============== NEW TASKS TRACKER WINDOW (Notebook Style) ==============
+        
+        public void DrawNewTasksTracker(Plugin plugin)
+        {
+            if (!showNewTasksTracker) return;
+            
+            InitializeScrollbarStyles();
+            
+            float baseW = 320, baseH = 450;
+            float winW = baseW * newTasksTrackerScale;
+            float winH = baseH * newTasksTrackerScale;
+            float s = newTasksTrackerScale;
+            
+            if (!newTasksTrackerPositionInitialized)
+            {
+                float savedX = PlayerPrefs.GetFloat(NEW_TASKS_X_KEY, Screen.width - winW - 15);
+                float savedY = PlayerPrefs.GetFloat(NEW_TASKS_Y_KEY, 15);
+                newTasksTrackerWindowRect = new Rect(savedX, savedY, winW, winH);
+                newTasksTrackerPositionInitialized = true;
+            }
+            
+            newTasksTrackerWindowRect.width = winW;
+            newTasksTrackerWindowRect.height = winH;
+            newTasksTrackerWindowRect.x = Mathf.Clamp(newTasksTrackerWindowRect.x, 0, Screen.width - winW);
+            newTasksTrackerWindowRect.y = Mathf.Clamp(newTasksTrackerWindowRect.y, 0, Screen.height - winH);
+            
+            int titleSize = Mathf.RoundToInt(15 * s);
+            int headerSize = Mathf.RoundToInt(12 * s);
+            int itemSize = Mathf.RoundToInt(11 * s);
+            float lineH = 18 * s;
+            float headerH = 22 * s;
+            
+            float winX = newTasksTrackerWindowRect.x;
+            float winY = newTasksTrackerWindowRect.y;
+            
+            // Paper background (white/very light)
+            GUI.color = new Color(0.99f, 0.99f, 0.97f, 1f);
+            GUI.DrawTexture(new Rect(winX, winY, winW, winH), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            
+            // Red margin line on the left
+            float marginX = winX + 28 * s;
+            GUI.color = new Color(0.9f, 0.6f, 0.6f, 1f);
+            GUI.DrawTexture(new Rect(marginX, winY, 2 * s, winH), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            
+            // Blue horizontal ruled lines
+            float ruleSpacing = 20 * s;
+            GUI.color = new Color(0.6f, 0.75f, 0.9f, 0.8f);
+            for (float ly = winY + ruleSpacing; ly < winY + winH - 5 * s; ly += ruleSpacing)
+            {
+                GUI.DrawTexture(new Rect(winX + 5 * s, ly, winW - 10 * s, 1), Texture2D.whiteTexture);
+            }
+            GUI.color = Color.white;
+            
+            // Content area
+            float x = marginX + 8 * s;
+            float y = winY + 8 * s;
+            float w = winW - (marginX - winX) - 16 * s;
+            
+            // Title
+            GUI.color = new Color(0.2f, 0.2f, 0.25f);
+            GUI.Label(new Rect(x, y, w * 0.6f, 24 * s), $"<size={titleSize}><i>New Tasks</i></size>");
+            GUI.color = Color.white;
+            
+            y += 26 * s;
+            
+            // Scale slider
+            GUI.color = new Color(0.3f, 0.3f, 0.35f);
+            GUI.Label(new Rect(x, y + 3 * s, 32 * s, 18 * s), $"<size={Mathf.RoundToInt(10 * s)}>Size:</size>");
+            GUI.color = Color.white;
+            
+            float sliderX = x + 34 * s;
+            float sliderW = w - 85 * s;
+            
+            GUI.color = new Color(0.8f, 0.8f, 0.82f, 1f);
+            GUI.DrawTexture(new Rect(sliderX, y + 8 * s, sliderW, 8 * s), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            
+            float newScale = GUI.HorizontalSlider(new Rect(sliderX, y, sliderW, 22 * s), newTasksTrackerScale, MIN_SCALE, MAX_SCALE);
+            
+            GUI.color = new Color(0.3f, 0.3f, 0.35f);
+            GUI.Label(new Rect(sliderX + sliderW + 6 * s, y + 3 * s, 42 * s, 18 * s), $"<size={Mathf.RoundToInt(10 * s)}>{Mathf.RoundToInt(newTasksTrackerScale * 100)}%</size>");
+            GUI.color = Color.white;
+            
+            if (Mathf.Abs(newScale - newTasksTrackerScale) > 0.01f)
+            {
+                newTasksTrackerScale = newScale;
+                PlayerPrefs.SetFloat(NEW_TASKS_SCALE_KEY, newTasksTrackerScale);
+                PlayerPrefs.Save();
+            }
+            
+            y += 26 * s;
+            
+            // Scroll area
+            float scrollTop = y;
+            float scrollH = winH - (scrollTop - winY) - 8 * s;
+            float contentH = CalculateNewTasksContentHeight(plugin, lineH, headerH, s);
+            
+            customVerticalScrollbar.fixedWidth = Mathf.Max(12, 12 * s);
+            customVerticalScrollbarThumb.fixedWidth = Mathf.Max(10, 10 * s);
+            
+            GUIStyle origScrollbar = GUI.skin.verticalScrollbar;
+            GUIStyle origThumb = GUI.skin.verticalScrollbarThumb;
+            GUI.skin.verticalScrollbar = customVerticalScrollbar;
+            GUI.skin.verticalScrollbarThumb = customVerticalScrollbarThumb;
+            
+            newTasksScrollPosition = GUI.BeginScrollView(
+                new Rect(x - 4 * s, scrollTop, w + 8 * s, scrollH),
+                newTasksScrollPosition,
+                new Rect(0, 0, w - 10 * s, contentH));
+            
+            GUI.skin.verticalScrollbar = origScrollbar;
+            GUI.skin.verticalScrollbarThumb = origThumb;
+            
+            float scrollY = 0;
+            float sectionW = w - 6 * s;
+            
+            if (plugin.NewTasksEnabled)
+            {
+                scrollY = DrawNewTasks(scrollY, sectionW, "Completed Tasks:", GetNewTasks(plugin), headerSize, itemSize, lineH, headerH, s);
+            }
+            else
+            {
+                GUI.color = new Color(0.4f, 0.5f, 0.4f);
+                GUI.Label(new Rect(4 * s, scrollY, sectionW, headerH), $"<size={headerSize}>New Tasks: DISABLED</size>");
+                GUI.color = Color.white;
+            }
+            
+            GUI.EndScrollView();
+            
+            // Handle dragging from title area (top 24px) - AFTER all controls
+            float dragAreaH = 24 * s;
+            Event e = Event.current;
+            Rect titleBar = new Rect(winX, winY, winW, dragAreaH);
+            
+            if (e.type == EventType.MouseDown && e.button == 0 && titleBar.Contains(e.mousePosition))
+            {
+                isDraggingNewTasksTracker = true;
+                newTasksDragOffset = e.mousePosition - new Vector2(winX, winY);
+                e.Use();
+            }
+            else if (e.type == EventType.MouseUp && e.button == 0 && isDraggingNewTasksTracker)
+            {
+                isDraggingNewTasksTracker = false;
+                PlayerPrefs.SetFloat(NEW_TASKS_X_KEY, newTasksTrackerWindowRect.x);
+                PlayerPrefs.SetFloat(NEW_TASKS_Y_KEY, newTasksTrackerWindowRect.y);
+                PlayerPrefs.Save();
+            }
+            else if (e.type == EventType.MouseDrag && isDraggingNewTasksTracker)
+            {
+                newTasksTrackerWindowRect.x = e.mousePosition.x - newTasksDragOffset.x;
+                newTasksTrackerWindowRect.y = e.mousePosition.y - newTasksDragOffset.y;
+                e.Use();
+            }
+        }
+        
+        private float CalculateNewTasksContentHeight(Plugin plugin, float lineH, float headerH, float s)
+        {
+            float h = headerH + 11 * lineH + 6 * s;
+            if (plugin.NewTasksEnabled)
+            {
+                h += headerH + 13 * lineH + 6 * s;
+            }
+            return h + 20 * s;
+        }
+        
+        private float DrawNewTasks(float startY, float width, string title, List<NewTaskInfo> tasks,
+            int headerSize, int itemSize, float lineH, float headerH, float s)
+        {
+            float y = startY;
+            int collected = 0;
+            foreach (var task in tasks) if (task.CompletedTask) collected++;
+            
+            // Header in dark ink
+            GUI.color = new Color(0.2f, 0.2f, 0.25f);
+            GUI.Label(new Rect(4 * s, y, width, headerH), $"<size={headerSize}><b>{title}</b> {collected}/{tasks.Count}</size>");
+            GUI.color = Color.white;
+            y += headerH;
+            
+            int checkSize = itemSize + 4;
+            foreach (var task in tasks)
+            {
+                // Green for collected, black for not
+                GUI.color = task.CompletedTask ? new Color(0.2f, 0.5f, 0.2f) : new Color(0.2f, 0.2f, 0.2f);
+                GUI.Label(new Rect(8 * s, y, width - 8 * s, lineH), $"<size={checkSize}>{(task.CompletedTask ? "✓" : "-")}</size><size={itemSize}> {task.Name}</size>");
+                GUI.color = Color.white;
+                y += lineH;
+            }
+            return y + 4 * s;
+        }
+        
+        private struct NewTaskInfo { public string Name; public bool CompletedTask; public NewTaskInfo(string n, bool c) { Name = n; CompletedTask = c; } }
+        
+        private List<NewTaskInfo> GetNewTasks(Plugin p) { var m = p.PropManager; return new List<NewTaskInfo> {
+            // Ordered based on what's most aesthetically pleasing: start area -> hub -> gardens -> high street -> back gardens -> pub
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1501), p.IsLocationChecked(Plugin.BASE_ID + 1501)), // "Break the intro gate"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1500), p.IsLocationChecked(Plugin.BASE_ID + 1500)), // "Drop some mail in the well"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1503), p.IsLocationChecked(Plugin.BASE_ID + 1503)), // "Short out the garden radio"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1504), p.IsLocationChecked(Plugin.BASE_ID + 1504)), // "Lock the groundskeeper IN the garden"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1511), p.IsLocationChecked(Plugin.BASE_ID + 1511)), // "Trap the TV shop owner in the garage"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1502), p.IsLocationChecked(Plugin.BASE_ID + 1502)), // "Break through the boards to the back gardens"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1505), p.IsLocationChecked(Plugin.BASE_ID + 1505)), // "Make the woman fix the topiary"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1506), p.IsLocationChecked(Plugin.BASE_ID + 1506)), // "Pose as a duck statue"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1507), p.IsLocationChecked(Plugin.BASE_ID + 1507)), // "Dress up the bush with both ribbons"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1510), p.IsLocationChecked(Plugin.BASE_ID + 1510)), // "Do some interior redecorating"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1508), p.IsLocationChecked(Plugin.BASE_ID + 1508)), // "Trip the burly man"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1509), p.IsLocationChecked(Plugin.BASE_ID + 1509)), // "Break a pint glass"
+            new NewTaskInfo(LocationMappings.GetLocationName(Plugin.BASE_ID + 1512), p.IsLocationChecked(Plugin.BASE_ID + 1512)), // "Perform at the pub with a harmonica"
         }; }
     }
 }

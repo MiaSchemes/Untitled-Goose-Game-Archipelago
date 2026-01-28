@@ -41,6 +41,10 @@ namespace GooseGameAP
         public bool HasPubAccess { get; set; } = false;
         public bool HasModelVillageAccess { get; set; } = false;
         public bool HasGoldenBell { get; set; } = false;
+
+        // Extra area access flags for teleporting
+        public bool HasEnteredBackGardens { get; set; } = false;
+        public bool HasEnteredPub { get; set; } = false;
         
         // NPC Soul flags
         public bool HasGroundskeeperSoul { get; set; } = false;
@@ -58,13 +62,14 @@ namespace GooseGameAP
         // Soul settings from slot data
         public bool NPCSoulsEnabled => Client?.NPCSoulsEnabled ?? true;
         public bool PropSoulsEnabled => Client?.PropSoulsEnabled ?? true;
+        public bool NewTasksEnabled => Client?.NewTasksEnabled ?? true;
         
         // Buff tracking
         public bool IsSilent => TrapManager?.IsSilent ?? false;
         public int MegaHonkCount => TrapManager?.MegaHonkCount ?? 0;
         
         // DeathLink
-        public bool DeathLinkEnabled { get; set; } = false;
+        public bool DeathLinkEnabled => Client?.DeathLinkEnabled ?? false;
         private bool deathLinkPending = false;
         
         // Location tracking
@@ -149,9 +154,13 @@ namespace GooseGameAP
             // Handle DeathLink
             if (deathLinkPending)
             {
-                deathLinkPending = false;
-                GateManager?.TeleportGooseToWell();
-                UI?.ShowNotification("DeathLink! Another player died!");
+                if (GameManager.instance != null && GameManager.instance.allGeese != null && GameManager.instance.allGeese.Count > 0)
+                {
+                    deathLinkPending = false;
+                    TrapManager.ForceDropItems();
+                    GateManager?.TeleportGooseToWell();
+                    UI?.ShowNotification("DeathLink! Another player died!");
+                }
             }
             
             // Update traps
@@ -188,16 +197,22 @@ namespace GooseGameAP
                 UI?.ToggleServerLog();
             }
             
-            // F4 key: Toggle location highlighting (sparkles on unchecked items)
+            // F4 key: Toggle server log overlay
             if (Input.GetKeyDown(KeyCode.F4))
+            {
+                UI?.ToggleNewTasksTracker();
+            }
+            
+            // F5 key: Toggle location highlighting (sparkles on unchecked items)
+            if (Input.GetKeyDown(KeyCode.F5))
             {
                 LocationHighlight?.Toggle();
                 string state = LocationHighlight?.HighlightingEnabled == true ? "ON" : "OFF";
                 UI?.ShowNotification($"Location highlighting: {state}");
             }
             
-            // F5 key: Cycle highlight color (Shift+F5 for backwards)
-            if (Input.GetKeyDown(KeyCode.F5))
+            // F6 key: Cycle highlight color (Shift+F6 for backwards)
+            if (Input.GetKeyDown(KeyCode.F6))
             {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
@@ -236,15 +251,51 @@ namespace GooseGameAP
             }
             if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
             {
-                WarpToArea("High Street", HasHighStreetAccess, GateManager.HighStreetPosition);
+                if (PropManager.HasReceivedSoul("Chalk") && !checkedLocations.Contains(119000016))
+                {
+                    int numTasks = 0;
+                    if (checkedLocations.Contains(119000010)) numTasks++;
+                    if (checkedLocations.Contains(119000011)) numTasks++;
+                    if (checkedLocations.Contains(119000012)) numTasks++;
+                    if (checkedLocations.Contains(119000013)) numTasks++;
+                    if (checkedLocations.Contains(119000014)) numTasks++;
+                    if (checkedLocations.Contains(119000015)) numTasks++;
+                    
+                    if (numTasks >= 5)
+                    {
+                        WarpToArea("High Street", HasHighStreetAccess, GateManager.HighStreetTemporaryPosition);
+                    }
+                    else
+                    {
+                        WarpToArea("High Street", HasHighStreetAccess, GateManager.HighStreetPosition);
+                    }
+                }
+                else
+                {
+                    WarpToArea("High Street", HasHighStreetAccess, GateManager.HighStreetPosition);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
             {
-                WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensPosition);
+                if (!HasEnteredBackGardens)
+                {
+                    WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensPosition);
+                }
+                else
+                {
+                    WarpToArea("Back Gardens", HasBackGardensAccess, GateManager.BackGardensUpdatedPosition);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
             {
-                WarpToArea("Pub", HasPubAccess, GateManager.PubPosition);
+                if (!HasEnteredPub)
+                {
+                    WarpToArea("Pub", HasPubAccess, GateManager.PubPosition);
+                }
+                else
+                {
+                    WarpToArea("Pub", HasPubAccess, GateManager.PubUpdatedPosition);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
             {
@@ -531,6 +582,9 @@ namespace GooseGameAP
             // Draw server log overlay (always if visible, even when main UI is hidden)
             UI?.DrawServerLog(this);
             
+            // Draw extra task list overlay (always if visible, even when main UI is hidden)
+            UI?.DrawNewTasksTracker(this);
+            
             if (!showUI) return;
             UI?.DrawUI(this);
         }
@@ -656,6 +710,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 20: case 21: case 22: case 23: case 24: case 25: // All Back Gardens Tasks Complete
+                    HasEnteredBackGardens = true;
                     if (checkedLocations.Contains(20 + BASE_ID) && checkedLocations.Contains(21 + BASE_ID)
                         && checkedLocations.Contains(22 + BASE_ID) && checkedLocations.Contains(23 + BASE_ID) && checkedLocations.Contains(24 + BASE_ID)
                         && checkedLocations.Contains(25 + BASE_ID) && checkedLocations.Contains(26 + BASE_ID))
@@ -664,6 +719,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 26: // All Back Gardens Tasks Complete, and Four Final Tasks
+                    HasEnteredBackGardens = true;
                     if (checkedLocations.Contains(20 + BASE_ID) && checkedLocations.Contains(21 + BASE_ID)
                         && checkedLocations.Contains(22 + BASE_ID) && checkedLocations.Contains(23 + BASE_ID) && checkedLocations.Contains(24 + BASE_ID)
                         && checkedLocations.Contains(25 + BASE_ID) && checkedLocations.Contains(26 + BASE_ID))
@@ -677,6 +733,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 30: case 31: case 32: case 33: case 34: case 35: case 36: // All Pub Tasks Complete
+                    HasEnteredPub = true;
                     if (checkedLocations.Contains(30 + BASE_ID) && checkedLocations.Contains(31 + BASE_ID) && checkedLocations.Contains(32 + BASE_ID)
                         && checkedLocations.Contains(33 + BASE_ID) && checkedLocations.Contains(34 + BASE_ID) && checkedLocations.Contains(35 + BASE_ID)
                         && checkedLocations.Contains(36 + BASE_ID) && checkedLocations.Contains(37 + BASE_ID))
@@ -685,6 +742,7 @@ namespace GooseGameAP
                     }
                     break;
                 case 37: // All Pub Tasks Complete, and Four Final Tasks
+                    HasEnteredPub = true;
                     if (checkedLocations.Contains(30 + BASE_ID) && checkedLocations.Contains(31 + BASE_ID) && checkedLocations.Contains(32 + BASE_ID)
                         && checkedLocations.Contains(33 + BASE_ID) && checkedLocations.Contains(34 + BASE_ID) && checkedLocations.Contains(35 + BASE_ID)
                         && checkedLocations.Contains(36 + BASE_ID) && checkedLocations.Contains(37 + BASE_ID))
@@ -742,12 +800,25 @@ namespace GooseGameAP
                     }
                     break;
 
+                // Break boards
+                case 1502:
+                    HasEnteredBackGardens = true;
+                    break;
+
                 // Model church first-time pecks
                 case 1350:
                     SendLocationCheck(1390 + BASE_ID);
                     break;
                 case 1369:
                     SendLocationCheck(1391 + BASE_ID);
+                    break;
+                
+                // Dress up the bush with both ribbons
+                case 9998: case 9999:
+                    if (checkedLocations.Contains(9998 + BASE_ID) && checkedLocations.Contains(9999 + BASE_ID))
+                    {
+                        SendLocationCheck(1507 + BASE_ID);
+                    }
                     break;
             }
         }
@@ -903,7 +974,7 @@ namespace GooseGameAP
                     break;
                 
                 // Prop Souls (400-621) - handled by PropManager
-                case 400: case 401: case 402: case 403: case 404: case 405: case 406: case 407: case 408: case 409:
+                case 400: case 402: case 403: case 404: case 405: case 406: case 407: case 408: case 409:
                 case 410: case 411: case 412: case 413: case 414: case 415: case 416: case 417: case 418: case 419:
                 case 420: case 421: case 422: case 423: case 424: case 425:
                 case 500: case 501: case 502: case 503: case 504: case 505: case 506: case 507: case 508: case 509:
@@ -923,6 +994,20 @@ namespace GooseGameAP
                     PropManager?.ReceiveSoul(soulName);
                     PropManager?.SaveSouls();
                     UI?.ShowNotification($"{soulName} received!");
+                    break;
+
+                case 401:  // Tomatoes
+                    PropManager?.ReceiveSoul("Tomatoes");
+                    PropManager?.SaveSouls();
+                    UI?.ShowNotification($"Tomatoes received!");
+                    
+                    var checkAllSwitchSystems = FindObjectsOfType<SwitchSystem>();
+                    foreach (var switchSys in checkAllSwitchSystems)
+                    {
+                        string switchSysParentName = switchSys?.transform?.parent?.gameObject?.name ?? "no parent";
+                        Log.LogInfo($"[INTERACT DEBUG] Noting existence of SwitchSystem '{switchSys.name}' with parent '{switchSysParentName}'");
+                    }
+
                     break;
                 
                 case 204: // Coin filler item
@@ -1002,8 +1087,27 @@ namespace GooseGameAP
             UI?.ShowNotification("You need " + areaName + " Access to enter!");
         }
         
-        public void OnGooseShooed()
+        public void OnGooseShooed(string nameOfShooer)
         {
+            if (DeathLinkEnabled) // TO DO: add option for deathlink every n shoos rather than every shoo
+            {
+                Client?.SendDeathLink(nameOfShooer);
+            }
+        }
+        
+        public void OnLaunch(Prop prop, PropLaunchEffect launcher)
+        {
+            Log.LogInfo("[OnLaunch] Launching: " + prop + " with: " + launcher);
+            if (launcher.name == "launcher0")
+            {
+                Instance?.InteractionTracker?.OnInteraction("WellDrop");
+                
+                if (PropManager.CleanPropName(prop.name) == "exitletter" || PropManager.CleanPropName(prop.name) == "exitparcel" || PropManager.CleanPropName(prop.name) == "minimailpillarprop")
+                {
+                    Log.LogInfo("[OnLaunch] Prop launched successfully counts as mail");
+                    Instance?.InteractionTracker?.OnInteraction("WellDrop2");
+                }
+            }
         }
         
         public bool CanEnterArea(GoalListArea area)
@@ -1029,6 +1133,9 @@ namespace GooseGameAP
             HasPubAccess = false;
             HasModelVillageAccess = false;
             HasGoldenBell = false;
+
+            HasEnteredBackGardens = false;
+            HasEnteredPub = false;
             
             HasGroundskeeperSoul = false;
             HasBoySoul = false;
@@ -1070,6 +1177,9 @@ namespace GooseGameAP
             PlayerPrefs.SetInt("AP_Pub", HasPubAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_ModelVillage", HasModelVillageAccess ? 1 : 0);
             PlayerPrefs.SetInt("AP_GoldenBell", HasGoldenBell ? 1 : 0);
+
+            PlayerPrefs.SetInt("AP_HasEntered_BackGardens", HasEnteredBackGardens ? 1 : 0);
+            PlayerPrefs.SetInt("AP_HasEntered_Pub", HasEnteredPub ? 1 : 0);
             
             PlayerPrefs.SetInt("AP_GroundskeeperSoul", HasGroundskeeperSoul ? 1 : 0);
             PlayerPrefs.SetInt("AP_BoySoul", HasBoySoul ? 1 : 0);
@@ -1111,6 +1221,10 @@ namespace GooseGameAP
                 HasPubAccess = PlayerPrefs.GetInt("AP_Pub") == 1;
                 HasModelVillageAccess = PlayerPrefs.GetInt("AP_ModelVillage") == 1;
                 HasGoldenBell = PlayerPrefs.GetInt("AP_GoldenBell") == 1;
+
+                HasEnteredBackGardens = PlayerPrefs.GetInt("AP_HasEntered_BackGardens") == 1;
+                HasEnteredPub = PlayerPrefs.GetInt("AP_HasEntered_Pub") == 1;
+
                 
                 HasGroundskeeperSoul = PlayerPrefs.GetInt("AP_GroundskeeperSoul", 0) == 1;
                 HasBoySoul = PlayerPrefs.GetInt("AP_BoySoul", 0) == 1;
@@ -1134,6 +1248,9 @@ namespace GooseGameAP
             HasPubAccess = false;
             HasModelVillageAccess = false;
             HasGoldenBell = false;
+
+            HasEnteredBackGardens = false;
+            HasEnteredPub = false;
             
             HasGroundskeeperSoul = false;
             HasBoySoul = false;
@@ -1186,6 +1303,7 @@ namespace GooseGameAP
             
             PlayerPrefs.DeleteKey("AP_NPCSoulsEnabled");
             PlayerPrefs.DeleteKey("AP_PropSoulsEnabled");
+            PlayerPrefs.DeleteKey("AP_NewTasksEnabled");
             
             PlayerPrefs.DeleteKey("AP_LastItemIndex");
             PlayerPrefs.DeleteKey("AP_SpeedyFeet");

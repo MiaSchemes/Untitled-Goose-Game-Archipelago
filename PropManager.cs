@@ -30,178 +30,183 @@ namespace GooseGameAP
         {
             "dart",
             "tomatobox",
-            "roseboxprop",
         };
         
         // Prop names that have to be a perfect match in the PropToSoul dictionary so that they aren't erroneously attached to the wrong souls
         private static readonly List<string> PerfectMatchOnlyProps = new List<string>
         {
             "minishovelprop",
+            "minipersonvariant-goose",
+            "roseboxprop",
         };
         
         // Map item name patterns to soul names
         private static readonly Dictionary<string, string> PropToSoul = new Dictionary<string, string>
         {
             // Grouped souls - items with multiple instances
-            { "carrot", "Carrot Soul" },
-            { "tomato", "Tomato Soul" },
-            { "pumpkin", "Pumpkin Soul" },
-            { "topsoilbag", "Topsoil Bag Soul" },
-            { "topsoil", "Topsoil Bag Soul" },
-            { "fertiliser", "Topsoil Bag Soul" },
-            { "fertliser", "Topsoil Bag Soul" },  // Typo variant
-            { "fertilizer", "Topsoil Bag Soul" },
-            { "quoit", "Quoit Soul" },
-            { "plate", "Plate Soul" },
-            { "orange", "Orange Soul" },
-            { "leek", "Leek Soul" },
-            { "cucumber", "Cucumber Soul" },
-            { "umbrella", "Umbrella Soul" },
-            { "bluecan", "Tinned Food Soul" },
-            { "orangecan", "Tinned Food Soul" },
-            { "yellowcan", "Tinned Food Soul" },
-            { "canblue", "Tinned Food Soul" },
-            { "canorange", "Tinned Food Soul" },
-            { "canyellow", "Tinned Food Soul" },
-            { "sock", "Sock Soul" },
-            { "pintbottle", "Pint Bottle Soul" },
-            { "knife", "Knife Soul" },
-            { "gumboot", "Gumboot Soul" },
-            { "fork", "Fork Soul" },
-            { "applecore", "Apple Core Soul" },
-            { "apple", "Apple Soul" },
-            { "sandwich", "Sandwich Soul" },
-            { "bow", "Bow Soul" },
-            { "walkietalkie", "Walkie Talkie Soul" },
-            { "boot", "Boot Soul" },
-            { "miniperson", "Mini Person Soul" },
+            { "carrot", "Carrots" },
+            { "tomato", "Tomatoes" },
+            { "pumpkin", "Pumpkins" },
+            { "topsoilbag", "Topsoil Bags" },
+            { "topsoil", "Topsoil Bags" },
+            { "fertiliser", "Topsoil Bags" },
+            { "fertliser", "Topsoil Bags" },  // Typo variant
+            { "fertilizer", "Topsoil Bags" },
+            { "quoitgreen", "Quoits (Green)" },
+            { "quoitred", "Quoits (Red)" },
+            { "plate", "Plates" },
+            { "orange", "Oranges" },
+            { "leek", "Leeks" },
+            { "cucumber", "Cucumbers" },
+            { "umbrella", "Umbrellas" },
+            { "bluecan", "Tinned Food" },
+            { "orangecan", "Tinned Food" },
+            { "yellowcan", "Tinned Food" },
+            { "canblue", "Tinned Food" },
+            { "canorange", "Tinned Food" },
+            { "canyellow", "Tinned Food" },
+            { "sock", "Socks" },
+            { "pintbottle", "Pint Bottles" },
+            { "knife", "Knives" },
+            { "gumboot", "Gumboots" },
+            { "fork", "Forks" },
+            { "applecore", "Apple Cores" },
+            { "apple", "Apples" },
+            { "sandwich", "Sandwich" },
+            { "bow", "Ribbons" },
+            { "walkietalkie", "Walkie Talkies" },
+            { "boot", "Boots" },
+            { "miniperson", "Miniature People" },
+            { "ministreetbench", "Miniature Benches" },
+            { "streetbench", "Miniature Benches" },
+            { "benchstreet", "Miniature Benches" },
+            { "minibench", "Miniature Benches" },
             
             // Garden one-offs
-            { "radio", "Radio Soul" },
-            { "radiosmall", "Radio Soul" },
-            { "trowel", "Trowel Soul" },
-            { "tulip", "Tulip Soul" },
-            { "jam", "Jam Soul" },
-            { "picnicmug", "Picnic Mug Soul" },
-            { "thermos", "Thermos Soul" },
-            { "strawhat", "Straw Hat Soul" },
-            { "sunhat", "Straw Hat Soul" },
-            { "drinkcan", "Drink Can Soul" },
-            { "tennisball", "Tennis Ball Soul" },
-            { "rake", "Rake Soul" },
-            { "basket", "Picnic Basket Soul" },  // Short name from hierarchy
-            { "esky", "Esky Soul" },
-            { "coolbox", "Esky Soul" },
-            { "shovel", "Shovel Soul" },
-            { "wateringcan", "Watering Can Soul" },
-            { "mallet", "Mallet Soul" },
-            { "woodencrate", "Wooden Crate Soul" },
-            { "cratewooden", "Wooden Crate Soul" },
+            { "cabbage", "Cabbages" },
+            { "radio", "Radio" },
+            { "radiosmall", "Radio" },
+            { "trowel", "Trowel" },
+            { "tulip", "Tulip" },
+            { "jam", "Jam" },
+            { "picnicmug", "Picnic Mug" },
+            { "thermos", "Thermos" },
+            { "strawhat", "Sun Hat" },
+            { "sunhat", "Sun Hat" },
+            { "drinkcan", "Drink Can" },
+            { "tennisball", "Tennis Ball" },
+            { "rake", "Rake" },
+            { "basket", "Picnic Basket" },  // Short name from hierarchy
+            { "esky", "Esky" },
+            { "coolbox", "Esky" },
+            { "shovel", "Shovel" },
+            { "wateringcan", "Watering Can" },
+            { "mallet", "Mallet" },
+            { "woodencrate", "Wooden Crate" },
+            { "cratewooden", "Wooden Crate" },
             
             // High Street one-offs
-            { "hornrimmedglasses", "Horn-Rimmed Glasses Soul" },
-            { "redglasses", "Red Glasses Soul" },
-            { "sunglasses", "Sunglasses Soul" },
-            { "toiletpaper", "Toilet Paper Soul" },
-            { "toycar", "Toy Car Soul" },
-            { "hairbrush", "Hairbrush Soul" },
-            { "toothbrush", "Toothbrush Soul" },
-            { "stereoscope", "Stereoscope Soul" },
-            { "dishsoapbottle", "Dish Soap Bottle Soul" },
-            { "dishwashbottle", "Dish Soap Bottle Soul" },
-            { "spraybottle", "Spray Bottle Soul" },
-            { "weedtool", "Weed Tool Soul" },
-            { "forkgarden", "Weed Tool Soul" },
-            { "lilyflower", "Lily Flower Soul" },
-            { "fusilage", "Fusilage Soul" },
+            { "hornrimmedglasses", "Horn-Rimmed Glasses" },
+            { "redglasses", "Red Glasses" },
+            { "sunglasses", "Sunglasses" },
+            { "toiletpaper", "Loo Paper" },
+            { "toycar", "Toy Car" },
+            { "hairbrush", "Hairbrush" },
+            { "toothbrush", "Toothbrush" },
+            { "stereoscope", "Stereoscope" },
+            { "dishsoapbottle", "Dish Soap Bottle" },
+            { "dishwashbottle", "Dish Soap Bottle" },
+            { "spraybottle", "Spray Bottle" },
+            { "weedtool", "Weed Tools" },
+            { "forkgarden", "Weed Tools" },
+            { "lilyflower", "Lily Flower" },
+            { "fusilage", "Toy Plane" },
             { "coin", "Coin" },
-            { "chalk", "Chalk Soul" },
-            { "dustbinlid", "Dustbin Lid Soul" },
-            { "basketprop", "Shopping Basket Soul" },
-            { "top", "Topsoil Bag Soul" },  // Short name after cleaning top_1, top_2, top_3
-            { "pushbroom", "Push Broom Soul" },
-            { "dustbin", "Dustbin Soul" },
-            { "babydoll", "Baby Doll Soul" },
-            { "pricinggun", "Pricing Gun Soul" },
-            { "addingmachine", "Adding Machine Soul" },
+            { "chalk", "Chalk" },
+            { "dustbinlid", "Dustbin Lid" },
+            { "basketprop", "Shopping Basket" },
+            { "top", "Topsoil Bags" },  // Short name after cleaning top_1, top_2, top_3
+            { "pushbroom", "Push Broom" },
+            { "dustbin", "Dustbin" },
+            { "babydoll", "Baby Doll" },
+            { "pricinggun", "Pricing Gun" },
+            { "addingmachine", "Adding Machine" },
+            { "football", "Football" },
+            { "garagedoorrope", "Garage Rope" },
             
             // Back Gardens one-offs
-            { "dummy", "Dummy Soul" },
-            { "cricketball", "Cricket Ball Soul" },
-            { "bustpipe", "Bust Pipe Soul" },
-            { "busthat", "Bust Hat Soul" },
-            { "bustglasses", "Bust Glasses Soul" },
-            { "teacup", "Tea Cup Soul" },
-            { "newspaper", "Newspaper Soul" },
-            { "badmintonracket", "Badminton Racket Soul" },
-            { "potstack", "Pot Stack Soul" },
-            { "soap", "Soap Soul" },
-            { "paintbrush", "Paintbrush Soul" },
-            { "vase", "Vase Soul" },
-            { "rightstrap", "Bra Soul" },
-            { "rose", "Rose Soul" },
-            // Removing Rose Box Soul until I can solve the physics issues with it
-            // { "roseboxprop", "Rose Box Soul" },
-            { "cricketbat", "Cricket Bat Soul" },
-            { "teapot", "Tea Pot Soul" },
-            { "clippers", "Clippers Soul" },
-            { "duckstatue", "Duck Statue Soul" },
-            { "duckstatueprop", "Duck Statue Soul" },  // Full prop name
-            { "duck", "Duck Statue Soul" },
-            { "frogstatue", "Frog Statue Soul" },
-            { "frog", "Frog Statue Soul" },
-            { "jeremyfish", "Jeremy Fish Soul" },
-            { "messysign", "Messy Sign Soul" },
-            { "drawer", "Drawer Soul" },
-            { "enameljug", "Enamel Jug Soul" },
-            { "jugenamel", "Enamel Jug Soul" },
-            { "cleansign", "Clean Sign Soul" },
+            { "dummy", "Dummy" },
+            { "cricketball", "Cricket Ball" },
+            { "bustpipe", "Bust Pipe" },
+            { "busthat", "Bust Hat" },
+            { "bustglasses", "Bust Glasses" },
+            { "teacup", "Tea Cup" },
+            { "newspaper", "Newspaper" },
+            { "badmintonracket", "Badminton Racket" },
+            { "potstack", "Pot Stack" },
+            { "soap", "Soap" },
+            { "paintbrush", "Paintbrush" },
+            { "vase", "Vase" },
+            { "rightstrap", "Bra" },
+            { "rose", "Rose" },
+            { "roseboxprop", "Rose Box" },
+            { "cricketbat", "Cricket Bat" },
+            { "teapot", "Tea Pot" },
+            { "clippers", "Clippers" },
+            { "duckstatue", "Duck Statue" },
+            { "duckstatueprop", "Duck Statue" },  // Full prop name
+            { "duck", "Duck Statue" },
+            { "frogstatue", "Frog Statue" },
+            { "frog", "Frog Statue" },
+            { "jeremyfish", "Jeremy Fish" },
+            { "messysign", "No Goose Sign (Messy)" },
+            { "drawer", "Drawer" },
+            { "enameljug", "Enamel Jug" },
+            { "jugenamel", "Enamel Jug" },
+            { "cleansign", "No Goose Sign (Clean)" },
             
             // Pub one-offs
-            { "fishingbobber", "Fishing Bobber Soul" },
-            { "exitletter", "Exit Letter Soul" },
-            { "pintglass", "Pint Glass Soul" },
-            { "toyboat", "Toy Boat Soul" },
-            { "peppergrinder", "Pepper Grinder Soul" },
-            { "cork", "Cork Soul" },
-            { "candlestick", "Candlestick Soul" },
-            { "flowerforvase", "Flower for Vase Soul" },
-            { "harmonica", "Harmonica Soul" },
-            { "tacklebox", "Tackle Box Soul" },
-            { "trafficcone", "Traffic Cone Soul" },
-            { "coneprop", "Traffic Cone Soul" },
-            { "exitparcel", "Exit Parcel Soul" },
-            { "stealthbox", "Stealth Box Soul" },
-            { "nogoosesign", "No Goose Sign Soul" },
-            { "pubnogoose", "No Goose Sign Soul" },
-            { "portablestool", "Portable Stool Soul" },
-            { "dartboard", "Dartboard Soul" },
-            { "mopbucket", "Mop Bucket Soul" },
-            { "pail", "Burly Mans Bucket Soul" },
-            { "bucket", "Mop Bucket Soul" },
-            { "mop", "Mop Soul" },
-            { "mophandle", "Mop Soul" },
-            { "mophead", "Mop Soul" },
-            { "deliverybox", "Delivery Box Soul" },
+            { "fishingbobber", "Fishing Bobber" },
+            { "exitletter", "Letter" },
+            { "pintglass", "Pint Glasses" },
+            { "toyboat", "Toy Boat" },
+            { "peppergrinder", "Pepper Grinder" },
+            { "cork", "Cork" },
+            { "candlestick", "Candlestick" },
+            { "flowerforvase", "Flower for Vase" },
+            { "harmonica", "Harmonica" },
+            { "tacklebox", "Tackle Box" },
+            { "trafficcone", "Traffic Cone" },
+            { "coneprop", "Traffic Cone" },
+            { "exitparcel", "Parcel" },
+            { "stealthbox", "Stealth Box" },
+            { "nogoosesign", "No Goose Sign (Pub)" },
+            { "pubnogoose", "No Goose Sign (Pub)" },
+            { "portablestool", "Portable Stool" },
+            { "dartboard", "Dartboard" },
+            { "mopbucket", "Mop Bucket" },
+            { "pail", "Bucket" },
+            { "bucket", "Mop Bucket" },
+            { "mop", "Mop" },
+            { "mophandle", "Mop" },
+            { "mophead", "Mop" },
+            { "deliverybox", "Delivery Box" },
             
             // Model Village one-offs
-            { "minimailpillar", "Mini Mail Pillar Soul" },
-            { "miniphonedoor", "Mini Phone Door Soul" },
-            { "minishovelprop", "Mini Shovel Soul" },
-            { "poppyflower", "Poppy Flower Soul" },
-            { "flowerpoppy", "Poppy Flower Soul" },
-            { "timberhandle", "Timber Handle Soul" },
-            { "birdbath", "Birdbath Soul" },
-            { "easel", "Easel Soul" },
-            { "minibench", "Mini Bench Soul" },
-            { "minipump", "Mini Pump Soul" },
-            { "ministreetbench", "Mini Bench Soul" },
-            { "streetbench", "Mini Bench Soul" },
-            { "benchstreet", "Mini Bench Soul" },
-            { "sunlounge", "Sun Lounge Soul" },
+            { "minimailpillar", "Miniature Mail Pillar" },
+            { "miniphonedoor", "Miniature Phone Door" },
+            { "minishovelprop", "Miniature Shovel" },
+            { "poppyflower", "Poppy Flower" },
+            { "flowerpoppy", "Poppy Flower" },
+            { "timberhandle", "Timber Handle" },
+            { "birdbath", "Miniature Birdbath" },
+            { "easel", "Miniature Easel" },
+            { "minipump", "Miniature Pump" },
+            { "sunlounge", "Miniature Sun Lounge" },
+            { "minipersonvariant-goose", "Miniature Goose" },
             
             // Victory item
-            { "goldenbell", "Golden Bell Soul" },
+            { "goldenbell", "Golden Bell" },
         };
         
         public PropManager(Plugin plugin)
@@ -244,8 +249,9 @@ namespace GooseGameAP
                     if (PropSoulsEnabled)
                     {
                         Log.LogInfo("[Prop] Prop souls ENABLED - disabling props until souls received");
-                        DisableAllProps();
-                        ApplyAllPropStates();
+                        //DisableAllProps();
+                        //ApplyAllPropStates();
+                        InverseApplyAllPropStates();
                     }
                     else
                     {
@@ -335,17 +341,55 @@ namespace GooseGameAP
                 GameObject drawer5 = null;
                 GameObject picnicBasket1 = null;
                 GameObject picnicBasket2 = null;
+                GameObject fertilizer = null;
+                GameObject fertilizer2 = null;
+                GameObject fertilizer3 = null;
+                GameObject fertilizer4 = null;
+                GameObject fertilizer5 = null;
+                GameObject fertilizer6 = null;
+                GameObject garageRope = null;
+                GameObject garageRope2 = null;
+                GameObject roseBox = null;
+                GameObject umbrella1 = null;
+                GameObject umbrella2 = null;
+                GameObject umbrella3 = null;
+                GameObject umbrella4 = null;
+                GameObject umbrella5 = null;
+                GameObject umbrella6 = null;
+                GameObject umbrella7 = null;
+                GameObject umbrella8 = null;
+                GameObject umbrella9 = null;
+                GameObject umbrella10 = null;
+                GameObject umbrella11 = null;
+                GameObject umbrella12 = null;
+                GameObject bucket = null;
 
                 var checkAllGameObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
                 Log.LogInfo($"[Prop] Found {checkAllGameObjects.Length} GameObjects");
                 foreach (var gameObj in checkAllGameObjects)
                 {
                     if (gameObj == null) continue;
-                    // Log.LogInfo($"[Prop DEBUG] Noting existence of game object with name: '{gameObj.name}'");
+                    /*Log.LogInfo($"[Prop DEBUG] Noting existence of game object with name: '{gameObj.name}'");
+                    
+                    if (gameObj.name.ToLower().Contains("umbrella_") || gameObj.transform != null && gameObj.transform.parent != null && (gameObj.transform.parent.name.ToLower().Contains("umbrella_") ||
+                        gameObj.transform.parent.parent != null && gameObj.transform.parent.parent.name.ToLower().Contains("umbrella_")))
+                    {
+                        string hierarchy = GetHierarchy(gameObj.transform);
+                        Log.LogInfo($"[Prop DEBUG] Noting existence of umbrella game object with name: '{gameObj.name}': {hierarchy}");
+                    }*/
+
                     if (gameObj.name == "braSkinned")
                     {
                         bra = gameObj;
                         Log.LogInfo($"[Prop] Using '{gameObj.name}' for bra");
+                        if (bra.transform != null)
+                        {
+                            Log.LogInfo($"[Prop DEBUG] Parent of '{gameObj.name}' is '{bra.transform.name}'");
+                        }
+                        if (bra.transform.parent != null)
+                        {
+                            Log.LogInfo($"[Prop DEBUG] Grandparent of '{gameObj.name}' is '{bra.transform.parent.name}'");
+                        }
                     }
                     else if (gameObj.name == "drawer starting home")
                     {
@@ -382,6 +426,119 @@ namespace GooseGameAP
                         picnicBasket2 = gameObj;
                         Log.LogInfo($"[Prop] Using '{gameObj.name}' for picnicBasket2");
                     }
+                    else if (gameObj.name == "fertilizer")
+                    {
+                        if (fertilizer == null)
+                        {
+                            fertilizer = gameObj;
+                            Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer");
+                        }
+                        else if (fertilizer2 == null)
+                        {
+                            fertilizer2 = gameObj;
+                            Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer2");
+                        }
+                        else if (fertilizer3 == null)
+                        {
+                            fertilizer3 = gameObj;
+                            Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer3");
+                        }
+                        else if (fertilizer4 == null)
+                        {
+                            fertilizer4 = gameObj;
+                            Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer4");
+                        }
+                        else if (fertilizer5 == null)
+                        {
+                            fertilizer5 = gameObj;
+                            Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer5");
+                        }
+                    }
+                    else if (gameObj.name == "fertilizer (1)")
+                    {
+                        fertilizer6 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for fertilizer6");
+                    }
+                    else if (gameObj.name == "garageDoorRope")
+                    {
+                        garageRope = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for garageRope");
+                    }
+                    else if (gameObj.name == "RopeRingParent")
+                    {
+                        garageRope2 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for garageRope2");
+                    }
+                    else if (gameObj.name == "rosebox")
+                    {
+                        roseBox = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for rosebox");
+                    }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella1 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella1");
+                    }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella2 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella2");
+                    }
+                    else if (gameObj.name == "tip handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella3 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella3");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella4 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella4");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella5 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella5");
+                    }
+                    else if (gameObj.name == "handle" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella6 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella6");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_1")
+                    {
+                        umbrella7 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella7");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_2")
+                    {
+                        umbrella8 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella8");
+                    }
+                    else if (gameObj.name == "canopy" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrella_3")
+                    {
+                        umbrella9 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella9");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand1")
+                    {
+                        umbrella10 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella10");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand2")
+                    {
+                        umbrella11 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella11");
+                    }
+                    else if (gameObj.name == "open button" && gameObj.transform != null && gameObj.transform.parent != null && gameObj.transform.parent.name == "umbrellaOnStand3")
+                    {
+                        umbrella12 = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for umbrella12");
+                    }
+                    else if (gameObj.name == "PailHomeOnWall")
+                    {
+                        bucket = gameObj;
+                        Log.LogInfo($"[Prop] Using '{gameObj.name}' for bucket");
+                    }
                 }
 
                 var allProps = UnityEngine.Object.FindObjectsOfType<Prop>();
@@ -392,7 +549,7 @@ namespace GooseGameAP
                 foreach (var prop in allProps)
                 {
                     if (prop == null) continue;
-                    if (logCount < 20)//500)
+                    if (logCount < 500)
                     {
                         string cleanName = CleanPropName(prop.name);
                         Log.LogInfo($"[Prop DEBUG] Raw: '{prop.name}' -> Clean: '{cleanName}'");
@@ -420,6 +577,16 @@ namespace GooseGameAP
                         Log.LogInfo($"[Prop HIERARCHY] {prop.name}: {hierarchy}");
                     }
                 }
+
+                // Have to do garage rope stuff outside of the foreach because there is no associated prop
+                if (!propCache.ContainsKey("Garage Rope"))
+                {
+                    propCache["Garage Rope"] = new List<GameObject>();
+                }
+                Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{garageRope.name}'. Attached to: 'Garage Rope'.");
+                propCache["Garage Rope"].Add(garageRope);
+                Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{garageRope2.name}'. Attached to: 'Garage Rope'.");
+                propCache["Garage Rope"].Add(garageRope2);
                 
                 // Log.LogInfo($"[Prop DEBUG] Cleaned list made");
                 int matched = 0;
@@ -475,6 +642,55 @@ namespace GooseGameAP
                                     propCache[soul].Add(picnicBasket1);
                                     propCache[soul].Add(picnicBasket2);
                                     propCacheUsingProps[soul].Add(prop);
+                                }
+                            }
+                            else if (cleanName == "top")
+                            {
+                                if (fertilizer != null && !propCache[soul].Contains(fertilizer))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'. '{prop.name}' added to propCacheUsingProps");
+                                    propCache[soul].Add(fertilizer);
+                                    propCache[soul].Add(fertilizer2);
+                                    propCache[soul].Add(fertilizer3);
+                                    propCache[soul].Add(fertilizer4);
+                                    propCache[soul].Add(fertilizer5);
+                                    propCache[soul].Add(fertilizer6);
+                                    propCacheUsingProps[soul].Add(prop);
+                                }
+                            }
+                            else if (cleanName == "roseboxprop")
+                            {
+                                if (roseBox != null && !propCache[soul].Contains(roseBox))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
+                                    propCache[soul].Add(roseBox);
+                                }
+                            }
+                            else if (cleanName == "umbrella")
+                            {
+                                if (umbrella1 != null && !propCache[soul].Contains(umbrella1))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
+                                    propCache[soul].Add(umbrella1);
+                                    propCache[soul].Add(umbrella2);
+                                    propCache[soul].Add(umbrella3);
+                                    propCache[soul].Add(umbrella4);
+                                    propCache[soul].Add(umbrella5);
+                                    propCache[soul].Add(umbrella6);
+                                    propCache[soul].Add(umbrella7);
+                                    propCache[soul].Add(umbrella8);
+                                    propCache[soul].Add(umbrella9);
+                                    propCache[soul].Add(umbrella10);
+                                    propCache[soul].Add(umbrella11);
+                                    propCache[soul].Add(umbrella12);
+                                }
+                            }
+                            else if (cleanName == "pail")
+                            {
+                                if (bucket != null && !propCache[soul].Contains(bucket))
+                                {
+                                    Log.LogInfo($"[Prop DEBUG] Forcing soul match for: '{cleanName}'. Attached to: '{soul}'.");
+                                    propCache[soul].Add(bucket);
                                 }
                             }
                             continue;
@@ -545,16 +761,10 @@ namespace GooseGameAP
                         return current.parent.gameObject;
                     }
                 }
-                
-                // Topsoil bags - check if there's a parent with mesh/collider
-                if (cleanName.Contains("top") && (parentName.Contains("top") || parentName.Contains("soil") || parentName.Contains("fertil")))
-                {
-                    Log.LogInfo($"[Prop] Using parent '{current.parent.name}' for topsoil");
-                    return current.parent.gameObject;
-                }
 
                 // Objects that need to be handled differently (eg, bra). basket is == instead of Contains else it ruins the shopping basket
-                if (cleanName.Contains("rightstrap") && parentName == "brahome" || cleanName.Contains("drawer") || cleanName == "basket")
+                if (cleanName.Contains("rightstrap") && parentName == "brahome" || cleanName.Contains("drawer") || cleanName == "basket" ||
+                    cleanName == "top" || cleanName == "roseboxprop" || cleanName == "umbrella" || cleanName == "pail")
                 {
                     return null;
                 }
@@ -564,7 +774,7 @@ namespace GooseGameAP
             return propObj;
         }
         
-        private string CleanPropName(string name)
+        public static string CleanPropName(string name)
         {
             string clean = name.ToLower()
                 .Replace("(clone)", "")
@@ -610,7 +820,7 @@ namespace GooseGameAP
             {
                 if (!PerfectMatchOnlyProps.Contains(kvp.Key) && (cleanName.StartsWith(kvp.Key) || cleanName.Contains(kvp.Key)))
                 {
-                    //Log.LogInfo($"[Prop DEBUG] cleanname '{cleanName}' .StartsWith or .Contains soul: '{kvp.Key}'");
+                    Log.LogInfo($"[Prop DEBUG] cleanname '{cleanName}' .StartsWith or .Contains soul: '{kvp.Key}'");
                     return kvp.Value;
                 }
             }
@@ -620,7 +830,7 @@ namespace GooseGameAP
             {
                 if (!PerfectMatchOnlyProps.Contains(kvp.Key) && (kvp.Key.StartsWith(cleanName) || kvp.Key.Contains(cleanName)))
                 {
-                    //Log.LogInfo($"[Prop DEBUG] soul '{kvp.Key}' .StartsWith or .Contains cleanname: '{cleanName}'");
+                    Log.LogInfo($"[Prop DEBUG] soul '{kvp.Key}' .StartsWith or .Contains cleanname: '{cleanName}'");
                     return kvp.Value;
                 }
             }
@@ -678,6 +888,37 @@ namespace GooseGameAP
             
             Log.LogInfo($"[Prop] Applied states for {receivedSouls.Count} received souls (+ always-enabled props)");
             Log.LogInfo($"[Prop] Enabled {enabledCount} total props");
+        }
+        
+        /// <summary>
+        /// Disable any prop we don't have a soul for
+        /// </summary>
+        private void InverseApplyAllPropStates()
+        {
+            // If souls are disabled, enable everything
+            if (!PropSoulsEnabled)
+            {
+                return;
+            }
+
+            int count = 0;
+            foreach (var kvp in propCache)
+            {
+                string soul = kvp.Key;
+                // Never disable props needed for progression, or if we have the soul
+                if (AlwaysEnabledProps.Contains(soul) || receivedSouls.Contains(soul)) continue;
+
+                // Otherwise, disable until we have the soul
+                foreach (var prop in kvp.Value)
+                {
+                    if (prop != null)
+                    {
+                        prop.SetActive(false);
+                        count++;
+                    }
+                }
+            }
+            Log.LogInfo($"[Prop] Disabled {count} props");
         }
         
         /// <summary>
@@ -862,8 +1103,9 @@ namespace GooseGameAP
             
             if (PropSoulsEnabled)
             {
-                DisableAllProps();
-                ApplyAllPropStates();
+                //DisableAllProps();
+                //ApplyAllPropStates();
+                InverseApplyAllPropStates();
             }
             else
             {

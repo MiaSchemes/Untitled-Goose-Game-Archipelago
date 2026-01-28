@@ -73,11 +73,50 @@ namespace GooseGameAP
         {
             try
             {
-                Plugin.Instance?.OnGooseShooed();
+                Plugin.Log.LogInfo("Goose shooed");
+                string name = "someone";
+                if (shooer != null)
+                {
+                    name = shooer.name;
+                }
+                Plugin.Instance?.OnGooseShooed(name);
             }
             catch (Exception ex)
             {
                 Plugin.Log.LogError("Shoo patch error: " + ex.Message);
+            }
+        }
+        
+        [HarmonyPatch(typeof(Goose), "Shoo", typeof(Vector3))]
+        [HarmonyPostfix]
+        static void OnGooseShooed2(Goose __instance)
+        {
+            try
+            {
+                Plugin.Log.LogInfo("Goose shooed");
+                Plugin.Instance?.OnGooseShooed("someone");
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.LogError("Shoo patch error: " + ex.Message);
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    public static class LaunchPatches
+    {
+        [HarmonyPatch(typeof(PropLaunchZone), "Launch")]
+        [HarmonyPostfix]
+        static void OnLaunch(PropLaunchZone __instance, Prop prop, PropLaunchEffect launcher)
+        {
+            try
+            {
+                Plugin.Instance?.OnLaunch(prop, launcher);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.LogError("Launch patch error: " + ex.Message);
             }
         }
     }
@@ -99,6 +138,7 @@ namespace GooseGameAP
                 // Log new events for discovery (only once per event type)
                 if (!seenEvents.Contains(id))
                 {
+                    Plugin.Log.LogInfo("[OnTriggerEvent] Adding new event: " + id);
                     seenEvents.Add(id);
                 }
                 
@@ -356,7 +396,7 @@ namespace GooseGameAP
         
         private static long? GetSandcastleLocationId(string side, int peckNumber)
         {
-            const long BASE_ID = 119000000;
+            long BASE_ID = 119000000;
             
             if (side == "doorway" && peckNumber >= 1 && peckNumber <= DOORWAY_MAX)
             {
@@ -369,6 +409,8 @@ namespace GooseGameAP
             return null;
         }
         
+        public static bool listAllSwitchSystems = false;
+        public static bool listAllJobs = false;
         /// <summary>
         /// Check if a switch interaction matches our tracked interactions
         /// </summary>
@@ -376,6 +418,62 @@ namespace GooseGameAP
         {
             string objLower = objName.ToLower();
             string parentLower = parentName.ToLower();
+
+            /*if (!listAllSwitchSystems)
+            {
+                listAllSwitchSystems = true;
+                var checkAllSwitchSystems = UnityEngine.Object.FindObjectsOfType<SwitchSystem>();
+                foreach (var switchSys in checkAllSwitchSystems)
+                {
+                    string switchSysParentName = switchSys?.transform?.parent?.gameObject?.name ?? "no parent";
+                    Plugin.Log.LogInfo($"[INTERACT DEBUG] Noting existence of SwitchSystem '{switchSys.name}' with parent '{switchSysParentName}'");
+                }
+            }
+            if (!listAllJobs)
+            {
+                listAllJobs = true;
+                var checkAllJobs = UnityEngine.Object.FindObjectsOfType<Job>();
+                foreach (var foundJob in checkAllJobs)
+                {
+                    if (foundJob == null) continue;
+
+                    Plugin.Log.LogInfo($"[INTERACT DEBUG] Noting existence of Job '{foundJob.name}' with owner: '{foundJob.owner}'");
+                }
+            }
+            
+            if (parentLower != "goldenbell" && parentLower != "irongate" && objLower != "pubgatesystem" && objLower != "pubtohubgatesystem" && objLower != "sluicegatesystem" &&
+                parentLower != "chimeswitches" && objLower != "gardenareatrigger" && parentLower != "teachingzoom" && objLower != "getinthegardendetector" && parentLower != "dartthrowjob" &&
+                parentLower != "quoitjobs" && parentLower != "footrcomponents" && parentLower != "footlcomponents" && objLower != "pubtofinalegatesystem" && !objLower.Contains("towerpeck") &&
+                !objLower.Contains("doorwaypeck") && parentLower != "van" && parentLower != "getinpubzone" && parentLower != "finalecameradata" && parentLower != "binskip_openable" &&
+                objLower != "pubareatrigger" && objLower != "messybackyarddetector" && parentLower != "teachingmove" && parentLower != "teachingbend" && parentLower != "spawnbush" &&
+                parentLower != "teachingbeak" && parentLower != "teachingpickupground" && parentLower != "introgate" && objLower != "backyardareatrigger" && 
+                parentLower != "trellisblockersystem" && parentLower != "toe_lcomponents" && parentLower != "cleanslipperl" && parentLower != "toe_rcomponents" &&
+                parentLower != "cleanslipperr" && parentLower != "gatetall" && parentLower != "halltohubgatesystem" && objLower != "highstreetareatrigger" && parentLower != "tvshopswitches" &&
+                objLower != "finaleareatrigger" && parentLower != "soap" && objLower != "goalmodelvillagesystem" && parentLower != "pricinggun" && parentLower != "topiary" &&
+                parentLower != "hubgatesystem" && objLower != "speedygoaltimersystem" && parentLower != "rake")
+            {
+                Plugin.Log.LogInfo($"[INTERACT] Detected interaction: '{objLower}' (parent: '{parentLower}')");
+            }*/
+
+            if (objLower == "slidetomatoboxsystem" && parentLower == "pubsignjobsandhomes")
+            {
+                var allProps = UnityEngine.Object.FindObjectsOfType<Prop>();
+                var tomatoes = new List<Prop>();
+                
+                foreach (var prop in allProps)
+                {
+                    if (prop == null || prop.gameObject == null) continue;
+                    
+                    string name = prop.gameObject.name.ToLower().Trim();
+                    
+                    if (name.Contains("pubtomato"))
+                    {
+                        tomatoes.Add(prop);
+                        
+                        // TO DO: fix tomato bug
+                    }
+                }
+            }
             
             // === GARDEN ===
             
@@ -397,6 +495,18 @@ namespace GooseGameAP
                 Plugin.Instance?.InteractionTracker?.OnInteraction("Sprinkler");
             }
             
+            // Short out the radio
+            if (objLower.Contains("shortoutswitchsystem") && parentLower == "radiosmall")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("ShortRadio");
+            }
+            
+            // Lock the groundskeeper in the garden
+            if (objLower.Contains("lockedinsystem") && parentLower == "extragardengoals")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("LockedIn");
+            }
+            
             // === HUB ===
             
             // Intro gate (first gate at game start)
@@ -406,6 +516,12 @@ namespace GooseGameAP
             }
             
             // === HIGH STREET ===
+            
+            // Boop the football
+            if (objLower == "goosepecktorollswitch" && parentLower == "football")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("Football");
+            }
             
             // Radio - bigRadioWithCable
             if (objLower.Contains("bigradio"))
@@ -435,8 +551,49 @@ namespace GooseGameAP
                     Plugin.Instance?.InteractionTracker?.OnInteraction("UmbrellaStand3");
                 }
             }
+
+            if (objLower.Contains("garagedoorbangsystem") || parentLower.Contains("garagedoor"))
+            {
+                var allJobs = UnityEngine.Object.FindObjectsOfType<Job>();
+                foreach (var foundJob in allJobs)
+                {
+                    if (foundJob == null) continue;
+                    if (foundJob.name == "GarageTrappedJobNonShopkeeper")
+                    {
+                        if (foundJob.lastPerformedBy != null)
+                        {
+                            Plugin.Log.LogInfo($"[INTERACT DEBUG] '{foundJob.owner}' is trapped in the garage! Last brain: '{foundJob.lastPerformedBy.name}'");
+                            if (foundJob.lastPerformedBy.name == "tvshop brain")
+                            {
+                                Plugin.Instance?.InteractionTracker?.OnInteraction("TrappedTVShopOwner");
+                            }
+                        }
+                        else
+                        {
+                            Plugin.Log.LogInfo($"[INTERACT DEBUG] '{foundJob.owner}' is trapped in the garage! Cannot determine last brain");
+                        }
+                    }
+                }
+            }
             
             // === BACK GARDENS ===
+            
+            // Topiary - pecking
+            if (parentLower == "topiary" && (objLower == "peckeffects" || objLower == "peckyswitch"))
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("Topiary");
+            }
+            // Topiary - fixing
+            if (parentLower == "topiary" && (/*objLower == "normalsnipswitch" || objLower == "cosmeticsnipswitch" ||*/ objLower == "finalsnipswitch"))
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("Topiary 2");
+            }
+            
+            // Pose as a duck
+            if (parentLower == "duckandribbonstuff" && objLower == "gooseisinposeswitchsystem")// objLower == "enablegooseposeswitchsystem")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("Pose as Duck");
+            }
             
             // Big Garden Bell - StrikerSwitchSystem/BellSwitchSystem with parent "bell"
             if (parentLower == "bell" && (objLower.Contains("striker") || objLower.Contains("bellswitch")))
@@ -511,6 +668,22 @@ namespace GooseGameAP
                 Plugin.Instance?.InteractionTracker?.OnInteraction("BreakTrellis");
             }
             
+            // Getting ribbons stuck on the bushes
+            if (objLower == "jumptohomesystem" && parentLower == "ribbonastuff")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("RibbonStuckA");
+            }
+            if (objLower == "ribbonbjumptohomesystem" && parentLower == "ribbonbstuff")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("RibbonStuckB");
+            }
+            
+            // Getting ribbons stuck on the bushes
+            if (objLower == "frontdoorsystem" && parentLower == "housebricksingleblend")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("InteriorRedecorating");
+            }
+            
             // === PUB ===
             
             // Van doors
@@ -527,6 +700,35 @@ namespace GooseGameAP
             if (objLower == "goosesswitch" && parentLower == "taphandlepositioner")
             {
                 Plugin.Instance?.InteractionTracker?.OnInteraction("PubTap");
+            }
+            
+            // Trip the burly man
+            if (objLower == "tripsystem" && parentLower == "pub man")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("TripBurly");
+            }
+            
+            // Break a pint glass
+            if (objLower == "breaksystem" && parentLower == "pintglassprop")
+            {
+                Plugin.Instance?.InteractionTracker?.OnInteraction("BreakPintGlass");
+            }
+
+            // Perform at the pub with a harmonica
+            if (objLower == "finalcheersystem" || parentLower == "goosestage")
+            {
+                var geese = UnityEngine.Object.FindObjectsOfType<Goose>();
+                foreach (var goose in geese)
+                {
+                    if (goose == null) continue;
+                    if (goose.holder == null) continue;
+                    if (goose.holder.holding == null) continue;
+                    Plugin.Log.LogInfo($"[INTERACT DEBUG] Goose is holding '{goose.holder.holding.name}'");
+                    if (goose.holder.holding.name.Contains("harmonica"))
+                    {
+                        Plugin.Instance?.InteractionTracker?.OnInteraction("PerformHarmonica");
+                    }
+                }
             }
         }
         

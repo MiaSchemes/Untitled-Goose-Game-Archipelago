@@ -308,7 +308,21 @@ namespace GooseGameAP
                 };
                 
                 // Get renderers
-                highlighted.renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                if (highlighted.itemKey != "dartboard")
+                {
+                    highlighted.renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                }
+                else
+                {
+                    var renderers = prop.gameObject.GetComponentsInChildren<Renderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        if (renderer == null) continue;
+                        if (!renderer.name.Contains("dartboard")) continue;
+
+                        highlighted.renderers = [renderer];
+                    }
+                }
                 
                 if (highlighted.renderers != null && highlighted.renderers.Length > 0)
                 {
@@ -328,7 +342,18 @@ namespace GooseGameAP
                 }
                 else if (gameObj.name == "fertilizer")
                 {
-                    HighlightSpecificGameObject(gameObj, "top");
+                    if (gameObj.transform.parent.name == "FertilizerPile")
+                    {
+                        HighlightSpecificGameObject(gameObj, "top_1");
+                    }
+                    else if (gameObj.transform.parent.name == "HoleBlockerHomes")
+                    {
+                        HighlightSpecificGameObject(gameObj, "top_3");
+                    }
+                }
+                else if (gameObj.name == "fertilizer (1)" && gameObj.transform.parent.name == "FertilizerPile")
+                {
+                    HighlightSpecificGameObject(gameObj, "top_2");
                 }
             }
         }
@@ -428,7 +453,7 @@ namespace GooseGameAP
                         highlighted.needsRefresh = true;
                         continue;
                     }
-                    
+
                     // Get mesh from MeshFilter or SkinnedMeshRenderer
                     Mesh mesh = null;
                     MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();

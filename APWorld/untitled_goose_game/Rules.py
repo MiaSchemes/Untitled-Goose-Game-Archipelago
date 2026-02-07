@@ -1052,7 +1052,7 @@ class UntitledGooseRules:
     
     def open_umbrella_on_tv(self, state: CollectionState) -> bool:
         return (
-            self.has_pub(state)
+            self.has_high_street(state)
             and self.has_npc(state, itemNames.NPC_TV_SHOP_OWNER)
             and self.has_npc(state, itemNames.NPC_MARKET_LADY)
             and self.has_prop(state, itemNames.PROP_UMBRELLAS)

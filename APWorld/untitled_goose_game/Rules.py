@@ -1172,45 +1172,49 @@ class UntitledGooseRules:
     # ----- To Do (Quickly!!) Task Rule Defs -----
     
     def speedrun_garden(self, state: CollectionState) -> bool:
-        return self.make_groundskeeper_hammer_thumb(state)
+        return (
+            self.get_into_garden
+            and self.get_groundskeeper_wet
+            and self.steal_groundskeepers_keys
+            and self.make_groundskeeper_wear_sun_hat
+            and self.rake_in_lake
+            and self.picnic
+            and self.make_groundskeeper_hammer_thumb
+        )
     
     def speedrun_high_street(self, state: CollectionState) -> bool:
-        return self.trap_shopkeep_in_garage(state)
+        return (
+            self.break_broom
+            and self.trap_boy_in_phone_booth
+            and self.make_boy_wear_wrong_glasses
+            and self.make_someone_buyback
+            and self.get_on_tv
+            and self.go_shopping
+            and self.trap_shopkeep_in_garage
+        )
     
     def speedrun_back_gardens(self, state: CollectionState) -> bool:
-        task_count = 0
-        
-        if self.make_someone_break_vase(state):
-            task_count += 1
-        if self.make_man_spit_out_tea(state):
-            task_count += 1
-        if self.get_dressed_up(state):
-            task_count += 1
-        if self.make_man_barefoot(state):
-            task_count += 1
-        if self.do_washing(state):
-            task_count += 1
-        if (
-            self.has_npc(state, itemNames.NPC_MESSY_NEIGHBOUR)
-            and self.has_prop(state, itemNames.PROP_BUST_HAT)
-            and self.has_prop(state, itemNames.PROP_BUST_GLASSES)
-            and self.has_prop(state, itemNames.PROP_BUST_PIPE)
-        ):
-            task_count += 1
-        
         return (
-            self.has_npc(state, itemNames.NPC_TIDY_NEIGHBOUR)
-            and self.has_npc(state, itemNames.NPC_MESSY_NEIGHBOUR)
-            and self.has_prop(state, itemNames.PROP_DRAWER)
-            and self.has_prop(state, itemNames.PROP_ROSE)
-            and self.has_prop(state, itemNames.PROP_ROSE_BOX)
-            and self.has_prop(state, itemNames.PROP_CLIPPERS)
-            and self.has_prop(state, itemNames.PROP_NO_GOOSE_SIGN_CLEAN)
-            and task_count >= 5
+            self.make_someone_break_vase
+            and self.dress_up_bust
+            and self.make_man_spit_out_tea
+            and self.get_dressed_up
+            and self.make_man_barefoot
+            and self.do_washing
+            and self.make_someone_prune_rose
         )
     
     def speedrun_pub(self, state: CollectionState) -> bool:
-        return self.drop_bucket_on_burly_man(state)
+        return (
+            self.get_into_pub
+            and self.break_dartboard
+            and self.get_toy_boat
+            and self.make_old_man_fall_on_bum
+            and self.be_awarded_flower
+            and self.drop_pint_glass_in_canal
+            and self.set_table
+            and self.drop_bucket_on_burly_man
+        )
     
     
     # ----- Milestone & Goal Defs -----
